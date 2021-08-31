@@ -188,5 +188,8 @@ Version 4.2.1 (7 Nov 2018)
 Version 4.2.2 (30 July 2019)
 - Updated Satellite Browser list: added 9 new subsections (TLE sets) and renamed a few subsections. (Note: if they are not showing up properly update the TLEs)
 
+Version 4.2.3 (31 August 2021)
+- Updated tracking tool to account for the ground station altitude.
+
 Version 5.0 (possible future features?)
 - Raspberry pi tracking mode and hardware (stepper motors) interface...
