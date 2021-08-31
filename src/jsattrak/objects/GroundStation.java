@@ -145,6 +145,9 @@ public class GroundStation implements Serializable
         // first calculate ECI position of Station
         double[] eciGS = calculateECIposition(thetaDeg);
         
+        // SEG v4.2.3 -- add the altitude of the ground station
+        eciGS[2] += getAltitude(); // lla_deg_m[2]
+        
         // find the vector between pos and GS
         double[] rECI = MathUtils.sub(eci_pos, eciGS);
         
