@@ -69,19 +69,102 @@
     </developer>
   </developers>
 
+  <repositories>
+    <repository>
+      <id>jogl</id>
+      <name>terrestris</name>
+      <url>https://nexus.terrestris.de/repository/public/</url>
+    </repository>
+  </repositories>
+
   <dependencies>
-    <!-- <dependency>
-      <groupId>org.hipparchus</groupId>
-      <artifactId>hipparchus</artifactId>
-      <version>${hipparchus.version}</version>
-      <type>pom</type>
+  <!-- https://mvnrepository.com/artifact/org.beanshell/bsh -->
+<!-- https://mvnrepository.com/artifact/org.apache-extras.beanshell/bsh -->
+    <dependency>
+      <groupId>org.apache-extras.beanshell</groupId>
+      <artifactId>bsh</artifactId>
+      <version>2.0b6</version>
     </dependency>
     <dependency>
-        <groupId>org.orekit</groupId>
-        <artifactId>orekit</artifactId>
-        <version>${orekit.version}</version>
+      <groupId>gov.nist.math</groupId>
+      <artifactId>jama</artifactId>
+      <version>1.0.3</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.media</groupId>
+      <artifactId>jmf</artifactId>
+      <version>2.1.1e</version>
+    </dependency>
+    <dependency>
+        <groupId>com.jgoodies</groupId>
+        <artifactId>jgoodies-looks</artifactId>
+        <version>2.7.0</version>
+    </dependency>
+    <dependency>
+      <groupId>jogl</groupId>
+      <artifactId>jogl</artifactId>
+      <version>1.1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>net.java.joglutils</groupId>
+      <artifactId>joglutils</artifactId>
+      <version>1.2008</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jogamp.gluegen</groupId>
+      <artifactId>gluegen-rt</artifactId>
+      <version>2.3.2</version>
+    </dependency>
+    <!-- <dependency>
+      <groupId>netscape</groupId>
+      <artifactId>javascript</artifactId>
+      <version>1.5.0</version>
     </dependency> -->
-
+    <dependency>
+      <groupId>com.github.insubstantial</groupId>
+      <artifactId>substance-swingx</artifactId>
+      <version>7.3</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.insubstantial</groupId>
+      <artifactId>laf-widget</artifactId>
+      <version>7.3</version>
+    </dependency>
+    <dependency>
+        <groupId>com.github.insubstantial</groupId>
+        <artifactId>laf-plugin</artifactId>
+        <version>7.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.swinglabs</groupId>
+      <artifactId>swing-layout</artifactId>
+      <version>1.0.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.swinglabs.swingx</groupId>
+      <artifactId>swingx-all</artifactId>
+      <version>1.6.5-1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.swinglabs</groupId>
+      <artifactId>swingx</artifactId>
+      <version>1.6.1</version>
+    </dependency>
+    <dependency>
+      <groupId>gov.nasa</groupId>
+      <artifactId>worldwind</artifactId>
+      <version>2.0.0-986</version>
+    </dependency>
+    <dependency>
+      <groupId>com.thoughtworks.xstream</groupId>
+      <artifactId>xstream</artifactId>
+      <version>1.4.20</version>
+    </dependency>
+    <dependency>
+      <groupId>xpp3</groupId>
+      <artifactId>xpp3_min</artifactId>
+      <version>1.1.4c</version>
+    </dependency>
     <!-- tests -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
