@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,128 +38,129 @@ import name.gano.astro.coordinates.CoordinateConversion;
  *
  * @author sgano
  */
+@SuppressWarnings("unused")
 public class JPolarPlotLabel extends JLabel implements Printable
 {
     private double aspectRatio = 2.0;// aspect ratio of the image in the frame (should equal value in J2EarthPanel)
     private int imageWidth = 0, imageHeight = 0;
     private int lastTotalWidth = 0, lastTotalHeight = 0;
-    
+
     private int plotSizePadding = 5; // padding on sides
-    
+
     private Color bgColor = Color.BLACK;
     private Color lineColor = Color.WHITE;
     private Color constraintElvColor = Color.GREEN;
     private Color currentLocColor = Color.ORANGE;
-    
+
     private Color leadColor = Color.BLUE;
     private Color lagColor = Color.BLUE;
-    
-    
+
+
     double[] elevationRange = new double[] {-90.0,90.0};
     double elevationMarkInc = 30; // degrees should be evenly divisible by 90
     double azimuthMarkInc = 22.5; // deg (should be evenly divisible by 180)
-    
+
     private double[] currentAE = new double[] {0,90};
-    
+
     // rendering hints
     private transient RenderingHints renderHints;
-    
+
     private boolean showLeadLagData = true;
-    
+
     // elevation constraint
     private double elevConst = 0; // deg
-    
-    
+
+
     // lead lag data to plot (if not empty)
     private double[][] aerLead = null;
     private double[][] aerLag = null;
-    
+
     // display options
     private boolean displayTime = true;
     private boolean displayNames = false;
     private boolean useDarkColors = true;
     private boolean limit2Horizon = false; // if polar plot is limited to horizon
     private boolean useCompassPoints = true; // use Compass directions
-    
+
     private String timeString = "";
     private String gs2SatNameString = "";
-    
+
     public JPolarPlotLabel()
     {
-        
+
         // create rendering options -- anti-aliasing
         renderHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
-        
+
         //this.setBackground(bgColor);
-        
+
     } // constructor
-    
-    
+
+
     public void paintComponent(Graphics g)
     {
         super.paintComponent(g);  // repaints what is already on the buffer
-        
+
         Dimension dim = getSize();
         int w = dim.width;
         int h = dim.height;
-        
+
         // save last width/height
         lastTotalWidth = w;
         lastTotalHeight = h;
-   
+
         // draw plot
         drawPolarPlot(g,w,h);
     } // draw
-    
+
     // graphics, width, height
     private void drawPolarPlot(Graphics g, int w, int h)
     {
         Graphics2D g2 = (Graphics2D)g; // cast to a 2D graphics object
-        
+
         // sent rendering options
         g2.setRenderingHints(renderHints);
-        
+
         //g2.drawLine(0,0,w,h); // draw a line across the map
         int plotSize = Math.min(h, w) - plotSizePadding*2; // size is smallest of width and height
-        
+
         int[] plotCenter = new int[] {w/2,h/2}; // center of plot
-        
-        // set bg color 
+
+        // set bg color
         //g2.setBackground(bgColor);
         g2.setPaint(bgColor);
-        g2.fillRect(0, 0, w, h);  
-        
-        // set line color 
+        g2.fillRect(0, 0, w, h);
+
+        // set line color
         g2.setPaint(lineColor);
-        
+
         // line style
         g2.setStroke(new BasicStroke());  // standard line, no fancy stuff
 
         // draw plot region -----------------
-        
+
         // draw outside circle
         g2.drawOval(plotCenter[0]-plotSize/2, plotCenter[1]-plotSize/2, plotSize, plotSize);
-        
+
         // set line pattern to dotted
         // dashed line, 2 pix on 2 pix off
         float[] dashPattern = { 2, 2, 2, 2 };
         g2.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT,
                 BasicStroke.JOIN_MITER, 10,
                 dashPattern, 0));
-        
+
         // draw elevation rings
         //double elevationDegPerPixel = (elevationRange[1]-elevationRange[0])/(plotSize/2);
         for(double elv=elevationRange[0];elv<=elevationRange[1];elv+=elevationMarkInc)
         {
             double radiusPix = (1.0-(elv-elevationRange[0])/(elevationRange[1]-elevationRange[0]))*(plotSize/2);
-            
+
             g2.drawOval((int)(plotCenter[0]-radiusPix),(int)( plotCenter[1]-radiusPix), (int)(radiusPix*2), (int)(radiusPix*2));
-            
+
             // add text along +x-axis
             g2.drawString(""+((int)elv), (int)(plotCenter[0]+radiusPix),plotCenter[1]+12);
         }
-        
-        
+
+
         // line style
         g2.setStroke(new BasicStroke());  // standard line, no fancy stuff
         // draw line at elevation constraint
@@ -167,7 +168,7 @@ public class JPolarPlotLabel extends JLabel implements Printable
         g2.setPaint(constraintElvColor);
         g2.drawOval((int)(plotCenter[0]-radiusPix),(int)( plotCenter[1]-radiusPix), (int)(radiusPix*2), (int)(radiusPix*2));
         g2.setPaint(lineColor); // reset paint color
-        
+
         // draw azimuth sectors
         g2.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT,
                 BasicStroke.JOIN_MITER, 10,
@@ -176,7 +177,7 @@ public class JPolarPlotLabel extends JLabel implements Printable
         {
             double endX = plotCenter[0]+(plotSize/2)*Math.sin(az*Math.PI/180.0);
             double endY = plotCenter[1] - (plotSize/2)*Math.cos(az*Math.PI/180.0);
-            
+
             g2.drawLine(plotCenter[0], plotCenter[1], (int)endX, (int)endY);
             // draw Azimuth lables (numbers or compass points)
             if(!useCompassPoints)
@@ -188,10 +189,10 @@ public class JPolarPlotLabel extends JLabel implements Printable
                 g2.drawString(CoordinateConversion.degrees2CompassPoints(az), (int)endX+2, (int)endY);
             }
         }
-        
+
         // end draw plot region ----------------------
-        
-        // display Time 
+
+        // display Time
         if(displayTime)
         {
             g2.setPaint(lineColor);
@@ -202,11 +203,11 @@ public class JPolarPlotLabel extends JLabel implements Printable
             g2.setPaint(lineColor);
             g2.drawString(gs2SatNameString, 2, plotCenter[1]- plotSize/2 + 12);
         }
-        
+
         double x=0;
         double y=0;
         double r=0;
-        
+
         // plot lead / lag data
         if (showLeadLagData)
         {
@@ -216,7 +217,7 @@ public class JPolarPlotLabel extends JLabel implements Printable
             g2.setStroke(new BasicStroke());  // standard line, no fancy stuff
             g2.setPaint(leadColor);
 
-            Double nanDbl = new Double(Double.NaN);
+            Double nanDbl = Double.NaN;
 
             if (aerLead != null)
             {
@@ -286,7 +287,7 @@ public class JPolarPlotLabel extends JLabel implements Printable
         y = plotCenter[1] - (r) * Math.cos(currentAE[0] * Math.PI / 180.0);
 
         g2.fillOval((int) (x - 5), (int) (y - 5), 10, 10);
-        
+
     } // drawPolarPlot
 
     public // deg (should be evenly divisible by 180)
@@ -339,7 +340,7 @@ public class JPolarPlotLabel extends JLabel implements Printable
         aerLead = null;
         aerLag = null;
     }
-    
+
     public void resetCurrentPosition()
     {
         currentAE[0] =0;
@@ -396,7 +397,7 @@ public class JPolarPlotLabel extends JLabel implements Printable
     {
         this.displayNames = displayNames;
     }
-    
+
     public BufferedImage renderPolarPlotOffScreen(int width, int height)
     {
         BufferedImage buff = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB );

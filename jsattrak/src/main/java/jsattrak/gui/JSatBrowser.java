@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,21 +37,21 @@ import jsattrak.utilities.TreeTransferHandler;
  *
  * @author  ganos
  */
-public class JSatBrowser extends javax.swing.JDialog implements java.io.Serializable
+public class JSatBrowser extends javax.swing.JDialog
 {
-    
+
     DefaultTreeModel treeModel;
-    
+
     DefaultMutableTreeNode topTreeNode; // top node
-    
+
     // hashtable with tle's
     private Hashtable<String,TLE> tleHash;
-    
+
     java.awt.Frame parent;
-    
+
     // main app
     JSatTrak app;
-    
+
     /** Creates new form JSatBrowser */
     public JSatBrowser(java.awt.Frame parent, boolean modal, JSatTrak app)
     {
@@ -59,43 +59,43 @@ public class JSatBrowser extends javax.swing.JDialog implements java.io.Serializ
         initComponents();
         this.parent = parent;
         this.app = app;
-        
+
         // setup the tree --
         // JTree tree = new JTree(System.getProperties());
         //satTree.setModel( System.getProperties() );
-        
+
         // -- Create Tree List Based on TLEDownloader values
-                
+
         topTreeNode = new DefaultMutableTreeNode("Satellites");
         //createNodes(top);
         //tree = new JTree(top);
-        
+
         // create a hashmap of TLEs with key as text from tree
         tleHash = new Hashtable<String,TLE>();
-        
+
         treeModel = new DefaultTreeModel(topTreeNode); // create tree model using root node
         satTree.setModel(treeModel); // set the tree's model
-        
+
         SatBrowserTleDataLoader sbtdl = new SatBrowserTleDataLoader(app, topTreeNode, tleHash, tleOutputTextArea, satTree);
-        
+
         sbtdl.execute();
-        
+
 
         // Drag and Drop Handler
         // setup transfer handler
         satTree.setTransferHandler(new TreeTransferHandler(tleHash));
-        
+
         // allow mutiple selections
         satTree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
-        
+
         // if local files exist wait for thread to finish before exiting
         TLEDownloader tleDownloader = new TLEDownloader();
         if( (new File(tleDownloader.getLocalPath()).exists()) && (new File(tleDownloader.getTleFilePath(0)).exists()) )
         {
-            int i=0;
+            // int i=0;
             while(!sbtdl.isDone())
             {
-                
+
                 try
                 {
                     Thread.sleep(50); // sleep for a little bit to wait for the thread
@@ -111,11 +111,11 @@ public class JSatBrowser extends javax.swing.JDialog implements java.io.Serializ
 
 
     } // constructor
-    
 
-        
-    
-    
+
+
+
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -222,13 +222,13 @@ public class JSatBrowser extends javax.swing.JDialog implements java.io.Serializ
     private void satTreeValueChanged(javax.swing.event.TreeSelectionEvent evt)//GEN-FIRST:event_satTreeValueChanged
     {//GEN-HEADEREND:event_satTreeValueChanged
         // some other sat was selected
-        
+
         if(satTree.getSelectionCount() > 0)
         {
             if( tleHash.containsKey(satTree.getLastSelectedPathComponent().toString()) )
             {
                 TLE selectedTLE = tleHash.get(satTree.getLastSelectedPathComponent().toString());
-                
+
                 tleOutputTextArea.setText( selectedTLE.getLine1() + "\n" + selectedTLE.getLine2() );
             }
             else // clear text area
@@ -243,7 +243,7 @@ private void jMenu1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:ev
 {//GEN-HEADEREND:event_jMenu1ActionPerformed
     app.addCustomSat(); // start custom sat dialog
 }//GEN-LAST:event_jMenu1ActionPerformed
-    
+
 //    /**
 //     * @param args the command line arguments
 //     */
@@ -262,7 +262,7 @@ private void jMenu1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:ev
     {
         return tleHash;
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
@@ -277,5 +277,5 @@ private void jMenu1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:ev
     private javax.swing.JTree satTree;
     private javax.swing.JTextArea tleOutputTextArea;
     // End of variables declaration//GEN-END:variables
-    
+
 }

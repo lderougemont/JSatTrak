@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,7 @@
  * =====================================================================
  *
  * A multi-threaded server to support clients running commands  on the same bean shell interperter
- * 
+ *
  * note: may want to add constructor to send in interpertor and title (and maybe location)
  * note: may want to add ability to disconnect a connection by selecting it in the table?
  */
@@ -45,43 +45,44 @@ import org.jdesktop.swingx.decorator.HighlightPredicate;
  *
  * @author  Shawn Gano
  */
+@SuppressWarnings("unused")
 public class GuiServer extends javax.swing.JFrame
 {
-    
+
     Interpreter bsh;
-    
+
     CommandServerThread commandServer;
-    
+
     String appName = "JSatTrak Command Server";
-    String appAuthor = "Shawn Gano";        
+    String appAuthor = "Shawn Gano";
     String version = "v1.0 (21 Mar 2008)";
-    
+
     /** Creates new form GuiServer
      * @param bsh bean shell interperator
      */
     public GuiServer(Interpreter bsh)
     {
         this.setTitle("JSatTrak Command Server");
-        
+
         initComponents();
         statusColorBox.setBackground(Color.RED);
-        
+
         connectionjXTable.setColumnControlVisible(true);
         connectionjXTable.addHighlighter(new ColorHighlighter(HighlightPredicate.EVEN, Color.WHITE, Color.black)); // even, background, foregrond
         connectionjXTable.addHighlighter(new ColorHighlighter(HighlightPredicate.ODD, new Color(229, 229, 229), Color.black)); // odd, background, foregrond
 //        connectionjXTable.addHighlighter(AlternateRowHighlighter.genericGrey);
-        
+
         //connectionjXTable.setShowGrid(true);
-        
+
         this.bsh = bsh; // set interperter
-        
+
         try
         {
             InetAddress addr = InetAddress.getLocalHost();
 
             // Get IP Address
             byte[] ipAddr = addr.getAddress();
-            
+
             hostIPTextField.setText( addr.getHostAddress());
 
             // Get hostname
@@ -90,9 +91,9 @@ public class GuiServer extends javax.swing.JFrame
         catch (UnknownHostException e)
         {
         }
-        
+
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -176,7 +177,7 @@ public class GuiServer extends javax.swing.JFrame
             }
         )
         {
-            Class[] types = new Class []
+            Class<?>[] types = new Class []
             {
                 java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class
             };
@@ -185,7 +186,7 @@ public class GuiServer extends javax.swing.JFrame
                 false, false, false
             };
 
-            public Class getColumnClass(int columnIndex)
+            public Class<?> getColumnClass(int columnIndex)
             {
                 return types [columnIndex];
             }
@@ -292,7 +293,7 @@ public class GuiServer extends javax.swing.JFrame
 
     private void startStopServerMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_startStopServerMenuItemActionPerformed
     {//GEN-HEADEREND:event_startStopServerMenuItemActionPerformed
-        
+
         if(statusColorBox.getBackground() == Color.RED)
         {
             // start a new server
@@ -303,12 +304,12 @@ public class GuiServer extends javax.swing.JFrame
         {
             commandServer.setListening(false);
         }
-        
+
 }//GEN-LAST:event_startStopServerMenuItemActionPerformed
 
     private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_exitMenuItemActionPerformed
     {//GEN-HEADEREND:event_exitMenuItemActionPerformed
-        //System.exit(0); 
+        //System.exit(0);
         commandServer.setListening(false); //stop server
         this.setVisible(false); // set invisible
 }//GEN-LAST:event_exitMenuItemActionPerformed
@@ -319,7 +320,7 @@ public class GuiServer extends javax.swing.JFrame
         // version
         JOptionPane.showMessageDialog(this, appName + "\n\nby: " + appAuthor + "\n\n" + version);
     }//GEN-LAST:event_aboutMenuItemActionPerformed
-    
+
     /**
      * @param args the command line arguments
      */
@@ -333,7 +334,7 @@ public class GuiServer extends javax.swing.JFrame
             }
         });
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
     private org.jdesktop.swingx.JXTable connectionjXTable;
@@ -354,17 +355,17 @@ public class GuiServer extends javax.swing.JFrame
     private javax.swing.JPanel statusColorBox;
     private javax.swing.JLabel statusMessageLabel;
     // End of variables declaration//GEN-END:variables
- 
-    
-    
+
+
+
     // Command Server Thread
     //First Obj - the result type returned by this SwingWorker's  doInBackground and get methods
     //Second Obj - the type used for carrying out intermediate results by this SwingWorker's publish and process methods
     protected class CommandServerThread extends SwingWorker<Object, Object>
     {
         boolean listening = false; // if socket is listening
-        Vector<CommandMultiServerThread> connectionVector = new Vector<CommandMultiServerThread>(); 
-        
+        Vector<CommandMultiServerThread> connectionVector = new Vector<CommandMultiServerThread>();
+
         // constructor, can take in objects needed
         public CommandServerThread()
         {
@@ -373,27 +374,27 @@ public class GuiServer extends javax.swing.JFrame
             startStopServerMenuItem.setText("Stop Server");
             statusMessageLabel.setText("Server Accepting Connections.");
             portTextField.setEditable(false);
-            
+
         }
-        
+
         public Object doInBackground()
         {
             // to send something to be updated in gui use:
             // publish((Object) obj);
-            
+
             ServerSocket serverSocket = null;
             listening = true;
-            
+
             int nextConnectionID = 0;
 
-            try 
+            try
             {
                 int port = Integer.parseInt( portTextField.getText() );
-                
+
                 serverSocket = new ServerSocket(port);
                 serverSocket.setSoTimeout(3000); // 3 sec delay in seeing if server should close
-            } 
-            catch (IOException e) 
+            }
+            catch (IOException e)
             {
                 System.err.println("Could not listen on port:.");
                 //System.exit(-1);
@@ -405,15 +406,15 @@ public class GuiServer extends javax.swing.JFrame
                 {
                     // wait for a connection
                     Socket newSocket = serverSocket.accept();
-                    
+
                     // make a new connection thread and add it to Vector
                     // passes outer class's bsh interperator
                     CommandMultiServerThread newConnection = new CommandMultiServerThread(newSocket, bsh, nextConnectionID, this);
                     newConnection.start();
-                    
+
                     connectionVector.add(newConnection);
                     nextConnectionID ++;
-                    
+
                     publish("New Connection Made"); // trigger process function to be called when time permits updating of GUI
                 }
                 catch(Exception e)
@@ -421,7 +422,7 @@ public class GuiServer extends javax.swing.JFrame
                     //System.out.println("Socket Timeout");
                 }
             }
-            
+
             try
             {
                 // first close all the connections
@@ -437,18 +438,18 @@ public class GuiServer extends javax.swing.JFrame
                 System.out.println("Couldn't close server");
             }
 
-            
+
             return null;
         }
-        
+
         // Receives data chunks from the publish method asynchronously on the Event Dispatch Thread.
         // can access swing components
         protected void process(List<Object> chunks)
         {
             // update JXTable
-            updateTable();           
+            updateTable();
         }
-        
+
         protected void updateTable()
         {
              // clear table
@@ -456,14 +457,14 @@ public class GuiServer extends javax.swing.JFrame
             {
                 ((DefaultTableModel) connectionjXTable.getModel()).removeRow(i);
             }
-            
+
             // update new info: ID, IP, date, message count
             for(CommandMultiServerThread s : connectionVector)
             {
                 ((DefaultTableModel)connectionjXTable.getModel()).addRow( new Object[] {s.getConnectionID(),s.getClientIP(),s.getIniDate()});
             }
         }
-        
+
         // what do to when done (can access swing components
         protected void done()
         {
@@ -472,7 +473,7 @@ public class GuiServer extends javax.swing.JFrame
             statusMessageLabel.setText("Server Not Running.");
             portTextField.setEditable(true);
         }
-        
+
         public boolean isListening()
         {
             return listening;
@@ -483,15 +484,15 @@ public class GuiServer extends javax.swing.JFrame
             this.listening = listening;
             //System.out.println("here");
         }
-        
+
         public void processConnectionClose(CommandMultiServerThread conn)
         {
             connectionVector.remove(conn);
             updateTable();
         }
-        
+
     } // CommandServerThread
-    
-    
-    
+
+
+
 }

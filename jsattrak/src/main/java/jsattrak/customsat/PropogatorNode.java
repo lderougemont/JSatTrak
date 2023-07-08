@@ -4,20 +4,20 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  * =====================================================================
- * 
+ *
  */
 
 package jsattrak.customsat;
@@ -51,15 +51,15 @@ import name.gano.swingx.treetable.CustomTreeTableNode;
  * @author sgano
  */
 public class PropogatorNode extends CustomTreeTableNode implements OrbitProblem
-{  
+{
     // static int to determin which propogator to use
     public static final int HPROP4 = 0;
     public static final int HPROP8 = 1;
     public static final int HPROP78 = 2;
-    
-    // which prop to use 
+
+    // which prop to use
     private int propogator = PropogatorNode.HPROP4;
-    
+
     // Hprop settings
     private int n_max = 20;  // degree
     private int m_max = 20;  // order
@@ -75,25 +75,25 @@ public class PropogatorNode extends CustomTreeTableNode implements OrbitProblem
     // Hprop 7-8 unique
     private double minStepSize = 1.0; // 1 second
     private double maxStepSize = 600.0; //10 minutes
-    private double relAccuracy = 1.00e-012; 
-    
+    private double relAccuracy = 1.00e-012;
+
     private double popogateTimeLen = 86400; // in seconds
-    
+
     // stopping conditions used
     private boolean stopOnApogee = false;
     private boolean stopOnPerigee = false;
-    
+
     // private variables used internally only
     private double JD_TT0; // JD_TT at initial time (Julian Date)
     Vector<StateVector> ephemeris;
-    
+
     // USED FOR GOAL CALCULATIONS
     StateVector lastStateVector = null; // last state -- to calculate goal properties
-    
+
     // variables that can be set data ----------
     String[] varNames = new String[]{"Propogation Time [s]"};
     // -----------------------------------------
-    
+
     // parameters that can be used as GOALS ---
     String[] goalNames = new String[]
     {
@@ -116,8 +116,8 @@ public class PropogatorNode extends CustomTreeTableNode implements OrbitProblem
         "Altitude [m]",  // element 16
     };
     // ========================================
-    
-    
+
+
     public PropogatorNode(CustomTreeTableNode parentNode)
     {
         super(new String[] {"Propogate","",""}); // initialize node, default values
@@ -125,46 +125,47 @@ public class PropogatorNode extends CustomTreeTableNode implements OrbitProblem
         setIcon( new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/customSatIcons/prop.png")) ) );
         //set Node Type
         setNodeType("Propogator");
-        
+
         // add this node to parent - last thing
         if( parentNode != null)
             parentNode.add(this);
-        
+
     } // PropogatorNode
-    
-    
+
+
+    @SuppressWarnings("unused")
      // propogate sat (using starting point as last ephemeris pt)
     public void execute(Vector<StateVector> ephemeris)
     {
         this.ephemeris = ephemeris;
-        
+
          // dummy but should do something based on input ephemeris
         //System.out.println("Executing : " + getValueAt(0) );
-        
+
         // last state before propogation
         StateVector lastState = ephemeris.lastElement();
-        
+
         // save initial time of the node ( TT)
         this.setStartTTjulDate(lastState.state[0]);
-        
+
         double[] pos = new double[] {lastState.state[1],lastState.state[2],lastState.state[3]};
         double[] vel = new double[] {lastState.state[4],lastState.state[5],lastState.state[6]};
-        
+
         boolean propSuccess = false;
-        
+
         // time parameters that are shared
-        JD_TT0 = lastState.state[0]; // last time !!!! IS THIS TT 
+        JD_TT0 = lastState.state[0]; // last time !!!! IS THIS TT
         double dt = stepSize; // in seconds
 
         int nSteps = (int) Math.ceil(popogateTimeLen/dt); // number of steps to integrate
-        
+
         // run correct propogator
         if(propogator == PropogatorNode.HPROP4)
         {
-            
+
             // use seconds as integration time (start at 0.0)
             RungeKutta4 integrator = new RungeKutta4(0.0, dt, pos, vel, nSteps, this);
-            
+
             // Add stopping conditions
             if(stopOnApogee)
             {
@@ -176,7 +177,7 @@ public class PropogatorNode extends CustomTreeTableNode implements OrbitProblem
                 StoppingCondition sc = new ApsisStopCond(ApsisStopCond.PERIAPSIS,ephemeris);
                 integrator.addStoppingCondition(sc);
             }
-            
+
             long ms = integrator.solve();
 
             //	System.out.println("RK4 Solver took: " + ms + " ms");
@@ -187,15 +188,15 @@ public class PropogatorNode extends CustomTreeTableNode implements OrbitProblem
         } // RK 4
         else if(propogator == PropogatorNode.HPROP8)
         {
-            
-            
+
+
             // 8th order test
             boolean adaptive = false; // not adaptive
             double iniStep = dt; // real value
             double relErrorTol = relAccuracy;  // hmm not set by user for this method??  set in RK7-8??
-            
+
             RungeKutta78 text = new RungeKutta78(0.0, popogateTimeLen, pos, vel, this, minStepSize, maxStepSize, iniStep, relErrorTol, adaptive);
-   
+
             // Add stopping conditions
             if(stopOnApogee)
             {
@@ -207,13 +208,13 @@ public class PropogatorNode extends CustomTreeTableNode implements OrbitProblem
                 StoppingCondition sc = new ApsisStopCond(ApsisStopCond.PERIAPSIS,ephemeris);
                 text.addStoppingCondition(sc);
             }
-            
+
             long simt = text.solve();
-            
+
             double minStep = text.getMinStep();
             double maxStep = text.getMaxStep();
             int ns = text.getNumSteps();
-            
+
             //guiApp.addMessagetoLog("RK8 Solver took: " + simt / 1000.0 + " sec (" + name + ")");
 
             propSuccess = true;
@@ -226,9 +227,9 @@ public class PropogatorNode extends CustomTreeTableNode implements OrbitProblem
             // get parameter values
             double iniStep = dt; // real value
             double relErrorTol = relAccuracy;
-            
+
             RungeKutta78 text = new RungeKutta78(0.0, popogateTimeLen, pos, vel, this, minStepSize, maxStepSize, iniStep, relErrorTol, adaptive);
-            
+
              // Add stopping conditions
             if(stopOnApogee)
             {
@@ -240,53 +241,53 @@ public class PropogatorNode extends CustomTreeTableNode implements OrbitProblem
                 StoppingCondition sc = new ApsisStopCond(ApsisStopCond.PERIAPSIS,ephemeris);
                 text.addStoppingCondition(sc);
             }
-            
+
             long simt = text.solve();
-            
+
             double minStep = text.getMinStep();
             double maxStep = text.getMaxStep();
             int ns = text.getNumSteps();
-            
+
             //guiApp.addMessagetoLog("RK7-8 Solver took: : " + simt / 1000.0 + " sec (" + name + "), Number of Steps: " + ns + ", Min/Max Step Sizes: " + minStep + "/" + maxStep);
 
             propSuccess = true;
-            
+
         } // RK78
-        
-        
+
+
         // copy final ephemeris state:
         lastStateVector = ephemeris.lastElement();
-        
+
         // copy internal ephemeris to the external ephemeris, making conversion from TT to UT??
         // nope Custom sat internal time is TT not UTC
-        
+
     }// execute
-    
-    
+
+
     // passes in main app to add the internal frame to
     public void displaySettings(JSatTrak app)
     {
-        
+
         String windowName = "" + getValueAt(0);
         JInternalFrame iframe = new JInternalFrame(windowName,true,true,true,true);
-        
+
         // show satellite browser window
-        PropogatorPanel gsBrowser = new PropogatorPanel(this,iframe); // non-modal version       
-        
+        PropogatorPanel gsBrowser = new PropogatorPanel(this,iframe); // non-modal version
+
         iframe.setContentPane( gsBrowser );
         iframe.setSize(415+20,386+115); // w,h
         iframe.setLocation(5,5);
-        
+
         app.addInternalFrame(iframe);
-          
+
     } // displaySettings
 
-    
-    
+
+
     // ==========================================
     // Get-Set Methods ==========================
     // ==========================================
-    
+
     public int getPropogator()
     {
         return propogator;
@@ -436,7 +437,7 @@ public class PropogatorNode extends CustomTreeTableNode implements OrbitProblem
     {
         this.relAccuracy = relAccuracy;
     }
-    
+
     public double getPopogateTimeLen()
     {
         return popogateTimeLen;
@@ -456,7 +457,7 @@ public class PropogatorNode extends CustomTreeTableNode implements OrbitProblem
      * @param var
      * @param vel
      * @param t
-     * @return 
+     * @return
      */
     public double[] deriv(double[] var, double[] vel, double t)
     {
@@ -470,7 +471,7 @@ public class PropogatorNode extends CustomTreeTableNode implements OrbitProblem
         // prepare - Transformation matrix to body-fixed system
         //double Mjd_TT = Mjd0_TT + t / 86400.0; // mjd_tt = start epic
         double Mjd_TT = (JD_TT0 + t/86400.0) - AstroConst.JDminusMJD; // Convert sim time to JD to MJD
-        
+
         // calculate current UT time from TT
         double Mjd_UT1 = Mjd_TT - Time.deltaT(Mjd_TT); //
 
@@ -483,13 +484,13 @@ public class PropogatorNode extends CustomTreeTableNode implements OrbitProblem
         // Acceleration due to harmonic gravity field
         acc = GravityField.AccelHarmonic(var, E, AstroConst.GM_Earth, AstroConst.R_Earth, AstroConst.CS, n_max, m_max);
 
-        // Luni-solar perturbations 
+        // Luni-solar perturbations
         double[] r_Sun = new double[3];
         if (includeSunPert || includeSolRadPress)
         {
             r_Sun = Sun.calculateSunPositionLowTT(Mjd_TT);
         }
-        
+
         if (includeSunPert)
         {
             acc = MathUtils.add(acc, GravityField.AccelPointMass(var, r_Sun, AstroConst.GM_Sun));
@@ -517,7 +518,7 @@ public class PropogatorNode extends CustomTreeTableNode implements OrbitProblem
         return acc;
 
     } // deriv
-    
+
     // verbose - debug
     private boolean verbose = false;
     public void setVerbose(boolean verbose){ this.verbose=verbose;}
@@ -533,12 +534,12 @@ public class PropogatorNode extends CustomTreeTableNode implements OrbitProblem
             ephemeris.add(state);
         }
     }
-    
+
      // meant to be over ridden if there are any input vars
     public double getVar(int varInt)
     {
         double var = 0;
-        
+
         switch(varInt)
         {
             case 0:
@@ -548,7 +549,7 @@ public class PropogatorNode extends CustomTreeTableNode implements OrbitProblem
                 var = 0;
                 break;
         }
-        
+
         return var;
     }
 
@@ -569,24 +570,24 @@ public class PropogatorNode extends CustomTreeTableNode implements OrbitProblem
     public Vector<InputVariable> getInputVarVector()
     {
         Vector<InputVariable> varVec = new Vector<InputVariable>(1);
-        
+
         InputVariable inVar = new InputVariable(this, 0, varNames[0], popogateTimeLen);
         varVec.add(inVar);
-        
+
         return varVec;
     }
-    
+
     // meant to be over ridden if there are any input vars
     public Vector<GoalParameter> getGoalParamVector()
     {
         Vector<GoalParameter> varVec = new Vector<GoalParameter>(17);
-        
+
         for (int i = 0; i < goalNames.length; i++)
         {
             GoalParameter inVar = new GoalParameter(this, i, goalNames[i], getGoal(i)); // hmm, need to put current value here if possible
             varVec.add(inVar);
         }
-        
+
         return varVec;
     }
 
@@ -594,7 +595,7 @@ public class PropogatorNode extends CustomTreeTableNode implements OrbitProblem
     public Double getGoal(int goalInt)
     {
         Double val = null;
-        
+
         if(lastStateVector != null)
         {
             // calculate goals value
@@ -644,7 +645,7 @@ public class PropogatorNode extends CustomTreeTableNode implements OrbitProblem
                     double[] R = new double[] {lastStateVector.state[1],lastStateVector.state[2],lastStateVector.state[3]};
                     double normR = MathUtils.norm(R);
                     R = MathUtils.scale(R, 1.0/normR); // unit vector
-                    
+
                     double[] v = new double[] {lastStateVector.state[4],lastStateVector.state[5],lastStateVector.state[6]};
                     double rDot = MathUtils.dot(v, R);
                     val = rDot;
@@ -687,14 +688,14 @@ public class PropogatorNode extends CustomTreeTableNode implements OrbitProblem
                     lla = GeoFunctions.GeodeticLLA(temePos, lastStateVector.state[0] - AstroConst.JDminusMJD - deltaTT2UTC); // tt-UTC = deltaTT2UTC
 
                     val = lla[2];
-                    break;   
-                    
-                
+                    break;
+
+
             } // switch
         } // last state not null
-        
+
         return val;
-    } // getGoal   
+    } // getGoal
 
     public // in seconds
     // stopping conditions used
@@ -718,5 +719,5 @@ public class PropogatorNode extends CustomTreeTableNode implements OrbitProblem
         this.stopOnPerigee = stopOnPerigee;
     }
 
-    
+
 }

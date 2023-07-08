@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,7 +34,7 @@ import jsattrak.customsat.SolverNode;
 import jsattrak.gui.JSatTrak;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
-import org.jdesktop.swingx.renderer.DefaultTableRenderer;
+// import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 
 /**
  *
@@ -44,53 +44,53 @@ public class SolverPanel extends javax.swing.JPanel
 {
     SolverNode sNode;
      JSatTrak app;
-    
+
     // used for diaplying settings panel
     private JInternalFrame iframe; // used to know what its parent frame is - to close window
-    
-    
+
+
     // vectors for input variables -- not needed stored in JXTable - retrive them from there when saving
     //Vector<InputVariable> inputVars = new Vector<InputVariable>(1);
-    
-    
+
+
     /** Creates new form SolverPanel */
     public SolverPanel(SolverNode sNode, JInternalFrame iframe, JSatTrak app)
     {
         this.iframe = iframe;
         this.sNode = sNode;
         this.app = app;
-        
+
         initComponents();
-        
-        
+
+
         // create columns in table for input and output varaibles/parameters
-        inputVarJXTable.setColumnControlVisible(true); 
+        inputVarJXTable.setColumnControlVisible(true);
         inputVarJXTable.addHighlighter(new ColorHighlighter(HighlightPredicate.EVEN, Color.WHITE, Color.black)); // even, background, foregrond
         inputVarJXTable.addHighlighter(new ColorHighlighter(HighlightPredicate.ODD, new Color(229, 229, 229), Color.black)); // odd, background, foregrond
 
         //inputVarJXTable.getColumnExt(4).setVisible(false); // hide column containing Object.
         inputVarJXTable.setSortable(false); // can't sort because of the way we remove rows
-        
-        goalParamJXTable.setColumnControlVisible(true); 
+
+        goalParamJXTable.setColumnControlVisible(true);
 //        goalParamJXTable.addHighlighter(AlternateRowHighlighter.genericGrey);
         goalParamJXTable.addHighlighter(new ColorHighlighter(HighlightPredicate.EVEN, Color.WHITE, Color.black)); // even, background, foregrond
         goalParamJXTable.addHighlighter(new ColorHighlighter(HighlightPredicate.ODD, new Color(229, 229, 229), Color.black)); // odd, background, foregrond
 
         goalParamJXTable.setSortable(false); // can't sort because of the way we remove rows
-        
-        
+
+
         // set number render options
         // SEG v4.1.6 - remove this - not needed and was causing exceptions
         //DefaultTableRenderer  tcr = (DefaultTableRenderer )inputVarJXTable.getDefaultRenderer( (new Double(0)).getClass());
-        
-        
-        
+
+
+
         // set values in GUI
         solverComboBox.setSelectedIndex(sNode.getSolver());
         activeCheckBox.setSelected(sNode.isSolverActive());
         iterSpinner.setValue( sNode.getMaxIter() );
         tolTextField.setText("" + sNode.getConvergenceTol());
-        
+
         // fill in tables with current parametesr
         for (InputVariable iv : sNode.getInputVarVec())
         {
@@ -101,13 +101,13 @@ public class SolverPanel extends javax.swing.JPanel
         {
             addGoalParameter(gp);
         }
-        
-        
+
+
         // auto fit talbes
         inputVarJXTable.packAll();
-        
+
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -118,7 +118,7 @@ public class SolverPanel extends javax.swing.JPanel
     {
 
         jLabel1 = new javax.swing.JLabel();
-        solverComboBox = new javax.swing.JComboBox();
+        solverComboBox = new javax.swing.JComboBox<String>();
         jLabel2 = new javax.swing.JLabel();
         iterSpinner = new javax.swing.JSpinner();
         jLabel3 = new javax.swing.JLabel();
@@ -143,7 +143,7 @@ public class SolverPanel extends javax.swing.JPanel
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11));
         jLabel1.setText("Solver:");
 
-        solverComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Modified Newton-Raphson", "Modified Broyden" }));
+        solverComboBox.setModel(new javax.swing.DefaultComboBoxModel<String>(new String[] { "Modified Newton-Raphson", "Modified Broyden" }));
 
         jLabel2.setText("Max Iter:");
 
@@ -165,7 +165,7 @@ public class SolverPanel extends javax.swing.JPanel
             }
         )
         {
-            Class[] types = new Class []
+            Class<?>[] types = new Class []
             {
                 java.lang.Object.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
@@ -174,7 +174,7 @@ public class SolverPanel extends javax.swing.JPanel
                 false, false, false, true, true
             };
 
-            public Class getColumnClass(int columnIndex)
+            public Class<?> getColumnClass(int columnIndex)
             {
                 return types [columnIndex];
             }
@@ -393,14 +393,14 @@ public class SolverPanel extends javax.swing.JPanel
     {//GEN-HEADEREND:event_addInputVarButtonActionPerformed
         String windowName = "Input Variables";
         JInternalFrame iframe = new JInternalFrame(windowName,true,true,true,true);
-        
+
         // show  window
         AddInputVar panel = new AddInputVar(sNode,this); // non-modal version
 
         iframe.setContentPane( panel );
         iframe.setSize(180+40,300); // w,h
         iframe.setLocation(5,5);
-              
+
         app.addInternalFrame(iframe);
     }//GEN-LAST:event_addInputVarButtonActionPerformed
 
@@ -409,14 +409,14 @@ public class SolverPanel extends javax.swing.JPanel
 
         // because of the way this works -- only good solution
         // the variables can not be sorted :(
-        
+
         int[] rows = inputVarJXTable.getSelectedRows();
-                
+
         for(int i=rows.length-1; i>=0;i--)
         {
             //inputVarJXTable.remove(rows[i]);
             ((DefaultTableModel)inputVarJXTable.getModel()).removeRow(rows[i]);
-            
+
         }
     }//GEN-LAST:event_removeInputVarButtonActionPerformed
 
@@ -424,33 +424,33 @@ public class SolverPanel extends javax.swing.JPanel
     {//GEN-HEADEREND:event_addGoalParamButtonActionPerformed
         String windowName = "Goal Variables";
         JInternalFrame iframe = new JInternalFrame(windowName,true,true,true,true);
-        
+
         // show satellite browser window
         AddGoalParam panel = new AddGoalParam(sNode,this); // non-modal version
 
         iframe.setContentPane( panel );
         iframe.setSize(180+40,300); // w,h
         iframe.setLocation(5,5);
-              
+
         app.addInternalFrame(iframe);
     }//GEN-LAST:event_addGoalParamButtonActionPerformed
 
     private void removeGoalParamButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_removeGoalParamButtonActionPerformed
     {//GEN-HEADEREND:event_removeGoalParamButtonActionPerformed
          int[] rows = goalParamJXTable.getSelectedRows();
-                
+
         for(int i=rows.length-1; i>=0;i--)
         {
             //inputVarJXTable.remove(rows[i]);
             ((DefaultTableModel)goalParamJXTable.getModel()).removeRow(rows[i]);
-            
+
         }
     }//GEN-LAST:event_removeGoalParamButtonActionPerformed
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_okButtonActionPerformed
     {//GEN-HEADEREND:event_okButtonActionPerformed
         boolean success = saveSettings();
-        
+
          // close internal frame
         if (success)
         {
@@ -485,7 +485,7 @@ public class SolverPanel extends javax.swing.JPanel
        {
            iv.setPrevioustoCurrentValue();
        }
-       
+
        // now reset table (since values have changed)
        refreshTables();
 }//GEN-LAST:event_revertVariablesButtonActionPerformed
@@ -494,13 +494,13 @@ public class SolverPanel extends javax.swing.JPanel
     {//GEN-HEADEREND:event_refreshTablesButtonActionPerformed
         refreshTables();
 }//GEN-LAST:event_refreshTablesButtonActionPerformed
-    
-    
+
+
     private boolean saveSettings()
     {
         // save settings back to Node
         boolean saveSuccess = true;
-        
+
         // save values from GUI
         sNode.setSolver( solverComboBox.getSelectedIndex() );
         sNode.setSolverActive(activeCheckBox.isSelected());
@@ -509,12 +509,12 @@ public class SolverPanel extends javax.swing.JPanel
         {
              sNode.setConvergenceTol( Double.parseDouble( tolTextField.getText() ) );
         }
-        catch(Exception e) 
+        catch(Exception e)
         {
             JOptionPane.showMessageDialog(this, "Data format error, check input (Convergence Tolerance).", "Data ERROR", JOptionPane.ERROR_MESSAGE);
             saveSuccess = false;
         }
-        
+
         // Get input parameters and goals from Tables
         try
         {
@@ -550,11 +550,11 @@ public class SolverPanel extends javax.swing.JPanel
             JOptionPane.showMessageDialog(this, "Data format error, check input (Table Values).", "Data ERROR", JOptionPane.ERROR_MESSAGE);
             saveSuccess = false;
         }
-        
-        
+
+
         return saveSuccess;
     } // savesettings
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox activeCheckBox;
     private javax.swing.JButton addGoalParamButton;
@@ -576,31 +576,31 @@ public class SolverPanel extends javax.swing.JPanel
     private javax.swing.JButton removeGoalParamButton;
     private javax.swing.JButton removeInputVarButton;
     private javax.swing.JButton revertVariablesButton;
-    private javax.swing.JComboBox solverComboBox;
+    private javax.swing.JComboBox<String> solverComboBox;
     private javax.swing.JTextField tolTextField;
     // End of variables declaration//GEN-END:variables
-    
+
     public void setIframe(JInternalFrame iframe)
     {
         this.iframe = iframe;
     }
-    
+
     public void addInputVariable(InputVariable iv)
-    {                
+    {
         ((DefaultTableModel)inputVarJXTable.getModel()).addRow( new Object[] {iv,iv.getParentNode().getValueAt(0).toString() ,iv.getValue(),iv.getDx(),iv.getScale()});
-        
+
     }
-    
+
     public void addGoalParameter(GoalParameter iv)
-    {                
+    {
         ((DefaultTableModel)goalParamJXTable.getModel()).addRow( new Object[] {iv,iv.getParentNode().getValueAt(0).toString() ,iv.getGoalValue(),iv.getValue(),iv.getScale()});
-        
+
     }
-    
+
     public void refreshTables()
     {
-        // refresh all tables 
-        
+        // refresh all tables
+
         // clear tables
         for(int i = 0; i<((DefaultTableModel)goalParamJXTable.getModel()).getRowCount();i++)
         {
@@ -611,7 +611,7 @@ public class SolverPanel extends javax.swing.JPanel
             ((DefaultTableModel)inputVarJXTable.getModel()).removeRow(0);
         }
 
-        
+
         // fill in tables with current parametesr
         for (InputVariable iv : sNode.getInputVarVec())
         {
@@ -622,8 +622,8 @@ public class SolverPanel extends javax.swing.JPanel
         {
             addGoalParameter(gp);
         }
-        
+
     }
-   
-     
+
+
 }

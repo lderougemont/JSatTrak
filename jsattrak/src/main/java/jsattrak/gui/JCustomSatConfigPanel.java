@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -83,9 +83,9 @@ public class JCustomSatConfigPanel extends javax.swing.JPanel
         // highlighter --same as old AlternateRowHighlighter.genericGrey
         missionDesignJXTreeTable.addHighlighter(new ColorHighlighter(HighlightPredicate.EVEN, Color.WHITE, Color.black)); // even, background, foregrond
         missionDesignJXTreeTable.addHighlighter(new ColorHighlighter(HighlightPredicate.ODD, new Color(229, 229, 229), Color.black)); // even, background, foregrond
-        // old way 
+        // old way
         //missionDesignJXTreeTable.addHighlighter(AlternateRowHighlighter.genericGrey);
-        
+
         // roll over effect? (not supported anymore in swingx?)
         //missionDesignJXTreeTable.addHighlighter(new RolloverHighlighter(Color.BLACK, Color.WHITE));
         //missionDesignJXTreeTable.setRolloverEnabled(true);
@@ -124,7 +124,7 @@ public class JCustomSatConfigPanel extends javax.swing.JPanel
         // see if something is selected
         if (missionDesignJXTreeTable.getSelectedRow() >= 0)
         {
-            // get selected object                  
+            // get selected object
             CustomTreeTableNode selectedNode = (CustomTreeTableNode) missionDesignJXTreeTable.getTreeSelectionModel().getSelectionPath().getLastPathComponent();
 
             // make sure selected node not root
@@ -484,7 +484,7 @@ public class JCustomSatConfigPanel extends javax.swing.JPanel
         // delete selected node if not STOP or INI or ROOT or LOOP
         if (missionDesignJXTreeTable.getSelectedRow() >= 0) // make sure something selected
         {
-            // get selected object                  
+            // get selected object
             CustomTreeTableNode selectedNode = (CustomTreeTableNode) missionDesignJXTreeTable.getTreeSelectionModel().getSelectionPath().getLastPathComponent();
 
             // make sure selected node not root
@@ -508,10 +508,10 @@ public class JCustomSatConfigPanel extends javax.swing.JPanel
 
         if (missionDesignJXTreeTable.getSelectedRow() >= 0) // make sure something selected
         {
-            // get selected object                  
+            // get selected object
             CustomTreeTableNode selectedNode = (CustomTreeTableNode) missionDesignJXTreeTable.getTreeSelectionModel().getSelectionPath().getLastPathComponent();
 
-            int selectionIndex = missionDesignJXTreeTable.getSelectionModel().getMinSelectionIndex();
+            // int selectionIndex = missionDesignJXTreeTable.getSelectionModel().getMinSelectionIndex();
 
             // make sure selected node not root
             if (selectedNode != ((CustomTreeTableNode) treeTableModel.getRoot()) && !selectedNode.getNodeType().equalsIgnoreCase("Initial Conditions"))
@@ -534,7 +534,7 @@ public class JCustomSatConfigPanel extends javax.swing.JPanel
                         // not below INI - so move it up
                         treeTableModel.removeNodeFromParent(selectedNode); // remove node
                         treeTableModel.insertNodeInto(selectedNode, selectedNodeParent, childIndex - 1);
-                    
+
                     } // not below ini
 
 
@@ -543,17 +543,17 @@ public class JCustomSatConfigPanel extends javax.swing.JPanel
 
             } // not root or an ini node
         } // something selected
-        
+
     }//GEN-LAST:event_upNodeButtonActionPerformed
 
     private void downNodeButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_downNodeButtonActionPerformed
     {//GEN-HEADEREND:event_downNodeButtonActionPerformed
         if (missionDesignJXTreeTable.getSelectedRow() >= 0) // make sure something selected
         {
-            // get selected object                  
+            // get selected object
             CustomTreeTableNode selectedNode = (CustomTreeTableNode) missionDesignJXTreeTable.getTreeSelectionModel().getSelectionPath().getLastPathComponent();
 
-            int selectionIndex = missionDesignJXTreeTable.getSelectionModel().getMinSelectionIndex();
+            // int selectionIndex = missionDesignJXTreeTable.getSelectionModel().getMinSelectionIndex();
 
             // make sure selected node not root
             if (selectedNode != ((CustomTreeTableNode) treeTableModel.getRoot()) && !selectedNode.getNodeType().equalsIgnoreCase("Initial Conditions"))
@@ -570,12 +570,12 @@ public class JCustomSatConfigPanel extends javax.swing.JPanel
                     // get node that is above the selected one
                     //CustomTreeTableNode nodeAbove = (CustomTreeTableNode) treeTableModel.getChild(selectedNodeParent, childIndex + 1);
 
-//                   
+//
                     // not below INI - so move it down
                     treeTableModel.removeNodeFromParent(selectedNode); // remove node
                     treeTableModel.insertNodeInto(selectedNode, selectedNodeParent, childIndex + 1);
 
-                // reselect node  TODO 
+                // reselect node  TODO
                 //?
 
                 // sorta works unless below a node with children that is open
@@ -609,7 +609,7 @@ public class JCustomSatConfigPanel extends javax.swing.JPanel
         // thread to run in background
         MissionDesignPropagator mdp = new MissionDesignPropagator(rootNode, treeTableModel, ephemeris, sat, app);
         mdp.execute();
-        
+
     }//GEN-LAST:event_propMissionButtonActionPerformed
 
     private void showNodeSettingsButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_showNodeSettingsButtonActionPerformed
@@ -629,7 +629,7 @@ public class JCustomSatConfigPanel extends javax.swing.JPanel
         // first see if a node is selected
         if (missionDesignJXTreeTable.getSelectedRow() >= 0) // make sure something selected
         {
-            // get selected object                  
+            // get selected object
             CustomTreeTableNode selectedNode = (CustomTreeTableNode) missionDesignJXTreeTable.getTreeSelectionModel().getSelectionPath().getLastPathComponent();
 
             double nodeStartTime = selectedNode.getStartTTjulDate();
@@ -638,17 +638,17 @@ public class JCustomSatConfigPanel extends javax.swing.JPanel
             {
                 // convert time to UTC
                 double deltaTT2UTC = Time.deltaT(nodeStartTime - AstroConst.JDminusMJD); // = TT - UTC
-                Time n = new Time();
+                // Time n = new Time();
 
                 // set app time
                 app.setTime(nodeStartTime - deltaTT2UTC);
-                
+
                 // force repaint and regeneration of ground paths - SEG 24 Sept 2008
                 sat.setGroundTrackIni2False(); //force update of ground track data
                 app.forceRepainting(false); // repait without updating positional data
 
                 app.updateTime(); // update time to redraw ground track!  SEG 10 July 2009
-                
+
             } // valid value
         } // node selected
     }//GEN-LAST:event_jump2NodeStartButtonActionPerformed
@@ -657,7 +657,7 @@ public class JCustomSatConfigPanel extends javax.swing.JPanel
     {//GEN-HEADEREND:event_revertParamValuesButtonActionPerformed
         // revert all parameter values back to previous values
         resetAllVariables(rootNode);
-        
+
     }//GEN-LAST:event_revertParamValuesButtonActionPerformed
 
     private void consoleCheckBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_consoleCheckBoxActionPerformed
@@ -680,7 +680,7 @@ public class JCustomSatConfigPanel extends javax.swing.JPanel
         {
             File file = fc.getSelectedFile();
 
-            String extension = app.getExtension(file);
+            String extension = JSatTrak.getExtension(file);
             String fileString = file.getAbsolutePath();
             // force .e extension
             if (extension != null)
@@ -702,7 +702,7 @@ public class JCustomSatConfigPanel extends javax.swing.JPanel
 
         } // file selected
 
-      
+
     }//GEN-LAST:event_exportEphemerisButtonActionPerformed
 
     private void addFromFileButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_addFromFileButtonActionPerformed
@@ -736,7 +736,7 @@ public class JCustomSatConfigPanel extends javax.swing.JPanel
             //cal.setTimeZone(TimeZone.getTimeZone("UTC"));
             SimpleDateFormat dateformatShort1 = new SimpleDateFormat("dd MMM yyyy HH:mm:ss.SSS");
             dateformatShort1.setTimeZone(TimeZone.getTimeZone("UTC"));
-            stkEpoch = dateformatShort1.format(cal.getTime()); 
+            stkEpoch = dateformatShort1.format(cal.getTime());
         }
 
         // open file for writing
@@ -748,7 +748,7 @@ public class JCustomSatConfigPanel extends javax.swing.JPanel
             buffWriter.write("stk.v.4.0\n\n");
             buffWriter.write("BEGIN Ephemeris\n\n");
             buffWriter.write("NumberOfEphemerisPoints " + ephemeris.size() + "\n\n");
-            buffWriter.write("ScenarioEpoch           " + stkEpoch + "\n\n"); // scenario epoch using Gregorian UTC time (dd mmm yyyy hh:mm:ss.s). 
+            buffWriter.write("ScenarioEpoch           " + stkEpoch + "\n\n"); // scenario epoch using Gregorian UTC time (dd mmm yyyy hh:mm:ss.s).
             buffWriter.write("InterpolationMethod     " + stkInterpMethod + "\n\n");
             buffWriter.write("InterpolationSamplesM1  " + stkInterpSamp + "\n\n");
             buffWriter.write("CentralBody             " + stkCentralBody + "\n\n");
@@ -762,10 +762,10 @@ public class JCustomSatConfigPanel extends javax.swing.JPanel
                 time = (sv.state[0] - ephemeris.firstElement().state[0])*24.0*60.0*60.0 ; // seconds since start
                 buffWriter.write(d12.format(time) + " " + d12.format(sv.state[1]) + " " + d12.format(sv.state[2]) + " " + d12.format(sv.state[3]) + " " + d12.format(sv.state[4]) + " " + d12.format(sv.state[5]) + " " + d12.format(sv.state[6]) + "\n");
             }
-            
+
             buffWriter.write("\nEND Ephemeris\n\n");
             buffWriter.close();
-                        
+
         }
         catch (Exception e)
         {

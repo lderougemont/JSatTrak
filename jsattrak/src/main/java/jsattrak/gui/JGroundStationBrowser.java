@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,43 +48,44 @@ import jsattrak.utilities.TreeGroundStationTransferHandler;
  *
  * @author  sgano
  */
-public class JGroundStationBrowser extends javax.swing.JPanel implements java.io.Serializable
+public class JGroundStationBrowser extends javax.swing.JPanel
 {
     public static String groundStationDB = "data/groundstations/groundstations_db.csv";
     public static String groundStationDir = "data/groundstations/";
     public static String groundStationCustomDB = "data/groundstations/groundstations_custom.csv";
-    
+
     DefaultTreeModel treeModel;
     DefaultMutableTreeNode topTreeNode; // top node
     DefaultMutableTreeNode customSecondaryNode;
-    
+
     Hashtable<String,double []> gsHash = new Hashtable<String, double[]>(); // stores Ground Station name and LLA info [deg,deg,meters]
-    
+
     Frame parent;
-    
+
     /** Creates new form JGroundStationBrowser */
+    @SuppressWarnings("unused")
     public JGroundStationBrowser(Frame parent)
     {
         this.parent = parent;
-        
+
         initComponents();
-        
+
         // top tree node
         topTreeNode = new DefaultMutableTreeNode("Ground Stations");
         treeModel = new DefaultTreeModel(topTreeNode); // create tree model using root node
         groundStationTree.setModel(treeModel); // set the tree's model
-        
+
         String currentSecondaryNodeName = null;
         DefaultMutableTreeNode currentSecondaryNode = null; //new DefaultMutableTreeNode(tleDownloader.secondCat[i]);
-        
-        
+
+
         // read data files for Ground Stations (standard and custom)
         try
         {
-            BufferedReader gsReader = null; // initalization of reader 
-            
+            BufferedReader gsReader = null; // initalization of reader
+
             //see if local file exists, if not stream from web
-            
+
             // read local file
             if( new File(groundStationDB).exists())
             {
@@ -100,14 +101,14 @@ public class JGroundStationBrowser extends javax.swing.JPanel implements java.io
                 InputStreamReader isr = new InputStreamReader(c.getInputStream());
                 gsReader = new BufferedReader(isr); // from the web
             }
-            
+
             String nextLine = null;
             int gsCount = 0; // count of stations loaded
             while ((nextLine = gsReader.readLine()) != null)
             {
                 // split line into parts
                 String[] elements = nextLine.split(",");
-                
+
                 if (elements.length == 5) // if the row is formatted correctly
                 {
                     String network = elements[0];
@@ -137,7 +138,7 @@ public class JGroundStationBrowser extends javax.swing.JPanel implements java.io
                 }
             }// while there are more lines to read
             gsReader.close();
-            
+
             // now load custom Ground Stations
             if (new File(groundStationCustomDB).exists())
             {
@@ -179,13 +180,13 @@ public class JGroundStationBrowser extends javax.swing.JPanel implements java.io
                 customSecondaryNode = new DefaultMutableTreeNode("Custom");
                 topTreeNode.add(customSecondaryNode);
             }
-            
+
             // add text to bottom
             statusTextField.setText("Total Ground Stations loaded: " + gsCount);
-            
+
             // auto expand root node
             groundStationTree.expandRow(0);
-        
+
         }
         catch (Exception e)
         {
@@ -193,19 +194,19 @@ public class JGroundStationBrowser extends javax.swing.JPanel implements java.io
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(parent, "Error Loading Ground Station Data. Check data.\n"+e.toString(), "Data LOADING ERROR", JOptionPane.ERROR_MESSAGE);
         }
-        
-        
+
+
         // Drag and Drop Handler
         // setup transfer handler
         //must also enable drag in IDE gui for tree
         groundStationTree.setTransferHandler(new TreeGroundStationTransferHandler(gsHash));
-        
+
         // allow mutiple selections
         groundStationTree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
-        
-        
+
+
     } // constructor
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -300,7 +301,7 @@ public class JGroundStationBrowser extends javax.swing.JPanel implements java.io
             if( gsHash.containsKey(groundStationTree.getLastSelectedPathComponent().toString()) )
             {
                 double[] lla = gsHash.get(groundStationTree.getLastSelectedPathComponent().toString());
-                
+
                 statusTextField.setText( "Lat:" + lla[0] + ", Lon:" + lla[1] +", Alt[m]:" + lla[2] );
             }
             else // clear text area
@@ -314,7 +315,7 @@ public class JGroundStationBrowser extends javax.swing.JPanel implements java.io
     {//GEN-HEADEREND:event_addGSButtonActionPerformed
         JAddGroundStationDialog dlg = new JAddGroundStationDialog(parent,true);
         dlg.setVisible(true); // show dialog
-        
+
         if(dlg.isOkHit())
         {
             // okay was hit process data
@@ -324,35 +325,35 @@ public class JGroundStationBrowser extends javax.swing.JPanel implements java.io
             double longitude = dlg.getLongitude();
             double altitude = dlg.getAltitude();
             boolean saveData = dlg.isSaveData();
-            
+
             // save ground station to hash
             gsHash.put(siteName, new double[]{latitude, longitude, altitude});
 
             // add new Ground station to the node
             DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(siteName);
             customSecondaryNode.add(newNode);
-            
+
             groundStationTree.repaint(); // refreseh tree?
-            
+
             // expand custom
            groundStationTree.scrollPathToVisible(getPath(newNode));
-            
+
             if (saveData) // append data to file
             {
                 try
                 {
                     File gsFile = new File(groundStationCustomDB);
                     boolean append = true;
-                    
+
                     // if file doesn't exist create a new one
-                    if(!gsFile.exists()) 
+                    if(!gsFile.exists())
                     {
                         (new File(groundStationDir)).mkdirs();
                         gsFile.createNewFile();
-                        
+
                         append = false;
                     } // create new file
-                    
+
                     FileWriter gsFileWriter = new FileWriter(gsFile,append);
                     BufferedWriter gsWriter = new BufferedWriter(gsFileWriter); // from local file
 
@@ -367,14 +368,14 @@ public class JGroundStationBrowser extends javax.swing.JPanel implements java.io
                     e.printStackTrace();
                     JOptionPane.showMessageDialog(parent, "Error Saving Ground Station Data. Check data and permissions. \n" + e.toString(), "Data SAVING ERROR", JOptionPane.ERROR_MESSAGE);
                 }
-                
+
             } // if save data
-           
+
         } // if okay hit
-        
+
 }//GEN-LAST:event_addGSButtonActionPerformed
-    
-    
+
+
     // Returns a TreePath containing the specified node.
     public TreePath getPath(TreeNode node)
     {
@@ -391,8 +392,8 @@ public class JGroundStationBrowser extends javax.swing.JPanel implements java.io
         // Convert array of nodes to TreePath
         return new TreePath(list.toArray());
     }
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addGSButton;
     private javax.swing.JTree groundStationTree;
@@ -400,5 +401,5 @@ public class JGroundStationBrowser extends javax.swing.JPanel implements java.io
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField statusTextField;
     // End of variables declaration//GEN-END:variables
-    
+
 }

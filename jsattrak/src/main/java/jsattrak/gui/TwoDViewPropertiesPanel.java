@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2018 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,45 +29,44 @@ import java.io.File;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JInternalFrame;
-import jsattrak.utilities.CustomFileFilter;
 import jsattrak.utilities.RelativePath;
 
 /**
  *
  * @author  sgano
  */
-public class TwoDViewPropertiesPanel extends javax.swing.JPanel implements java.io.Serializable
+public class TwoDViewPropertiesPanel extends javax.swing.JPanel
 {
-    
+
     J2DEarthPanel j2dpanel; // jpanel that this object is setting options for
-    
+
     JSatTrak app; // used to force repaints
-    
+
     JInternalFrame iframe; // used to know what its parent frame is - to close window
-    
-    
+
+
     /** Creates new form TwoDViewPropertiesPanel */
     public TwoDViewPropertiesPanel()
     {
         initComponents();
     }
-    
+
     public void setInternalFrame(JInternalFrame iframe)
     {
         this.iframe = iframe;
     }
-    
+
      public TwoDViewPropertiesPanel(J2DEarthPanel j2dpanel, JSatTrak app)
     {
         initComponents();
-        
+
         this.j2dpanel = j2dpanel;
         this.app = app;
-        
+
         // setup options window with currently selected options
         bgColorPanel.setBackground( j2dpanel.getBackgroundColor() );
         latLongLinesCheckBox.setSelected( j2dpanel.getShowLatLonLines()  );
-        
+
 //        if(j2dpanel.getImageMapNum() == 0)
 //        {
 //            blueMarbleImageRadioButton.setSelected(true);
@@ -78,9 +77,9 @@ public class TwoDViewPropertiesPanel extends javax.swing.JPanel implements java.
 //        }
         // Image path
         imagePathTextField.setText(j2dpanel.getTwoDMap());
-        
+
         zoomIncrementTextField.setText( j2dpanel.getZoomIncrementMultiplier() + "" );
-        
+
         if(j2dpanel.getImageScalingOption() == BufferedImage.SCALE_FAST)
         {
             fastImageScalingRadioButton.setSelected(true);
@@ -89,26 +88,26 @@ public class TwoDViewPropertiesPanel extends javax.swing.JPanel implements java.
         {
             smoothScalingRadioButton.setSelected(true);
         }
-        
+
         showDatTimeCheckBox.setSelected( j2dpanel.isShowDateTime());
         dateTimeColorPanel.setBackground(j2dpanel.getDateTimeColor() );
         dateTimeXOffsetTextField.setText(""+j2dpanel.getXDateTimeOffset());
         dateTimeYOffsetTextField.setText(""+j2dpanel.getYDateTimeOffset());
-        
+
         // darkness options
         showDarknessCheckBox.setSelected(j2dpanel.isDrawSun());
         int val = (int) (100.0*j2dpanel.getSunAlpha());
         alphaSlider.setValue(val);
         sunColorPanel.setBackground( j2dpanel.getSunColor() );
         sunResTextArea.setText( ""+j2dpanel.getNumPtsSunFootPrint() );
-        
+
         // Region options
-        
-        
+
+
         // load data files into chooser
         File dir = new File( j2dpanel.getPathRegionFiles() );
         File[] dirList = dir.listFiles();
-        
+
         if (dirList == null)
         {
             // Either dir does not exist or is not a directory
@@ -123,19 +122,19 @@ public class TwoDViewPropertiesPanel extends javax.swing.JPanel implements java.
         }
         // select the current one if possible
         regionsComboBox.setSelectedItem( j2dpanel.getRegionFileName() );
-        drawRegionsCheckBox.setSelected( j2dpanel.isRegionDrawOn() );        
+        drawRegionsCheckBox.setSelected( j2dpanel.isRegionDrawOn() );
         regionsColorPanel.setBackground( j2dpanel.getRegionLineColor() );
-        
+
         // darkness effect
         darknessEffectCheckBox.setSelected( j2dpanel.isShowEarthLightsMask());
-        
-        
+
+
         // SEG v4.2 -- set current values for line width and font size
         drawingLineWidthTextField.setText( "" +  j2dpanel.getDrawingLineWidth() );
         labelFontSizeTextField.setText("" + j2dpanel.getTextLabelFontSize() );
-        
+
     } // TwoDViewPropertiesPanel
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -171,7 +170,7 @@ public class TwoDViewPropertiesPanel extends javax.swing.JPanel implements java.
         drawRegionsCheckBox = new javax.swing.JCheckBox();
         regionsColorPanel = new javax.swing.JPanel();
         regionsColorButton = new javax.swing.JButton();
-        regionsComboBox = new javax.swing.JComboBox();
+        regionsComboBox = new javax.swing.JComboBox<String>();
         jLabel8 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         showDarknessCheckBox = new javax.swing.JCheckBox();
@@ -674,7 +673,7 @@ public class TwoDViewPropertiesPanel extends javax.swing.JPanel implements java.
         Color oldColor = regionsColorPanel.getBackground();
         // show color Dialog
         Color newColor = JColorChooser.showDialog(app,"Choose Region Outline Color", oldColor);
-        
+
         if (newColor != null)
         {
             regionsColorPanel.setBackground(newColor);
@@ -700,7 +699,7 @@ public class TwoDViewPropertiesPanel extends javax.swing.JPanel implements java.
                 alphaValTextArea.setText("0."+val);
             }
         }
-        
+
     }//GEN-LAST:event_alphaSliderStateChanged
 
     private void sunColorButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_sunColorButtonActionPerformed
@@ -710,7 +709,7 @@ public class TwoDViewPropertiesPanel extends javax.swing.JPanel implements java.
         Color oldColor = sunColorPanel.getBackground();
         // show color Dialog
         Color newColor = JColorChooser.showDialog(app,"Choose Darkness Color", oldColor);
-        
+
         if (newColor != null)
         {
             sunColorPanel.setBackground(newColor);
@@ -724,7 +723,7 @@ public class TwoDViewPropertiesPanel extends javax.swing.JPanel implements java.
         Color oldColor = dateTimeColorPanel.getBackground();
         // show color Dialog
         Color newColor = JColorChooser.showDialog(app,"Choose Satellite Color", oldColor);
-        
+
         if (newColor != null)
         {
             dateTimeColorPanel.setBackground(newColor);
@@ -738,7 +737,7 @@ public class TwoDViewPropertiesPanel extends javax.swing.JPanel implements java.
         Color oldColor = bgColorPanel.getBackground();
         // show color Dialog
         Color newColor = JColorChooser.showDialog(app,"Choose Satellite Color", oldColor);
-        
+
         if (newColor != null)
         {
             bgColorPanel.setBackground(newColor);
@@ -771,11 +770,11 @@ public class TwoDViewPropertiesPanel extends javax.swing.JPanel implements java.
     {//GEN-HEADEREND:event_okButtonActionPerformed
         // save all settings back to satProp
          boolean updateMaps = saveSettings();
-        
-        
+
+
         // force repaint
         app.forceRepainting(updateMaps);
-        
+
         // close internal frame
         try
         {
@@ -788,10 +787,10 @@ public class TwoDViewPropertiesPanel extends javax.swing.JPanel implements java.
     {//GEN-HEADEREND:event_applyButtonActionPerformed
         // save settings
         boolean updateMaps = saveSettings();
-        
+
         // force repaint
         app.forceRepainting(updateMaps);
-        
+
     }//GEN-LAST:event_applyButtonActionPerformed
 
 private void imageBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imageBrowseButtonActionPerformed
@@ -799,15 +798,15 @@ private void imageBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {/
     //String localPathCononical = "data/models/";
     String localPath = "data"+File.separator+ "pixmaps" + File.separator;
     String userDir = System.getProperty("user.dir"); // path java was run from
-    
+
     final JFileChooser fc = new JFileChooser(localPath);
 //    ImageFilter xmlFilter = new ImageFilter("jpg,gif,png", "*.jpg,*.gif,*.png");
 //    ImageFilter xmlFilter = new ImageFilter("jpg,gif,png", "*.jpg,*.gif,*.png");
 //    ImageFilter xmlFilter = new ImageFilter("jpg,gif,png", "*.jpg,*.gif,*.png");
 //    ImageFilter xmlFilter = new ImageFilter("jpg,gif,png", "*.jpg,*.gif,*.png");
-//    
+//
 //    //ImageFilter xmlFilter2 = new ImageFilter("obj", "*.obj");
-//    
+//
 //    //fc.addChoosableFileFilter(xmlFilter2);
 //    fc.addChoosableFileFilter(xmlFilter); // load last so 3ds is prefered
 
@@ -823,28 +822,29 @@ private void imageBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {/
             String relPath = RelativePath.getRelativePath(new File(test), new File(test2)); // returns conanical rel path
 
             imagePathTextField.setText(relPath);
-     
+
         }
         catch(Exception e)
         {
             System.out.println("ERROR Selecting Model File: " + e.toString());
         }
     } // if file choosen
-    
+
 }//GEN-LAST:event_imageBrowseButtonActionPerformed
 
     private void drawingLineWidthTextFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_drawingLineWidthTextFieldActionPerformed
     {//GEN-HEADEREND:event_drawingLineWidthTextFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_drawingLineWidthTextFieldActionPerformed
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider alphaSlider;
     private javax.swing.JLabel alphaValTextArea;
     private javax.swing.JButton applyButton;
     private javax.swing.JButton bgColorButton;
     private javax.swing.JPanel bgColorPanel;
+    @SuppressWarnings("unused")
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton cancelButton;
     private javax.swing.JCheckBox darknessEffectCheckBox;
@@ -877,7 +877,7 @@ private void imageBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {/
     private javax.swing.JButton okButton;
     private javax.swing.JButton regionsColorButton;
     private javax.swing.JPanel regionsColorPanel;
-    private javax.swing.JComboBox regionsComboBox;
+    private javax.swing.JComboBox<String> regionsComboBox;
     private javax.swing.JCheckBox showDarknessCheckBox;
     private javax.swing.JCheckBox showDatTimeCheckBox;
     private javax.swing.JRadioButton smoothScalingRadioButton;
@@ -886,17 +886,17 @@ private void imageBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {/
     private javax.swing.JTextField sunResTextArea;
     private javax.swing.JTextField zoomIncrementTextField;
     // End of variables declaration//GEN-END:variables
- 
-    
+
+
     public boolean saveSettings()
     {
         boolean updateMapData = false;
-        
+
         // save settings
         // setup options window with currently selected options
         j2dpanel.setBackgroundColor( bgColorPanel.getBackground() );
         j2dpanel.setShowLatLonLines( latLongLinesCheckBox.isSelected()  );
-        
+
 //        if(blueMarbleImageRadioButton.isSelected() )
 //        {
 //            j2dpanel.setImageMapNum(0);
@@ -907,13 +907,13 @@ private void imageBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {/
 //        }
         // Image path
         j2dpanel.setTwoDMap(imagePathTextField.getText());
-        
+
         try
         {
             j2dpanel.setZoomIncrementMultiplier( Double.parseDouble( zoomIncrementTextField.getText() ) );
         }catch(Exception e){}
-        
-        
+
+
         if(fastImageScalingRadioButton.isSelected())
         {
             j2dpanel.setImageScalingOption(BufferedImage.SCALE_FAST);
@@ -922,7 +922,7 @@ private void imageBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {/
         {
             j2dpanel.setImageScalingOption(BufferedImage.SCALE_SMOOTH);
         }
-        
+
         j2dpanel.setShowDateTime(showDatTimeCheckBox.isSelected());
         j2dpanel.setDateTimeColor(dateTimeColorPanel.getBackground() );
         try
@@ -931,7 +931,7 @@ private void imageBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {/
         j2dpanel.setYDateTimeOffset( Integer.parseInt(dateTimeYOffsetTextField.getText()) );
         }
         catch(Exception e){}
-        
+
         // darkness settings
         j2dpanel.setDrawSun(showDarknessCheckBox.isSelected());
         j2dpanel.setSunColor(sunColorPanel.getBackground());
@@ -945,14 +945,14 @@ private void imageBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {/
             j2dpanel.setNumPtsSunFootPrint( Integer.parseInt(sunResTextArea.getText()) );
         }
         catch(Exception e){}
-        
+
         // darkness image/light effect
         j2dpanel.setShowEarthLightsMask(darknessEffectCheckBox.isSelected() );
-        
+
         // region settings
         j2dpanel.setRegionDrawingOptions(drawRegionsCheckBox.isSelected(), (String)regionsComboBox.getSelectedItem(), regionsColorPanel.getBackground());
-              
-        
+
+
         // SEG v4.2 -- line width and font size settings
         try
         {
@@ -961,11 +961,11 @@ private void imageBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {/
             {
                 lineWidth = 1.0f; // default value
             }
-            
+
             j2dpanel.setDrawingLineWidth(lineWidth);
         }
         catch(Exception e){}
-        
+
         // SEG v4.2 -- line width and font size settings
         try
         {
@@ -974,17 +974,17 @@ private void imageBrowseButtonActionPerformed(java.awt.event.ActionEvent evt) {/
             {
                 fontSize = 12.0f; // default value
             }
-            
+
             j2dpanel.setTextLabelFontSize(fontSize);
         }
         catch(Exception e){}
-        
+
         // SEG v4.2 -- set current values for line width and font size
         drawingLineWidthTextField.setText( "" +  j2dpanel.getDrawingLineWidth() );
         labelFontSizeTextField.setText("" + j2dpanel.getTextLabelFontSize() );
-        
+
         return updateMapData;
     } // saveSettings
-    
-    
+
+
 }

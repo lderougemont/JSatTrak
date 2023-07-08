@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,22 +32,22 @@ import jsattrak.utilities.J3DEarthComponent;
  */
 public class JTerrainProfileDialog extends javax.swing.JDialog
 {
-    private boolean okHit = false; // if okay was hit
+    // private boolean okHit = false; // if okay was hit
     JSatTrak app; // used to force repaints
-    
+
     J3DEarthComponent j3dDialog;
-    
+
     /** Creates new form JTerrainProfileDialog */
     public JTerrainProfileDialog(java.awt.Frame parent, boolean modal, JSatTrak app, J3DEarthComponent j3dDialog)
     {
         super(parent, modal);
-        
+
         //this.terrainProfileLayer = terrainProfileLayer;
         this.app = app;
         this.j3dDialog = j3dDialog;
-        
+
         initComponents();
-        
+
         //set inital settings
         try
         {
@@ -66,9 +66,9 @@ public class JTerrainProfileDialog extends javax.swing.JDialog
         {
             e.printStackTrace();
         }
-        
+
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -80,7 +80,7 @@ public class JTerrainProfileDialog extends javax.swing.JDialog
 
         showTPCheckBox = new javax.swing.JCheckBox();
         jLabel1 = new javax.swing.JLabel();
-        satComboBox = new javax.swing.JComboBox();
+        satComboBox = new javax.swing.JComboBox<String>();
         jLabel2 = new javax.swing.JLabel();
         longSpanTextField = new javax.swing.JTextField();
         applyButton = new javax.swing.JButton();
@@ -101,7 +101,7 @@ public class JTerrainProfileDialog extends javax.swing.JDialog
 
         jLabel1.setText("Profiler Satellite:");
 
-        satComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        satComboBox.setModel(new javax.swing.DefaultComboBoxModel<String>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel2.setText("+/- Longitude Span [deg]:");
 
@@ -195,7 +195,7 @@ public class JTerrainProfileDialog extends javax.swing.JDialog
     {//GEN-HEADEREND:event_applyButtonActionPerformed
         // save settings
         boolean updateMaps = saveSettings();
-        
+
         // force repaint
         app.forceRepainting(updateMaps);
 }//GEN-LAST:event_applyButtonActionPerformed
@@ -204,14 +204,14 @@ public class JTerrainProfileDialog extends javax.swing.JDialog
     {//GEN-HEADEREND:event_okButtonActionPerformed
         // save all settings back to satProp
          boolean updateMaps = saveSettings();
-        
-        
+
+
         // force repaint of 2D window
           // maybe do this from JSatTrack -- when internal frame is closed of this type and ok was hit?
-        okHit = true;
+        // okHit = true;
         // force repaint
         app.forceRepainting(updateMaps);
-        
+
         // close internal frame
         try
         {
@@ -229,9 +229,9 @@ public class JTerrainProfileDialog extends javax.swing.JDialog
         }
         catch(Exception e){}
     }//GEN-LAST:event_cancelButtonActionPerformed
-    
-  
-    
+
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyButton;
     private javax.swing.JButton cancelButton;
@@ -239,16 +239,16 @@ public class JTerrainProfileDialog extends javax.swing.JDialog
     private javax.swing.JLabel jLabel2;
     private javax.swing.JTextField longSpanTextField;
     private javax.swing.JButton okButton;
-    private javax.swing.JComboBox satComboBox;
+    private javax.swing.JComboBox<String> satComboBox;
     private javax.swing.JCheckBox showTPCheckBox;
     // End of variables declaration//GEN-END:variables
-    
-    
+
+
     private boolean saveSettings()
     {
         boolean updateMapData = false;
-        
-       
+
+
         // combo box
         j3dDialog.setTerrainProfileSat( (String) satComboBox.getSelectedItem() );
 
@@ -257,11 +257,11 @@ public class JTerrainProfileDialog extends javax.swing.JDialog
             j3dDialog.setTerrainProfileLongSpan( Double.parseDouble( longSpanTextField.getText() ) );
         }
         catch(Exception e) { e.printStackTrace();}
-        
+
         // last set if layer is visiable
         j3dDialog.setTerrainProfileEnabled(showTPCheckBox.isSelected() );
 
         return updateMapData;
     } // saveSettings
-    
+
 }

@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,10 +19,10 @@
  * =====================================================================
  *
  * Created on October 25, 2007, 1:56 PM
- * 
+ *
  * update 29 April 2008: Shawn Gano
  * - fixed to allow other types of windows besides just 3d WWJ, using a "mode" variable to allow 3dWWJ, 2D, or other
- * 
+ *
  */
 
 package jsattrak.gui;
@@ -55,118 +55,118 @@ import name.gano.file.SaveImageFile;
 public class JCreateMovieDialog extends javax.swing.JDialog
 {
     Time startTime, endTime;
-    
+
     double timeStep = 1.0;
-    int playbackFPS = 16; 
-    
+    int playbackFPS = 16;
+
      // date formats for displaying and reading in
     private SimpleDateFormat dateformat = new SimpleDateFormat("dd MMM yyyy HH:mm:ss.SSS z");
     private SimpleDateFormat dateformatShort1 = new SimpleDateFormat("dd MMM y H:m:s.S z");
     private SimpleDateFormat dateformatShort2 = new SimpleDateFormat("dd MMM y H:m:s z"); // no Milliseconds
-     
+
     // reltive name of temporary dir to store files
     String tempDirStr = "temp_images";
     String rootNameTempImages = "screen_";
-    
+
     JSatTrak app;
-    
+
     // mode for type of window being used to make a movie from
     int movieMode = 0; // 0= 3dWWJ, 1=2D graphics, 2=other any JComponent
     // types of windows to make movies from:
     J3DEarthComponent threeDpanel;
     J2DEarthPanel     twoDpanel;
     Container         otherPanel;
-    
+
     /** Creates new form JCreateMovieDialog for a 3D window
      * @param parent
      * @param modal
      * @param threeDpanel
-     * @param app 
+     * @param app
      */
     public JCreateMovieDialog(java.awt.Frame parent, boolean modal, J3DEarthComponent threeDpanel, JSatTrak app)
     {
         super(parent, modal);
-        
+
         this.threeDpanel = threeDpanel;
         this.app = app;
-        
+
         movieMode = 0; // set 3D wwj window type
-        
+
         iniGUI( threeDpanel.getDialogTitle() );
-        
+
     } // 3d Window movie maker
-    
+
     /** Creates new form JCreateMovieDialog for a 2D window
      * @param parent
      * @param modal
-     * @param twoDpanel 
-     * @param app 
+     * @param twoDpanel
+     * @param app
      */
     public JCreateMovieDialog(java.awt.Frame parent, boolean modal, J2DEarthPanel twoDpanel, JSatTrak app)
     {
         super(parent, modal);
-        
+
         this.twoDpanel = twoDpanel;
         this.app = app;
-        
+
         movieMode = 1; // set 3D wwj window type
-        
+
         iniGUI(twoDpanel.getName());
     } // 2d window movie Maker
-    
+
     /** Creates new form JCreateMovieDialog for an generic Container
      * @param parent
      * @param modal
-     * @param otherPanel 
+     * @param otherPanel
      * @param app
      * @param windowTitle Title of the window - to be shown in dialog so user knows which window movie will be made from
      */
     public JCreateMovieDialog(java.awt.Frame parent, boolean modal, Container otherPanel, JSatTrak app, String windowTitle)
     {
         super(parent, modal);
-        
+
         this.otherPanel = otherPanel;
         this.app = app;
-        
+
         movieMode = 2; // set 3D wwj window type
-        
+
         iniGUI(windowTitle);
     } // 2d window movie Maker
-    
+
     private void iniGUI(String windowTitle)
     {
          initComponents();
-        
+
         // title name
         windowNameLabel.setText( windowTitle );
-        
+
         // get current date
         // Start time
         startTime = new Time();
-        
-        startTime.setDateFormat( (SimpleDateFormat)app.getCurrentJulianDay().getDateFormat());//threeDpanel.getApp().getCurrentJulianDay().getDateFormat() ); 
+
+        startTime.setDateFormat( (SimpleDateFormat)app.getCurrentJulianDay().getDateFormat());//threeDpanel.getApp().getCurrentJulianDay().getDateFormat() );
         startTime.set( app.getCurrentJulianDay().getCurrentGregorianCalendar().getTimeInMillis()  );
         // End time
         endTime = new Time();
-        endTime.setDateFormat( (SimpleDateFormat)app.getCurrentJulianDay().getDateFormat() ); 
+        endTime.setDateFormat( (SimpleDateFormat)app.getCurrentJulianDay().getDateFormat() );
         endTime.set( app.getCurrentJulianDay().getCurrentGregorianCalendar().getTimeInMillis()  );
-        endTime.addSeconds( 60.0*60.0*3.0 ); // default 3 hours + 
-        
+        endTime.addSeconds( 60.0*60.0*3.0 ); // default 3 hours +
+
         startTimeField.setText( startTime.getDateTimeStr());
         endTimeField.setText(endTime.getDateTimeStr());
-        
-        
+
+
         // time step
         timeStepField.setText( ""+app.getCurrentTimeStep() );
         timeStep = app.getCurrentTimeStep();
-        
+
         // frames per sec default
         playBackRateSpinner.setValue(playbackFPS);
-        
+
         // update other date
         updateDisplayData();
     } // ini GUI
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -380,11 +380,12 @@ public class JCreateMovieDialog extends javax.swing.JDialog
     private void startTimeFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_startTimeFieldActionPerformed
     {//GEN-HEADEREND:event_startTimeFieldActionPerformed
         updateTime(startTime, startTimeField );
-        
+
         // recalc
         updateDisplayData();
 }//GEN-LAST:event_startTimeFieldActionPerformed
 
+    @SuppressWarnings("unused")
     private void genMovieButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_genMovieButtonActionPerformed
     {//GEN-HEADEREND:event_genMovieButtonActionPerformed
         // collect all data
@@ -412,11 +413,11 @@ public class JCreateMovieDialog extends javax.swing.JDialog
             JOptionPane.showMessageDialog(this, "PARAMETER ERROR : " + e.toString(), "ERROR", JOptionPane.ERROR_MESSAGE);
             return;
         } // catch
-        
+
         // ASK WHERE TO SAVE MOVIE!!!!!!
         //    	Create a file chooser
         String outputMoviePath = "test.mov"; // default output
-        
+
         final JFileChooser fc = new JFileChooser();
         jsattrak.utilities.CustomFileFilter movFilter = new jsattrak.utilities.CustomFileFilter("mov", "*.mov");
         fc.addChoosableFileFilter(movFilter);
@@ -444,7 +445,7 @@ public class JCreateMovieDialog extends javax.swing.JDialog
                 file = new File(file.getAbsolutePath() + "." + fileExtension);
             //System.out.println("path="+file.getAbsolutePath());
             }
-            
+
             outputMoviePath = "file:" + file.getAbsolutePath();
 
         }
@@ -452,26 +453,26 @@ public class JCreateMovieDialog extends javax.swing.JDialog
         {
             return; // don't do anything more - user canceled
         }
-            
-        
-        
+
+
+
         // === CREATE temporary files ========================
-        
+
         // create temp directory
         boolean success = (new File(tempDirStr)).mkdir();
-        
+
         double deltaTsec = (endTime.getMJD() - startTime.getMJD())*24*60*60.0;
         final int numFrames = (int)Math.ceil( deltaTsec/timeStep );
-        
+
         // do the long work in a thread so progress bar can be updated
         final String outputMoviePathFinal = outputMoviePath;
         SwingWorker<Object, Integer> worker = new SwingWorker<Object, Integer>()
                 {
-                    
+
                     public Vector<String> doInBackground()
                     {
                         Vector<String> inputFiles = new Vector<String>(); // array of files
-                                                
+
                         for (int i = 0; i < numFrames; i++)
                         {
                             app.setTime(startTime.getCurrentGregorianCalendar().getTimeInMillis());
@@ -503,16 +504,16 @@ public class JCreateMovieDialog extends javax.swing.JDialog
 
                             // update time
                             startTime.addSeconds(timeStep);
-                            
-                            
+
+
                         } // create movie freames
-                        
-                        
+
+
                         movieStatusBar.setString("Building Movie File.....");
                         movieStatusBar.setIndeterminate(true);
-                        
+
                         // stuff to do afterwards
-                        
+
                          // create movie =========
                         // get size
                         int width;
@@ -541,7 +542,7 @@ public class JCreateMovieDialog extends javax.swing.JDialog
                         {
                             JOptionPane.showMessageDialog(null, "ERROR Creating Output File (check permissions)", "ERROR", JOptionPane.ERROR_MESSAGE);
                             System.err.println("Cannot build media locator from: " + outputMoviePathFinal);
-                            
+
                             //movieStatusBar.setIndeterminate(false);
                             publish(0);
                             movieStatusBar.setString("ERROR!");
@@ -553,11 +554,11 @@ public class JCreateMovieDialog extends javax.swing.JDialog
 
                         // clean up ============
                         boolean cleanSuccess = deleteDirectory(tempDirStr);
-                        
+
                         //movieStatusBar.setIndeterminate(false);
                         publish(0);
                         movieStatusBar.setString("Finished!");
-                        
+
                         return inputFiles;
                     } // doInBackground
 
@@ -581,16 +582,16 @@ public class JCreateMovieDialog extends javax.swing.JDialog
 
                         app.forceRepainting();
                     } // done -- update GUI at the finish of process
-     
-                   
-                    
+
+
+
                 }; // swing worker
         worker.execute();
-        
-        
+
+
 }//GEN-LAST:event_genMovieButtonActionPerformed
 
-    public static String getExtension(File f) 
+    public static String getExtension(File f)
     {
         String ext = null;
         String s = f.getName();
@@ -602,12 +603,12 @@ public class JCreateMovieDialog extends javax.swing.JDialog
         }
         return ext;
     } // getExtension
-    
+
     // recursivley deletes a non-empty directory
     static public boolean deleteDirectory(String path2Dir)
     {
         File path = new File(path2Dir);
-        
+
         if (path.exists())
         {
             File[] files = path.listFiles();
@@ -625,17 +626,17 @@ public class JCreateMovieDialog extends javax.swing.JDialog
         }
         return (path.delete());
     } // deleteDirectory
-    
+
     private void playBackRateSpinnerStateChanged(javax.swing.event.ChangeEvent evt)//GEN-FIRST:event_playBackRateSpinnerStateChanged
     {//GEN-HEADEREND:event_playBackRateSpinnerStateChanged
         if( ((Integer)playBackRateSpinner.getValue()).intValue() < 1)
         {
             playBackRateSpinner.setValue(1);
         }
-        
+
         // save value
         playbackFPS = ((Integer)playBackRateSpinner.getValue()).intValue();
-                
+
         // update calculations
         updateDisplayData();
     }//GEN-LAST:event_playBackRateSpinnerStateChanged
@@ -643,7 +644,7 @@ public class JCreateMovieDialog extends javax.swing.JDialog
     private void timeStepFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_timeStepFieldActionPerformed
     {//GEN-HEADEREND:event_timeStepFieldActionPerformed
         timeStep = Double.parseDouble( timeStepField.getText() );
-        
+
         // update calculations
         updateDisplayData();
     }//GEN-LAST:event_timeStepFieldActionPerformed
@@ -651,11 +652,11 @@ public class JCreateMovieDialog extends javax.swing.JDialog
     private void endTimeFieldActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_endTimeFieldActionPerformed
     {//GEN-HEADEREND:event_endTimeFieldActionPerformed
          updateTime(endTime, endTimeField );
-        
+
         // recalc
         updateDisplayData();
     }//GEN-LAST:event_endTimeFieldActionPerformed
-    
+
 //    /**
 //     * @param args the command line arguments
 //     */
@@ -677,7 +678,7 @@ public class JCreateMovieDialog extends javax.swing.JDialog
 //            }
 //        });
 //    }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField endTimeField;
     private javax.swing.JButton genMovieButton;
@@ -698,26 +699,26 @@ public class JCreateMovieDialog extends javax.swing.JDialog
     private javax.swing.JTextField timeStepField;
     private javax.swing.JLabel windowNameLabel;
     // End of variables declaration//GEN-END:variables
-    
-    
+
+
     public void updateDisplayData()
     {
          double deltaTsec = (endTime.getMJD() - startTime.getMJD())*24*60*60.0;
-         
+
          int numFrames = (int)Math.ceil( deltaTsec/timeStep );
-         
+
          double clipLenSec = (numFrames +0.0)/playbackFPS;
-         
+
          movieLengthLabel.setText("" + clipLenSec + " [sec]");
          numFramesLabel.setText(""+numFrames);
-        
+
     } // updateDisplayData
-    
-    
+
+
     private void updateTime(Time time, JTextField timeTextField)
     {
         // save old time
-        double prevJulDate = time.getJulianDate();
+        // double prevJulDate = time.getJulianDate();
 
         // enter hit in date/time box...
         //System.out.println("Date Time Changed");
@@ -768,7 +769,7 @@ public class JCreateMovieDialog extends javax.swing.JDialog
 
         } // if date accepted
     } // updateTime
-    
+
     public void createScreenCapture(String outputFileName)
     {
         try
@@ -824,10 +825,10 @@ public class JCreateMovieDialog extends javax.swing.JDialog
 
             // extension mov
             String fileExtension = "jpg"; // default
-            
+
             // new file from name
             File file = new File(outputFileName);
-            
+
             // save file
             //ImageIO.write(screencapture, fileExtension, file); // old way
             // new way - SEG - though fixed JPG compression (may want this to be an option)
@@ -845,30 +846,31 @@ public class JCreateMovieDialog extends javax.swing.JDialog
             System.out.println("ERROR SCREEN CAPTURE:" + e4.toString());
         }
     } // createScreenCapture
-        
+
     /**
      * Create a media locator from the given string.
      */
+    @SuppressWarnings("unused")
     static MediaLocator createMediaLocator(String url) {
 
-	MediaLocator ml;
+        MediaLocator ml;
 
-	if (url.indexOf(":") > 0 && (ml = new MediaLocator(url)) != null)
-	    return ml;
+        if (url.indexOf(":") > 0 && (ml = new MediaLocator(url)) != null)
+            return ml;
 
-	if (url.startsWith(File.separator)) {
-	    if ((ml = new MediaLocator("file:" + url)) != null)
-		return ml;
-	} else {
-	    String file = "file:" + System.getProperty("user.dir") + File.separator + url;
-	    if ((ml = new MediaLocator(file)) != null)
-		return ml;
-	}
+        if (url.startsWith(File.separator)) {
+            if ((ml = new MediaLocator("file:" + url)) != null)
+                return ml;
+        } else {
+            String file = "file:" + System.getProperty("user.dir") + File.separator + url;
+            if ((ml = new MediaLocator(file)) != null)
+                return ml;
+        }
 
-	return null;
+        return ml;
     } // createMediaLocator
-    
-    
+
+
     // calculate actualy 2D map size and location on screen
     // returns int[] {width,height,pt.x,pt.y} pt = point on screen
     private int[] calculate2DMapSizeAndScreenLoc(J2DEarthPanel twoDmapPanel)
@@ -906,9 +908,9 @@ public class JCreateMovieDialog extends javax.swing.JDialog
             width = newWidth;
             height = newHeight;
         }// find scale
-        
+
         return new int[] {width,height,pt.x,pt.y};
- 
+
     } // calculate2DMapSizeAndScreenLoc
-    
+
 }

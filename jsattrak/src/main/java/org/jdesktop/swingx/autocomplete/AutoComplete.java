@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -35,7 +35,7 @@ import javax.swing.JComboBox;
 import javax.swing.text.JTextComponent;
 
 /**
- * 
+ *
  * @author kschaefer
  */
 final class AutoComplete {
@@ -55,21 +55,21 @@ final class AutoComplete {
             adaptor.markEntireText();
         }
     }
-    
+
     static class KeyAdapter extends java.awt.event.KeyAdapter {
-        private JComboBox comboBox;
-        
-        public KeyAdapter(JComboBox comboBox) {
+        private JComboBox<String> comboBox;
+
+        public KeyAdapter(JComboBox<String> comboBox) {
             this.comboBox = comboBox;
         }
-        
+
         @Override
         public void keyPressed(KeyEvent keyEvent) {
             // don't popup on action keys (cursor movements, etc...)
             if (keyEvent.isActionKey()) {
                 return;
             }
-            
+
             // don't popup if the combobox isn't visible anyway
             if (comboBox.isDisplayable() && !comboBox.isPopupVisible()) {
                 int keyCode = keyEvent.getKeyCode();
@@ -83,12 +83,12 @@ final class AutoComplete {
     }
 
     static class PropertyChangeListener implements java.beans.PropertyChangeListener {
-        private JComboBox comboBox;
-        
-        public PropertyChangeListener(JComboBox comboBox) {
+        private JComboBox<String> comboBox;
+
+        public PropertyChangeListener(JComboBox<String> comboBox) {
             this.comboBox = comboBox;
         }
-        
+
         /**
          * {@inheritDoc}
          */
@@ -101,14 +101,14 @@ final class AutoComplete {
                 handleEnabled(evt);
             }
         }
-        
+
         private void handleEnabled(PropertyChangeEvent evt) {
             if (Boolean.TRUE.equals(evt.getNewValue())) {
                 comboBox.setEditable(true);
             } else {
                 JTextComponent textComponent = (JTextComponent) comboBox.getEditor().getEditorComponent();
                 boolean strictMatching = ((AutoCompleteDocument) textComponent.getDocument()).strictMatching;
-                
+
                 comboBox.setEditable(!strictMatching);
             }
         }
@@ -117,16 +117,16 @@ final class AutoComplete {
             if (evt.getNewValue() instanceof AutoCompleteComboBoxEditor) {
                 return;
             }
-            
+
             AutoCompleteComboBoxEditor acEditor = (AutoCompleteComboBoxEditor) evt.getOldValue();
             boolean strictMatching = false;
-            
+
             if (acEditor.getEditorComponent() != null) {
                 JTextComponent textComponent = (JTextComponent) acEditor.getEditorComponent();
                 strictMatching = ((AutoCompleteDocument) textComponent.getDocument()).strictMatching;
-                
+
                 undecorate(textComponent);
-                
+
                 for (KeyListener l : textComponent.getKeyListeners()) {
                     if (l instanceof KeyAdapter) {
                         textComponent.removeKeyListener(l);
@@ -140,9 +140,9 @@ final class AutoComplete {
             AutoCompleteDocument document = createAutoCompleteDocument(adaptor, strictMatching,
                     acEditor.stringConverter, editorComponent.getDocument());
             decorate(editorComponent, document, adaptor);
-            
+
             editorComponent.addKeyListener(new AutoComplete.KeyAdapter(comboBox));
-            
+
             //set before adding the listener for the editor
             comboBox.setEditor(new AutoCompleteComboBoxEditor(comboBox.getEditor(), document.stringConverter));
         }
@@ -150,20 +150,20 @@ final class AutoComplete {
 
     static class SelectionAction implements Action {
         private Action delegate;
-        
+
         public SelectionAction(Action delegate) {
             this.delegate = delegate;
         }
-        
+
         /**
          * {@inheritDoc}
          */
         @Override
         public void actionPerformed(ActionEvent e) {
-            JComboBox comboBox = (JComboBox) e.getSource();
+            JComboBox<String> comboBox = (JComboBox) e.getSource();
             JTextComponent textComponent = (JTextComponent) comboBox.getEditor().getEditorComponent();
             AutoCompleteDocument doc = (AutoCompleteDocument) textComponent.getDocument();
-            
+
             // doing this prevents the updating of the selected item to "" during the remove prior
             // to the insert in JTextComponent.setText
             doc.strictMatching = true;
@@ -181,7 +181,7 @@ final class AutoComplete {
         public void addPropertyChangeListener(java.beans.PropertyChangeListener listener) {
             delegate.addPropertyChangeListener(listener);
         }
-        
+
         /**
          * {@inheritDoc}
          */
@@ -189,7 +189,7 @@ final class AutoComplete {
         public void removePropertyChangeListener(java.beans.PropertyChangeListener listener) {
             delegate.removePropertyChangeListener(listener);
         }
-        
+
         /**
          * {@inheritDoc}
          */
@@ -205,7 +205,7 @@ final class AutoComplete {
         public void putValue(String key, Object value) {
             delegate.putValue(key, value);
         }
-        
+
         /**
          * {@inheritDoc}
          */
@@ -222,7 +222,7 @@ final class AutoComplete {
             delegate.setEnabled(b);
         }
     }
-    
+
     private AutoComplete() {
         // prevent instantiation
     }

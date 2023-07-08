@@ -31,14 +31,14 @@ import javax.swing.ListCellRenderer;
 /**
  * listens to rollover properties. Repaints effected component regions.
  * Updates link cursor.
- * 
+ *
  * @author Jeanette Winzenburg
  */
-public class ListRolloverController<T extends JList> extends RolloverController<T> {
+public class ListRolloverController<E,T extends JList<E>> extends RolloverController<T> {
 
         private Cursor oldCursor;
 
-        // --------------------------------- JList rollover
+        // --------------------------------- JList<String> rollover
 
         @Override
         protected void rollover(Point oldLocation, Point newLocation) {
@@ -61,7 +61,7 @@ public class ListRolloverController<T extends JList> extends RolloverController<
         }
 
         /**
-         * something weird: cursor in JList behaves different from JTable?
+         * something weird: cursor in JList<String> behaves different from JTable?
          * Hmm .. no: using the table code snippets seems to fix #503-swingx
          * @param location
          */
@@ -91,14 +91,14 @@ public class ListRolloverController<T extends JList> extends RolloverController<
         @Override
         protected RolloverRenderer getRolloverRenderer(Point location,
                 boolean prepare) {
-            ListCellRenderer renderer = component.getCellRenderer();
-            RolloverRenderer rollover = renderer instanceof RolloverRenderer 
+            ListCellRenderer<? super E> renderer = component.getCellRenderer();
+            RolloverRenderer rollover = renderer instanceof RolloverRenderer
                 ? (RolloverRenderer) renderer : null;
             if ((rollover != null) && !rollover.isEnabled()) {
                 rollover = null;
             }
             if ((rollover != null) && prepare) {
-                Object element = component.getModel().getElementAt(location.y);
+                E element = component.getModel().getElementAt(location.y);
                 renderer.getListCellRendererComponent(component, element,
                         location.y, false, true);
             }

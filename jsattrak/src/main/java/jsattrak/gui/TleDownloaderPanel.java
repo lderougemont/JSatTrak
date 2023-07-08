@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,21 +34,21 @@ import jsattrak.utilities.TLEDownloader;
  *
  * @author  sgano
  */
-public class TleDownloaderPanel extends javax.swing.JPanel implements java.io.Serializable
+public class TleDownloaderPanel extends javax.swing.JPanel
 {
-    
+
     JSatTrak app;
     JInternalFrame iframe;
-    
+
     /** Creates new form TleDownloaderPanel */
     public TleDownloaderPanel(JSatTrak app, JInternalFrame iframe)
     {
         initComponents();
-        
+
         this.app = app;
         this.iframe = iframe;
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -201,15 +201,15 @@ public class TleDownloaderPanel extends javax.swing.JPanel implements java.io.Se
     }// </editor-fold>//GEN-END:initComponents
 
 private void tleStartDowloadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tleStartDowloadButtonActionPerformed
-    
-    
+
+
     tleStartDowloadButton.setEnabled(false);
     // before running swing worker start GUI animations
     tleProgressBar.setValue(0);
     tleProgressBar.setStringPainted(true);
     tleProgressBar.repaint();
     app.startStatusAnimation();
-        
+
     // create a swing worker thread to download data from
     SwingWorker<Boolean, ProgressStatus> worker = new SwingWorker<Boolean, ProgressStatus>()
     {
@@ -285,7 +285,7 @@ private void tleStartDowloadButtonActionPerformed(java.awt.event.ActionEvent evt
             }
 
 
-            return new Boolean(result);
+            return result;
 
         }
 
@@ -299,7 +299,7 @@ private void tleStartDowloadButtonActionPerformed(java.awt.event.ActionEvent evt
             tleProgressBar.setValue(ps.getPercentComplete());
             tleProgressBar.repaint();
             tleProgressLabel.setText("Downloading File: " + ps.getStatusText());
-            
+
         }
 
         @Override
@@ -341,11 +341,11 @@ private void tleStartDowloadButtonActionPerformed(java.awt.event.ActionEvent evt
     // execute swing worker
     worker.execute();
     //System.out.println(worker.get().toString());
-    
-    
+
+
 }//GEN-LAST:event_tleStartDowloadButtonActionPerformed
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -362,5 +362,5 @@ private void tleStartDowloadButtonActionPerformed(java.awt.event.ActionEvent evt
     private javax.swing.JLabel tleProgressLabel;
     private javax.swing.JButton tleStartDowloadButton;
     // End of variables declaration//GEN-END:variables
-    
+
 }

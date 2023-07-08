@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,59 +43,59 @@ import jsattrak.objects.SatelliteTleSGP4;
  *
  * @author sgano
  */
-public class ObjectTreeTransferHandler extends StringTransferHandler implements java.io.Serializable 
+public class ObjectTreeTransferHandler extends StringTransferHandler implements java.io.Serializable
 {
     private int[] indices = null;
     private int addIndex = -1; //Location where items were added
     private int addCount = 0;  //Number of items added.
-        
+
     // hashtable reference -- used to keep track of all sats
     Hashtable<String,AbstractSatellite> satHash;
-    
+
     Hashtable<String,GroundStation> gsHash;
-    
+
     // parent App
     JSatTrak parentApp;
-    
+
     // object tree nodes:
     IconTreeNode topSatTreeNode;
     IconTreeNode topGSTreeNode;
-    
+
     // constructor
     public ObjectTreeTransferHandler(Hashtable<String,AbstractSatellite> satHash, Hashtable<String,GroundStation> gsHash, JSatTrak app, IconTreeNode topSatTreeNode, IconTreeNode topGSTreeNode)
     {
         this.satHash = satHash;
         this.gsHash = gsHash;
         this.parentApp = app;
-        
+
         this.topSatTreeNode = topSatTreeNode;
         this.topGSTreeNode = topGSTreeNode;
-        
+
     }
-    
+
     //Bundle up the selected items in the list
     //as a single string, for export.
     protected String exportString(JComponent c)
     {
         String returnString = "";
-        
+
         // nothing can be dragged out of this component
         return returnString;
     }
-    
+
     //Take the incoming string and wherever there is a
     //newline, break it into a separate item in the list.
     protected void importString(JComponent c, String str)
     {
         //System.out.println("HERE4 " + str);
-        
+
         JTree target = (JTree)c;
-        
+
         DefaultTreeModel treeModel = (DefaultTreeModel)target.getModel();
-        
-        
+
+
         //int index = target.get.getSelectedIndex();
-        
+
         //System.out.println("Index: " + index);
         //System.out.println("HERE");
 
@@ -105,36 +105,36 @@ public class ObjectTreeTransferHandler extends StringTransferHandler implements 
         //be problematic when removing the original items.
         //So this is not allowed.
 //        if (indices != null && index >= indices[0] - 1 &&
-//              index <= indices[indices.length - 1]) 
+//              index <= indices[indices.length - 1])
 //        {
 //            indices = null;
 //            return;
 //        }
 
 //        int max = listModel.getSize();
-//        if (index < 0) 
+//        if (index < 0)
 //        {
 //            index = max;
-//        } else 
+//        } else
 //        {
 //            index++;
-//            if (index > max) 
+//            if (index > max)
 //            {
 //                index = max;
 //            }
 //        }
 //        addIndex = index;
-        
-        
+
+
         String[] values = str.split("\n"); // can be many objects moved at once
         addCount = values.length;
         int objImportedCount = 0;
-        for (int i = 0; i < values.length; i++) 
+        for (int i = 0; i < values.length; i++)
         {
             // now we need to split again using ### to seperate names from TLE lines
-            
+
             String[] inLines = values[i].split("###");
-            
+
             String type = inLines[0]; // type such as SAT or GS
             String name = inLines[1];
             String inLine1 = inLines[2];
@@ -144,16 +144,16 @@ public class ObjectTreeTransferHandler extends StringTransferHandler implements 
             {
                 inLine3  = inLines[4];
             }
-            
+
             // if Satellite
             if(type.equalsIgnoreCase("SAT"))
             {
-                                
+
                 // see if sat already exisits, if not add to hashtable and add to list
                 if (!satHash.containsKey(name))
                 {
                     // is not already in list
-                   
+
                         try
                         {
                             // add to hashTable  -- this line is the one can can throw an exception if the data is bad
@@ -184,7 +184,7 @@ public class ObjectTreeTransferHandler extends StringTransferHandler implements 
                             // TLE not valid
                             JOptionPane.showMessageDialog(parentApp, "TLE data is invalid check TLE data file or Source:" + name, "TLE ERROR", JOptionPane.ERROR_MESSAGE);
                         }
-                   
+
                 } // check if sat already in list
             } // if satellite
             else if(type.equalsIgnoreCase("GS"))
@@ -197,56 +197,56 @@ public class ObjectTreeTransferHandler extends StringTransferHandler implements 
                     // add to hashTable
                     GroundStation gs = new GroundStation(name, new double[] {Double.parseDouble(inLine1), Double.parseDouble(inLine2), Double.parseDouble(inLine3)},parentApp.getCurrentJulTime());
                     gsHash.put(name, gs);
-                    
+
                     // add item to the tree
                     //topSatTreeNode.add( new IconTreeNode(name) );
                     IconTreeNode newNode = new IconTreeNode(name);
                     treeModel.insertNodeInto(newNode, topGSTreeNode, topGSTreeNode.getChildCount());
-                    
+
                     newNode.setIcon( new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/custom/groundStation_obj.png")) ) );
-                    
+
                     //System.out.println("node added: " + name);
-                    
+
                     // expand new item
                     target.scrollPathToVisible(getPath(newNode));
-                    
+
                     parentApp.setStatusMessage("Ground Station Added to Scenario: " + name);
 
                     // count number of imports
                     objImportedCount++;
 
                 } // if not in GS hash
-                
+
             } // if Ground Station object
-            
+
         } // for each obj dragged
-        
+
         // update GUI if needed
         if(objImportedCount > 0)
         {
             parentApp.forceRepainting();
-            
+
             if(objImportedCount > 1)
             {
-                
+
                 parentApp.setStatusMessage("Multiple Objects Added to Scenario: " + objImportedCount);
             }
-            
+
         }
-        
+
     } // import String
 
     //If the remove argument is true, the drop has been
-    //successful and it's time to remove the selected items 
+    //successful and it's time to remove the selected items
     //from the list. If the remove argument is false, it
     //was a Copy operation and the original list is left
     //intact.
-    protected void cleanup(JComponent c, boolean remove) 
+    protected void cleanup(JComponent c, boolean remove)
     {
         /*
         if (remove && indices != null)
         {
-            JList source = (JList)c;
+            JList<String> source = (JList)c;
             DefaultListModel model  = (DefaultListModel)source.getModel();
             //If we are moving items around in the same list, we
             //need to adjust the indices accordingly, since those
@@ -271,8 +271,8 @@ public class ObjectTreeTransferHandler extends StringTransferHandler implements 
         addIndex = -1;
          */
     }
-    
-    
+
+
      // Returns a TreePath containing the specified node.
     public TreePath getPath(TreeNode node)
     {
@@ -289,5 +289,5 @@ public class ObjectTreeTransferHandler extends StringTransferHandler implements 
         // Convert array of nodes to TreePath
         return new TreePath(list.toArray());
     }
-    
+
 }

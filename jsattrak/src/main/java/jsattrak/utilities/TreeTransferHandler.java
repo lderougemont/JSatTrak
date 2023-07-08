@@ -3,13 +3,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,76 +31,76 @@ public class TreeTransferHandler extends StringTransferHandler implements java.i
     private int[] indices = null;
     private int addIndex = -1; //Location where items were added
     private int addCount = 0;  //Number of items added.
-    
+
     private Hashtable<String,TLE> tleHash;
-    
+
     // constructor
     public TreeTransferHandler(Hashtable<String,TLE> tleHash)
     {
         this.tleHash = tleHash;
     }
-    
+
     //Bundle up the selected items in the list
     //as a single string, for export.
     protected String exportString(JComponent c)
     {
         //System.out.println("HERE");
-        
+
         JTree satTree = (JTree)c;
-        
+
         String returnString = "";
-        
+
         // allow for drag and drop of multiple sats at once
         TreePath[] treePaths = satTree.getSelectionPaths();
         //int[] selectionRows = satTree.getSelectionRows();
-        
+
         for(int i=0; i<treePaths.length;i++)
         {
-            
+
             String currentSatName = treePaths[i].getLastPathComponent().toString();
             //System.out.println("Name: " + currentSatName);
-            
+
             // only transfer items that are satellites
             if( tleHash.containsKey(currentSatName) )
             {
-                                
+
                 // get the name part of the string with type SAT added to the front
                 returnString += "SAT###" + currentSatName;
-                
+
                 TLE selectedTLE = tleHash.get(currentSatName);
-                
+
                 returnString += ( "###" + selectedTLE.getLine1() );
                 returnString += ( "###" + selectedTLE.getLine2() + "\n" );
-                
+
                 //tleOutputTextArea.setText( selectedTLE.getLine1() + "\n" + selectedTLE.getLine2() );
             }
             else // do nothing -- not a satellite in hashtable
             {
-                
+
             }
-            
+
         }// each row selected
-        
+
         // return string to drag/drop
         return returnString;
     }
-    
+
     //Take the incoming string and wherever there is a
     //newline, break it into a separate item in the list.
     protected void importString(JComponent c, String str)
     {
         /*
         //System.out.println("HERE!!");
-         
-        JList target = (JList)c;
-         
+
+        JList<String> target = (JList)c;
+
         DefaultListModel listModel = (DefaultListModel)target.getModel();
         //System.out.println("HERE4");
         int index = target.getSelectedIndex();
-         
+
         //System.out.println("Index: " + index);
         //System.out.println("HERE");
-         
+
         //Prevent the user from dropping data back on itself.
         //For example, if the user is moving items #4,#5,#6 and #7 and
         //attempts to insert the items after item #5, this would
@@ -112,7 +112,7 @@ public class TreeTransferHandler extends StringTransferHandler implements java.i
             indices = null;
             return;
         }
-         
+
         int max = listModel.getSize();
         if (index < 0)
         {
@@ -136,16 +136,16 @@ public class TreeTransferHandler extends StringTransferHandler implements java.i
     }
 
     //If the remove argument is true, the drop has been
-    //successful and it's time to remove the selected items 
+    //successful and it's time to remove the selected items
     //from the list. If the remove argument is false, it
     //was a Copy operation and the original list is left
     //intact.
-    protected void cleanup(JComponent c, boolean remove) 
+    protected void cleanup(JComponent c, boolean remove)
     {
         /*
         if (remove && indices != null)
         {
-            JList source = (JList)c;
+            JList<String> source = (JList)c;
             DefaultListModel model  = (DefaultListModel)source.getModel();
             //If we are moving items around in the same list, we
             //need to adjust the indices accordingly, since those

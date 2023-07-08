@@ -3,13 +3,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,18 +33,18 @@ import jsattrak.coverage.CoverageAnalyzer;
  *
  * @author sgano
  */
-public class CoverageDataGeom implements Renderable 
+public class CoverageDataGeom implements Renderable
 {
-    
+
 //    Globe globe;
     CoverageAnalyzer ca;
-    
+
     public CoverageDataGeom(CoverageAnalyzer ca)
     {
         this.ca = ca;
     }
-    
-    
+
+
     public void render(DrawContext dc)
     {
         if(dc == null)
@@ -66,7 +66,7 @@ public class CoverageDataGeom implements Renderable
 
         Color satColor;
 
-        Double nanDbl = new Double(Double.NaN);
+        Double nanDbl = Double.NaN;
 
         double alt = 100000;
 
@@ -112,7 +112,7 @@ public class CoverageDataGeom implements Renderable
                         //gl.glTexCoord2f(1, 0);
                         gl.glVertex3f((float)pos4.x, (float)pos4.y, (float)pos4.z);
                         gl.glEnd();
-                        
+
                         // if drawing grid
                         if(ca.isPlotCoverageGrid())
                         {
@@ -123,11 +123,11 @@ public class CoverageDataGeom implements Renderable
                                 gl.glVertex3f((float)pos3.x, (float)pos3.y, (float)pos3.z);
                                 gl.glVertex3f((float)pos4.x, (float)pos4.y, (float)pos4.z);
                             gl.glEnd();
-                            
+
                             // draw center?
-                            
+
                         }// draw coverage grid with point in center
-                        
+
                     } // time > 0
                     else
                     {
@@ -157,14 +157,14 @@ public class CoverageDataGeom implements Renderable
                                 gl.glVertex3f((float)pos3.x, (float)pos3.y, (float)pos3.z);
                                 gl.glVertex3f((float)pos4.x, (float)pos4.y, (float)pos4.z);
                             gl.glEnd();
-                        
+
                             // draw center
-                            
+
                         }// draw coverage grid with point in center
-                        
+
                     }// else (time ==0)
-                    
-                    // 
+
+                    //
 
                 } // for lat
 
@@ -173,8 +173,8 @@ public class CoverageDataGeom implements Renderable
         } // not null
 
 
-        
+
         gl.glPopAttrib();
-        
+
      } // render
 }

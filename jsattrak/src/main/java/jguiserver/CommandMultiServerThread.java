@@ -1,18 +1,18 @@
 /*
  *  A Thread to handle a socket connection - all input stream from client is sent to a
  *  beanshell interperator.
- * 
+ *
  * =====================================================================
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,15 +37,16 @@ import jguiserver.GuiServer.CommandServerThread;
  *
  * @author sgano
  */
-public class CommandMultiServerThread extends Thread   
+@SuppressWarnings("unused")
+public class CommandMultiServerThread extends Thread
 {
     private Socket socket = null;
     Interpreter bsh;
-    
+
     private int connectionID;
-    
+
     private String iniDate;
-    
+
     CommandServerThread server; // used to handle disconnects (etc)
 
     public CommandMultiServerThread(Socket socket, Interpreter bsh, int ID, CommandServerThread server)
@@ -55,10 +56,10 @@ public class CommandMultiServerThread extends Thread
         this.bsh = bsh;
         this.connectionID = ID;
         this.server = server;
-        
+
         iniDate = now();
     }
-    
+
     // method to get current time
     public static final String DATE_FORMAT_NOW = "HH:mm:ss dd-MMM-yyyy";
     public static String now()
@@ -80,19 +81,19 @@ public class CommandMultiServerThread extends Thread
                     socket.getInputStream()));
 
             String inputLine, outputLine;
-            
+
             out.println("Connection Successful");
 
             while ((inputLine = in.readLine()) != null)
             {
                 //outputLine = cp.processInput(inputLine);
-                
-                // check for an exit 
+
+                // check for an exit
                 if (inputLine.trim().equalsIgnoreCase("exit"))
                 {
                     break;
                 }
-                
+
                 // process command
                 try
                 {
@@ -105,9 +106,9 @@ public class CommandMultiServerThread extends Thread
                     //out.println("ERROR: Check command syntax");
                     out.println("null"); // hmm might want to send more info, such as if the command worked or if it was a bad command? Maybe the tostring is causing problems
                 }
-                      
+
             } // read from client
-            
+
             out.close();
             in.close();
             socket.close();
@@ -118,7 +119,7 @@ public class CommandMultiServerThread extends Thread
         catch (IOException e)
         {
             e.printStackTrace();
-            
+
              // tell server we are closing
             server.processConnectionClose(this);
         }
@@ -130,12 +131,12 @@ public class CommandMultiServerThread extends Thread
     {
         return connectionID;
     }
-    
+
     public void close() throws Exception
     {
         socket.close();
     }
-    
+
     public String getClientIP()
     {
         return socket.getInetAddress().toString();

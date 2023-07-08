@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -122,7 +122,7 @@ import name.gano.worldwind.view.BasicModelViewInputHandler3;
  */
 public class J3DEarthInternalPanel extends javax.swing.JPanel implements J3DEarthComponent
 {
-    
+
     private WorldWindowGLJPanel wwd;
     StatusBar statusBar;
     JInternalFrame parent; // parent dialog
@@ -133,32 +133,32 @@ public class J3DEarthInternalPanel extends javax.swing.JPanel implements J3DEart
     ECEFModelRenderable ecefModel;
     // terrain profile layer
     TerrainProfileLayer terrainProfileLayer;
-    
+
     CoverageRenderableLayer cel;
-    
+
     private boolean viewModeECI = true; // view mode - ECI (true) or ECEF (false)
-    
+
     // Web Map Servers
     private static final String[] servers = new String[]{
         "http://neowms.sci.gsfc.nasa.gov/wms/wms",
         "http://mapserver.flightgear.org/cgi-bin/landcover",
         "http://wms.jpl.nasa.gov/wms.cgi",
         "http://labs.metacarta.com/wms/vmap0",
-        
+
     };
-    
-    
+
+
     // parent app
     private JSatTrak app; // used to force repaints
     // Star layer - for rotation if in ECI
     StarsLayer starsLayer;
     Hashtable<String, AbstractSatellite> satHash;
     Hashtable<String, GroundStation> gsHash;
-    
+
     // options
     private String terrainProfileSat = "";
     private double terrainProfileLongSpan = 10.0;
-    
+
     // view mode options
     private boolean modelViewMode = false; // default false
     private String modelViewString = ""; // to hold name of satellite to view when modelViewMode=true
@@ -180,13 +180,13 @@ public class J3DEarthInternalPanel extends javax.swing.JPanel implements J3DEart
 
      // ECI grid
     private ECIRadialGrid eciRadialGrid = new ECIRadialGrid();
-    
+
     /** Creates new form J3DEarthPanel
      * @param parent
      * @param satHash
      * @param gsHash
      * @param currentMJD
-     * @param app 
+     * @param app
      */
     public J3DEarthInternalPanel(JInternalFrame parent, Hashtable<String, AbstractSatellite> satHash, Hashtable<String, GroundStation> gsHash, double currentMJD, JSatTrak app)
     {
@@ -194,9 +194,9 @@ public class J3DEarthInternalPanel extends javax.swing.JPanel implements J3DEart
         this.app = app;
         this.satHash = satHash;
         this.gsHash = gsHash;
-        
+
         initComponents();
-        
+
          // set default initial view
         Configuration.setValue(AVKey.INITIAL_LATITUDE, 38.0);
         Configuration.setValue(AVKey.INITIAL_LONGITUDE, -90.0);
@@ -219,13 +219,13 @@ public class J3DEarthInternalPanel extends javax.swing.JPanel implements J3DEart
 
         // turn network loading off -- this is a global switch
         //gov.nasa.worldwind.WorldWind.getNetworkStatus().setOfflineMode(true);
-        
+
         Model m = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
         // m.setLayers(layerList);
         m.setShowWireframeExterior(false);
         m.setShowWireframeInterior(false);
         m.setShowTessellationBoundingVolumes(false);
-        
+
         // add political boundary layer
         m.getLayers().add(new CountryBoundariesLayer());
         // MS  Virtual Earth imagery
@@ -258,7 +258,7 @@ public class J3DEarthInternalPanel extends javax.swing.JPanel implements J3DEart
         //insertBeforeCompass(wwd, viewControlsLayer);
         //getLayerPanel().update(wwd);
         this.getWwd().addSelectListener(new ViewControlsSelectListener(wwd, viewControlsLayer));
-       
+
         // set default layer visabiliy
         for (Layer layer : m.getLayers())
         {
@@ -292,7 +292,7 @@ public class J3DEarthInternalPanel extends javax.swing.JPanel implements J3DEart
             if (layer instanceof StarsLayer)
             {
                 starsLayer = (StarsLayer) layer;
-                
+
                 // for now just enlarge radius by a factor of 10
                 starsLayer.setRadius(starsLayer.getRadius()*10.0);
             }
@@ -301,15 +301,15 @@ public class J3DEarthInternalPanel extends javax.swing.JPanel implements J3DEart
                 ((CountryBoundariesLayer) layer).setEnabled(false); // off by default
             }
         } // for layers
-        
-        
+
+
         wwd.setModel(m);
 
         // add USGS topo layer
         USGSTopographicMaps topo = new USGSTopographicMaps();
         topo.setEnabled(false);
         WwjUtils.insertBeforePlacenames(getWwd(), topo);
-        
+
         // Coverage Data Layer
         cel = new CoverageRenderableLayer(app.getCoverageAnalyzer());
         //cel.setEnabled(false); // off by default
@@ -318,7 +318,7 @@ public class J3DEarthInternalPanel extends javax.swing.JPanel implements J3DEart
         // add EcefTimeDepRenderableLayer layer
         timeDepLayer = new EcefTimeDepRenderableLayer(currentMJD,app);
         m.getLayers().add(timeDepLayer);
-        
+
         // add ECI Layer
         eciLayer = new ECIRenderableLayer(currentMJD); // create ECI layer
         orbitModel = new OrbitModelRenderable(satHash, wwd.getModel().getGlobe());
@@ -326,13 +326,13 @@ public class J3DEarthInternalPanel extends javax.swing.JPanel implements J3DEart
         eciLayer.setCurrentMJD(currentMJD); // update time again after adding renderable
         m.getLayers().add(eciLayer); // add ECI Layer
         eciLayer.addRenderable(eciRadialGrid); // add grid (optional if it is on or not)
-        
+
         // add ECEF Layer
         ecefLayer = new ECEFRenderableLayer(); // create ECEF layer
         ecefModel = new ECEFModelRenderable(satHash, gsHash, wwd.getModel().getGlobe());
         ecefLayer.addRenderable(ecefModel); // add renderable object
         m.getLayers().add(ecefLayer); // add ECI Layer
-        
+
         // add terrain profile layer
         terrainProfileLayer = new TerrainProfileLayer();
         m.getLayers().add(terrainProfileLayer); // add ECI Layer
@@ -341,21 +341,21 @@ public class J3DEarthInternalPanel extends javax.swing.JPanel implements J3DEart
         // ini start and end - to avoid null calculations
         terrainProfileLayer.setStartLatLon(LatLon.fromDegrees(0.0, 0.0));
         terrainProfileLayer.setEndLatLon(LatLon.fromDegrees(50.0, 50.0));
-        
+
         terrainProfileLayer.setFollow( TerrainProfileLayer.FOLLOW_NONE );
         terrainProfileLayer.setEnabled( false ); // off by default
-        
+
         RenderableLayer latLongLinesLayer = createLatLongLinesLayer();
         latLongLinesLayer.setName("Lat/Long Lines");
         latLongLinesLayer.setEnabled(false);
         //insertBeforeCompass(this.getWwd(), latLongLinesLayer);
         m.getLayers().add(latLongLinesLayer); // add ECI Layer
-        
+
         // add the WWJ status bar at the bottom
         statusBar = new StatusBar();
         this.add(statusBar, java.awt.BorderLayout.PAGE_END);
         statusBar.setEventSource(wwd);
-        
+
         // if ECI update star field rotation
         // update star field based on date (any mode)
         //        if(viewModeECI)
@@ -402,7 +402,7 @@ public class J3DEarthInternalPanel extends javax.swing.JPanel implements J3DEart
 
         // correct clipping plane -- so entire orbits are shown - maybe make variable?
         setupView(); // setup needed viewing specs and use of AutoClipBasicOrbitView
-  
+
     } // constructor
 
     // Update worldwind wun shading
@@ -514,7 +514,7 @@ public class J3DEarthInternalPanel extends javax.swing.JPanel implements J3DEart
     {
         lensFlareLayer.setEnabled(enabled);
     }
-    
+
     private RenderableLayer createLatLongLinesLayer()
     {
         RenderableLayer shapeLayer = new RenderableLayer();
@@ -532,7 +532,7 @@ public class J3DEarthInternalPanel extends javax.swing.JPanel implements J3DEart
                 Polyline polyline = new Polyline(positions);
                 polyline.setFollowTerrain(false);
                 polyline.setNumSubsegments(30);
-                
+
                 if(lon == -180 || lon == 0)
                 {
                     polyline.setColor(new Color(1f, 1f, 0f, 0.5f)); // yellow
@@ -541,7 +541,7 @@ public class J3DEarthInternalPanel extends javax.swing.JPanel implements J3DEart
                 {
                     polyline.setColor(new Color(1f, 1f, 1f, 0.5f));
                 }
-                
+
                 shapeLayer.addRenderable(polyline);
             }
 
@@ -557,7 +557,7 @@ public class J3DEarthInternalPanel extends javax.swing.JPanel implements J3DEart
                 polyline.setPathType(Polyline.LINEAR);
                 polyline.setFollowTerrain(false);
                 polyline.setNumSubsegments(30);
-                
+
                 if(lat == 0)
                 {
                     polyline.setColor(new Color(1f, 1f, 0f, 0.5f));
@@ -566,21 +566,21 @@ public class J3DEarthInternalPanel extends javax.swing.JPanel implements J3DEart
                 {
                     polyline.setColor(new Color(1f, 1f, 1f, 0.5f));
                 }
-                
+
                 shapeLayer.addRenderable(polyline);
             }
 
             return shapeLayer;
     }
-    
+
     public void setFocusWWJ()
     {
         // MUST USE SO THAT KEYBOARD COMMANDS WORK FOR WWJ
         // MUST BE CALLED AFTER ALL OF GUI IS MADE TOO (it seems)
         wwd.requestFocusInWindow();
     }
-    
-    
+
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -725,16 +725,16 @@ public class J3DEarthInternalPanel extends javax.swing.JPanel implements J3DEart
     {//GEN-HEADEREND:event_globeLayersButtonActionPerformed
         // create globe layers dialog
         String windowName = "Globe Layers";
-        
+
         //JDialog iframe = new JDialog(parent, windowName, false); // parent, title, modal
         JDialog iframe = new JDialog(app, windowName, false); // parent, title, modal
-        
+
         //iframe.setContentPane(newPanel);
         Container cp = iframe.getContentPane();
-        
+
         // get layers on Globe
         LayerList layerList = wwd.getModel().getLayers();
-        
+
         // create panel of layers check boxes
         JPanel westContainer = new JPanel(new BorderLayout());
         {
@@ -754,42 +754,42 @@ public class J3DEarthInternalPanel extends javax.swing.JPanel implements J3DEart
                 westContainer.add(westPanel, BorderLayout.NORTH);
             }
         }
-        
+
         // add layer list to model (for listening)
         wwd.getModel().setLayers(layerList);
-        
+
         // make scroll pane
         JScrollPane jsp = new JScrollPane(westContainer);
         //jsp.add(westContainer);
         // add to dialog
         cp.add(jsp);
-        
+
         iframe.setSize(200+50, 350+40);
-        
+
         Point p = this.getWwdLocationOnScreen();
         iframe.setLocation(p.x + 15, p.y + 15);
 
         setLookandFeel(iframe);
-        
+
         iframe.setVisible(true);
-        
+
     }//GEN-LAST:event_globeLayersButtonActionPerformed
     private int previousTabIndex = 0;
-    
+
     private void wmsButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_wmsButtonActionPerformed
     {//GEN-HEADEREND:event_wmsButtonActionPerformed
         // create a dialog for all the web map services
-        
+
         // create tabbed pane to add to Dialog
         //JTabbedPane tabbedPane;
-        
+
         final JTabbedPane tabbedPane = new JTabbedPane();
-        
+
         tabbedPane.add(new JPanel());
         tabbedPane.setTitleAt(0, "+");
         tabbedPane.addChangeListener(new ChangeListener()
         {
-            
+
             public void stateChanged(ChangeEvent changeEvent)
             {
                 if (tabbedPane.getSelectedIndex() != 0)
@@ -797,14 +797,14 @@ public class J3DEarthInternalPanel extends javax.swing.JPanel implements J3DEart
                     previousTabIndex = tabbedPane.getSelectedIndex();
                     return;
                 }
-                
+
                 String server = JOptionPane.showInputDialog("Enter wms server URL");
                 if (server == null || server.length() < 1)
                 {
                     tabbedPane.setSelectedIndex(previousTabIndex);
                     return;
                 }
-                
+
                 // Respond by adding a new WMSLayerPanel to the tabbed pane.
                 if (addWMSTab(tabbedPane.getTabCount(), server.trim(), tabbedPane) != null)
                 {
@@ -812,71 +812,71 @@ public class J3DEarthInternalPanel extends javax.swing.JPanel implements J3DEart
                 }
             }
         });
-        
+
         // Create a tab for each server and add it to the tabbed panel.
         for (int i = 0; i < servers.length; i++)
         {
             addWMSTab(i + 1, servers[i], tabbedPane); // i+1 to place all server tabs to the right of the Add Server tab
         }
-        
+
         // Display the first server pane by default.
         tabbedPane.setSelectedIndex(tabbedPane.getTabCount() > 0 ? 1 : 0);
         previousTabIndex = tabbedPane.getSelectedIndex();
-        
+
         // create and open dialog
         String windowName = "Web Map Services";
-        
+
         JDialog iframe = new JDialog(app, windowName, false); // parent, title, modal
-        
+
         //iframe.setContentPane(newPanel);
         Container cp = iframe.getContentPane();
-        
+
         // add to dialog
         cp.add(tabbedPane);
-        
+
         iframe.setSize(480, 350);
-        
+
         Point p = parent.getLocation();
         iframe.setLocation(p.x + 15, p.y + 15);
 
         setLookandFeel(iframe);
-        
+
         iframe.setVisible(true);
-        
-        
+
+
     }//GEN-LAST:event_wmsButtonActionPerformed
-    
+
     private void screenCaptureButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_screenCaptureButtonActionPerformed
     {//GEN-HEADEREND:event_screenCaptureButtonActionPerformed
         createScreenCapture();
     }//GEN-LAST:event_screenCaptureButtonActionPerformed
-    
+
     private void viewPropButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_viewPropButtonActionPerformed
     {//GEN-HEADEREND:event_viewPropButtonActionPerformed
         // create create Sat Settings panel
         JThreeDViewPropPanel newPanel = new JThreeDViewPropPanel(app, this, wwd);
-        
+
         //String windowName = prop.getName().trim() + " - Settings"; // set name - trim excess spaces
         String windowName = "3D View Settings"; // set name - trim excess spaces
-        
+
         // create new internal frame window
         JDialog iframe = new JDialog(app, windowName, false);
-        
+
         iframe.setContentPane(newPanel); // set contents pane
         iframe.setSize(220+330, 260+65+185); // set size w,h
-        
+
         Point p = this.getLocationOnScreen();
         iframe.setLocation(p.x + 15, p.y + 55);
-        
+
         newPanel.setParentDialog(iframe); // save parent for closing
-        
+
         setLookandFeel(iframe);
 
         iframe.setVisible(true);
-        
-        
+
+
     }//GEN-LAST:event_viewPropButtonActionPerformed
-    
+
     private void setLookandFeel(JDialog iframe)
     {
         // set icon
@@ -915,7 +915,7 @@ public class J3DEarthInternalPanel extends javax.swing.JPanel implements J3DEart
         setLookandFeel(panel);
         panel.setVisible(true);
     }//GEN-LAST:event_genMovieButtonActionPerformed
-    
+
     private void terrainProfileButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_terrainProfileButtonActionPerformed
     {//GEN-HEADEREND:event_terrainProfileButtonActionPerformed
         JTerrainProfileDialog panel = new JTerrainProfileDialog(app, false, app, this);
@@ -930,7 +930,7 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
     new ToggleFullscreen(GraphicsEnvironment.getLocalGraphicsEnvironment()
 	.getDefaultScreenDevice(),wwd, this);
 }//GEN-LAST:event_fullScreenButtonActionPerformed
-    
+
     private WMSLayersPanel addWMSTab(int position, String server, JTabbedPane tabbedPane)
     {
         // Add a server to the tabbed dialog.
@@ -940,18 +940,18 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
             tabbedPane.add(layersPanel, BorderLayout.CENTER);
             String title = layersPanel.getServerDisplayString();
             tabbedPane.setTitleAt(position, title != null && title.length() > 0 ? title : server);
-            
+
             // Add a listener to notice wms layer selections and tell the layer panel to reflect the new state.
             // this should only run when layer dialog is open?
             layersPanel.addPropertyChangeListener("LayersPanelUpdated", new PropertyChangeListener()
             {
-                
+
                 public void propertyChange(PropertyChangeEvent propertyChangeEvent)
                 {
                     //AppFrame.this.getLayerPanel().update(AppFrame.this.getWwd());
                 }
             });
-            
+
             return layersPanel;
         }
         catch (URISyntaxException e)
@@ -974,16 +974,16 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
     private javax.swing.JButton wmsButton;
     private javax.swing.JPanel wwjPanel;
     // End of variables declaration//GEN-END:variables
-    
+
     public boolean isViewModeECI()
     {
         return viewModeECI;
     }
-    
+
     public void setViewModeECI(boolean viewModeECI)
     {
         this.viewModeECI = viewModeECI;
-        
+
         // take care of which view mode to use
         if(viewModeECI)
         {
@@ -994,55 +994,55 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
         {
             starsLayer.setLongitudeOffset(Angle.fromDegrees(0.0)); // reset to normal
         }
-        
+
     }
-    
+
     // parent app
     public JSatTrak getApp()
     {
         return app;
     }
-    
+
     public WorldWindow getWwd()
     {
         return wwd;
     }
-    
+
     public int getWwdWidth()
     {
         return wwd.getWidth();
     }
-    
+
     public int getWwdHeight()
     {
         return wwd.getHeight();
     }
-    
+
     public Point getWwdLocationOnScreen()
     {
         return wwd.getLocationOnScreen();
     }
-    
+
     public String getTerrainProfileSat()
     {
         return terrainProfileSat;
     }
-    
+
     public void setTerrainProfileSat(String terrainProfileSat)
     {
         this.terrainProfileSat = terrainProfileSat;
     }
-    
+
     public double getTerrainProfileLongSpan()
     {
         return terrainProfileLongSpan;
     }
-    
+
     public void setTerrainProfileLongSpan(double terrainProfileLongSpan)
     {
         this.terrainProfileLongSpan = terrainProfileLongSpan;
     }
-    
+
     public boolean isModelViewMode()
     {
         return modelViewMode;
@@ -1056,13 +1056,13 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
             // no change, then do nothing
             return;
         }
-        
+
         // save state
         this.modelViewMode = viewMode;
-        
+
         // setup correct view
         setupView();
-        
+
     } // setModelViewMode
 
     public String getModelViewString()
@@ -1078,7 +1078,7 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
             this.modelViewString = modelString; // save first
             setupView();
         }
-        
+
         this.modelViewString = modelString;
     }
 
@@ -1090,7 +1090,7 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
     public void setModelViewNearClip(double modelViewNearClip)
     {
         this.modelViewNearClip = modelViewNearClip;
-        
+
         if(this.isModelViewMode())
         {
             wwd.getView().setNearClipDistance(modelViewNearClip);
@@ -1105,43 +1105,43 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
     public void setModelViewFarClip(double modelViewFarClip)
     {
         this.modelViewFarClip = modelViewFarClip;
-        
+
         if(this.isModelViewMode())
         {
             wwd.getView().setFarClipDistance(modelViewFarClip);
         }
     }
-    
+
     private void setupView()
     {
         if(modelViewMode == false)
         { // Earth View mode
             AutoClipBasicOrbitView bov = new AutoClipBasicOrbitView();
             wwd.setView(bov);
-            
+
             // remove the rest of the old input handler  (does this need a remove of hover listener? - maybe it is now completely removed?)
             wwd.getInputHandler().setEventSource(null);
-            
+
             AWTInputHandler awth = new AWTInputHandler();
             awth.setEventSource(wwd);
             wwd.setInputHandler(awth);
             awth.setSmoothViewChanges(smoothViewChanges); // FALSE MAKES THE VIEW FAST!! -- MIGHT WANT TO MAKE IT GUI Chooseable
-                        
+
             // IF EARTH VIEW -- RESET CLIPPING PLANES BACK TO NORMAL SETTINGS!!!
             wwd.getView().setNearClipDistance(this.nearClippingPlaneDistOrbit);
             wwd.getView().setFarClipDistance(this.farClippingPlaneDistOrbit);
-            
+
             // change class for inputHandler
-            Configuration.setValue(AVKey.INPUT_HANDLER_CLASS_NAME, 
+            Configuration.setValue(AVKey.INPUT_HANDLER_CLASS_NAME,
                         AWTInputHandler.class.getName());
 
             // re-setup control layer handler
             this.getWwd().addSelectListener(new ViewControlsSelectListener(wwd, viewControlsLayer));
-            
+
         } // Earth View mode
         else
         { // Model View mode
-            
+
             // TEST NEW VIEW -- TO MAKE WORK MUST TURN OFF ECI!
             this.setViewModeECI(false);
 
@@ -1163,7 +1163,7 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
             {
                 bmv = new BasicModelView3(((BasicModelView3)wwd.getView()).getOrbitViewModel(), sat);
             }
-            
+
             // remove the old hover listener -- depending on this instance of the input handler class type
             if( wwd.getInputHandler() instanceof AWTInputHandler)
             {
@@ -1173,18 +1173,18 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
             {
                 ((BasicModelViewInputHandler3) wwd.getInputHandler()).removeHoverSelectListener();
             }
-            
+
             // set view
             wwd.setView(bmv);
 
             // remove the rest of the old input handler
             wwd.getInputHandler().setEventSource(null);
-             
+
             // add new input handler
             BasicModelViewInputHandler3 mih = new BasicModelViewInputHandler3();
             mih.setEventSource(wwd);
             wwd.setInputHandler(mih);
-            
+
             // view smooth?
             mih.setSmoothViewChanges(smoothViewChanges); // FALSE MAKES THE VIEW FAST!!
 
@@ -1193,16 +1193,16 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
             wwd.getView().setFarClipDistance(modelViewFarClip);
             bmv.setZoom(900000);
             bmv.setPitch(Angle.fromDegrees(45));
-            
+
             // change class for inputHandler
-            Configuration.setValue(AVKey.INPUT_HANDLER_CLASS_NAME, 
+            Configuration.setValue(AVKey.INPUT_HANDLER_CLASS_NAME,
                         BasicModelViewInputHandler3.class.getName());
 
             // re-setup control layer handler
             this.getWwd().addSelectListener(new ViewControlsSelectListener(wwd, viewControlsLayer));
-            
+
         } // model view mode
-        
+
     } // setupView
 
     /**
@@ -1239,16 +1239,16 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
     //    {
     //        this.wwd = wwd;
     //    }
-    
+
     // End of variables declaration
     // inner class for layers list
     private static class LayerAction extends AbstractAction
     {
-        
+
         private Layer layer;
         private boolean selected;
         private WorldWindowGLJPanel wwd;
-        
+
         public LayerAction(Layer layer, boolean selected, WorldWindowGLJPanel wwd)
         {
             super(layer.getName());
@@ -1257,7 +1257,7 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
             this.layer.setEnabled(this.selected);
             this.wwd = wwd;
         }
-        
+
         public void actionPerformed(ActionEvent actionEvent)
         {
             if (((JCheckBox) actionEvent.getSource()).isSelected())
@@ -1268,14 +1268,14 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
             {
                 this.layer.setEnabled(false);
             }
-            
-            wwd.repaint();
+            wwd.redraw(); // or Now?
+            // wwd.repaint();
         }
     }  // LayerAction
-    
+
     public void setMJD(double mjd)
     {
-        
+
         if(viewModeECI)
         {
             // Hmm need to do something to keet the ECI view moving even after user interaction
@@ -1283,22 +1283,22 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
             // this fixes the problem:
             wwd.getView().stopStateIterators();
             wwd.getView().stopMovement(); //seems to fix prop in v0.5
-            
+
             // update rotation of view and Stars
             double theta0 = eciLayer.getRotateECIdeg();
-            
+
             // UPDATE TIME
             eciLayer.setCurrentMJD(mjd);
-            
+
             double thetaf = eciLayer.getRotateECIdeg();
-            
+
             // move view
-            
+
             //Quaternion q0 = ((BasicOrbitView) wwd.getView()).getRotation();
             //Vec4 vec = ((BasicOrbitView) wwd.getView()).getEyePoint();
             //Position pos = ((BasicOrbitView) wwd.getView()).getCurrentEyePosition();
             Position pos = ((BasicOrbitView) wwd.getView()).getCenterPosition(); // WORKS
-            
+
             // amount to rotate the globe (degrees) around poles axis
             double rotateEarthDelta = thetaf - theta0; // deg
 
@@ -1310,7 +1310,7 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
 //            Position newPos = new Position(pos.getLatitude(),newLon,pos.getElevation());
             //Position newPos = pos.add(new Position(Angle.fromDegrees(0),Angle.fromDegrees(-rotateEarthDelta),0.0));
             Position newPos = pos.add(new Position(Angle.fromDegrees(0),Angle.fromDegrees(-rotateEarthDelta),0.0)); // WORKS
-            
+
             // rotation in 3D space is "added" to the quaternion by quaternion multiplication
 //            try // try around it to prevent problems when running the simulation and then opening a new 3D window (this is called before the wwj is initalized)
 //            {
@@ -1322,21 +1322,21 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
 //            {
 //                // do nothing, it will catch up next update
 //            }
-            
+
             // star layer
             starsLayer.setLongitudeOffset(Angle.fromDegrees(-eciLayer.getRotateECIdeg()));
-            
+
         } // if ECI
         else
         {
             // EFEC - just update time
             eciLayer.setCurrentMJD(mjd);
-            
+
             // star layer
             starsLayer.setLongitudeOffset(Angle.fromDegrees(-eciLayer.getRotateECIdeg()));
         }
-        
-        
+
+
         // if needed update terrain profile layer
         if (terrainProfileLayer.isEnabled())
         {
@@ -1354,15 +1354,15 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
 
         // update layer that needs time updates
         timeDepLayer.setCurrentMJD(mjd);
-        
+
     } // set MJD
-    
+
     public void repaintWWJ()
     {
         //wwd.redraw(); // may not force repaint when it is slow to repaint (thus skiped)
         wwd.redrawNow(); //force it to happen now -- needed when plotting coverage data
     }
-    
+
     // screen capture
     // routine to do the screen capture:
     public void createScreenCapture()
@@ -1372,17 +1372,17 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
             //capture the whole screen
             //BufferedImage screencapture = new Robot().createScreenCapture(
             //      new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()) );
-            
+
             // just the framePanel	 // viewsTabbedPane frame3d
             Point pt = new Point();
             int width = 0;
             int height = 0;
-            
+
             // Get location on screen / width / height
             pt = wwd.getLocationOnScreen();
             width = wwd.getWidth();
             height = wwd.getHeight();
-            
+
             // not a possible size
             if (height <= 0 || width <= 0)
             {
@@ -1390,7 +1390,7 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
                 JOptionPane.showInternalMessageDialog(this, "A Screenshot was not possible - too small of size", "ERROR", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            
+
             // full app screen shot
             //BufferedImage screencapture = new Robot().createScreenCapture(
             //			   new Rectangle( mainFrame.getX()+viewsTabbedPane.getX(), mainFrame.getY(),
@@ -1398,22 +1398,22 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
             // scree shot of just window
             BufferedImage screencapture = new Robot().createScreenCapture(
                     new Rectangle(pt.x, pt.y, width, height));
-            
-            
+
+
             //    	Create a file chooser
             final JFileChooser fc = new JFileChooser();
             jsattrak.utilities.CustomFileFilter pngFilter = new jsattrak.utilities.CustomFileFilter("png", "*.png");
             fc.addChoosableFileFilter(pngFilter);
             jsattrak.utilities.CustomFileFilter jpgFilter = new jsattrak.utilities.CustomFileFilter("jpg", "*.jpg");
             fc.addChoosableFileFilter(jpgFilter);
-            
+
             fc.setDialogTitle("Save Screenshot");
             int returnVal = fc.showSaveDialog(this);
-            
+
             if (returnVal == JFileChooser.APPROVE_OPTION)
             {
                 File file = fc.getSelectedFile();
-                
+
                 String fileExtension = "png"; // default
                 if (fc.getFileFilter() == pngFilter)
                 {
@@ -1423,7 +1423,7 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
                 {
                     fileExtension = "jpg";
                 }
-                
+
                 String extension = getExtension(file);
                 if (extension != null)
                 {
@@ -1435,7 +1435,7 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
                     file = new File(file.getAbsolutePath() + "." + fileExtension);
                     //System.out.println("path="+file.getAbsolutePath());
                 }
-                
+
                 //addMessagetoLog("Screenshot saved: " + file.getAbsolutePath());
                 // save file
                 //File file = new File("screencapture.png");
@@ -1448,34 +1448,34 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
                     System.out.println("ERROR SCREEN CAPTURE:" + e.toString());
                     return;
                 }
-                
+
             }
             else
             {
                 //log.append("Open command cancelled by user." + newline);
             }
-            
-            
+
+
         }
         catch (Exception e4)
         {
             System.out.println("ERROR SCREEN CAPTURE:" + e4.toString());
         }
     } // createScreenCapture
-    
+
     public static String getExtension(File f)
     {
         String ext = null;
         String s = f.getName();
         int i = s.lastIndexOf('.');
-        
+
         if (i > 0 && i < s.length() - 1)
         {
             ext = s.substring(i + 1).toLowerCase();
         }
         return ext;
     } // getExtension
-    
+
     public void closeWindow()
     {
         try
@@ -1485,21 +1485,21 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
         catch(Exception e)
         {}
     }
-    
+
     public JInternalFrame getParentDialog()
     {
         return parent;
     }
-    
+
     public String getDialogTitle()
     {
         return parent.getTitle();
     }
-    
+
     public void setTerrainProfileEnabled(boolean enabled)
     {
         terrainProfileLayer.setEnabled(enabled);
-        
+
         if (enabled) // try to update data
         {
             try
@@ -1514,17 +1514,17 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
             }
         } // terrain profil layer
     }
-    
+
     public boolean getTerrainProfileEnabled()
     {
         return terrainProfileLayer.isEnabled();
     }
-    
+
     public LayerList getLayerList()
     {
         return wwd.getModel().getLayers();
     }
-    
+
     public void setOrbitFarClipDistance(double clipDist)
     {
         farClippingPlaneDistOrbit = clipDist;
@@ -1552,20 +1552,20 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
     {
         return nearClippingPlaneDistOrbit;
     }
-    
+
     public void updateCoverageLayerObject(CoverageAnalyzer ca)
     {
         cel.updateNewCoverageObject(ca);
     }
-    
+
     public void resetWWJdisplay()
     {
-        
+
         wwd.setSize(100, 100);
         this.add(wwd, java.awt.BorderLayout.CENTER);
 
         //  BUG if resume from Full screen mouse not over window, wwj takes up whole frame
-  
+
         // repaint!
         super.repaint();
     }
@@ -1574,5 +1574,5 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
     {
         return timeDepLayer;
     } //getEcefTimeDepRenderableLayer
-    
+
 }

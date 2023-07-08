@@ -26,14 +26,15 @@ import javax.swing.JList;
 
 /**
  * List specific <code>CellContext</code>.
+ * @param <E>
  */
-public class ListCellContext extends CellContext {
+public class ListCellContext<E> extends CellContext {
 
     /**
      * Sets state of the cell's context. Note that the component might be null
      * to indicate a cell without a concrete context. All accessors must cope
      * with.
-     * 
+     *
      * @param component the component the cell resides on, might be null
      * @param value the content value of the cell
      * @param row the cell's row index in view coordinates
@@ -43,7 +44,7 @@ public class ListCellContext extends CellContext {
      * @param expanded the cell's expanded state
      * @param leaf the cell's leaf state
      */
-    public void installContext(JList component, Object value, int row, int column,
+    public void installContext(JList<? extends E> component, E value, int row, int column,
             boolean selected, boolean focused, boolean expanded, boolean leaf) {
         this.component = component;
         installState(value, row, column, selected, focused, expanded, leaf);
@@ -51,7 +52,7 @@ public class ListCellContext extends CellContext {
     }
 
     /**
-     * 
+     *
      */
     private boolean checkDropOnState() {
         if ((getComponent() == null)) {
@@ -66,9 +67,9 @@ public class ListCellContext extends CellContext {
         return false;
     }
 
-    
+
     @Override
-    public JList getComponent() {
+    public JList<String> getComponent() {
         return (JList) super.getComponent();
     }
 
@@ -105,7 +106,7 @@ public class ListCellContext extends CellContext {
     protected String getUIPrefix() {
         return "List.";
     }
-    
-    
-    
+
+
+
 }

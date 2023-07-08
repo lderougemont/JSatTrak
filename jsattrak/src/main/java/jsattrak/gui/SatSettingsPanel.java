@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,52 +37,52 @@ import jsattrak.utilities.RelativePath;
  *
  * @author  sgano
  */
-public class SatSettingsPanel extends javax.swing.JPanel implements java.io.Serializable
+public class SatSettingsPanel extends javax.swing.JPanel
 {
-    
+
     AbstractSatellite satProps;
-    
+
     private boolean okHit = false; // if okay was hit
-    
+
     JInternalFrame iframe; // used to know what its parent frame is - to close window
-    
+
     JSatTrak app; // used to force repaints
-    
+
     /** Creates new form SatSettingsPanel */
     public SatSettingsPanel()
     {
         initComponents();
-        
+
         // won't work - dummy
         //satProps = new SatelliteTleSGP4("test","1","2");
     }
-    
+
     // constructor to pass SatelliteProps object
     public SatSettingsPanel(AbstractSatellite satProps, JSatTrak app)
     {
         initComponents();
-        
-        
+
+
         this.satProps = satProps;
         this.app = app;
-        
+
         // if this a custom sat add extra tab at the begining
         if (satProps instanceof CustomSatellite)
         {
             CustomSatellite satProp = (CustomSatellite) satProps;
-            
+
             JCustomSatConfigPanel configPanel = new JCustomSatConfigPanel(satProp,satProp.getEphemeris(), app);
             int tabIndex = 0;
             jTabbedPane1.add(configPanel,tabIndex);
             jTabbedPane1.setTitleAt(tabIndex, "Custom Satellite Settings");
-            
+
             jTabbedPane1.setSelectedIndex(0); // select first tab
         }
-        
+
         // setup the fields
         iniSatProps();
-    } 
-    
+    }
+
     // ini option fields from satProps
     private void iniSatProps()
     {
@@ -90,18 +90,18 @@ public class SatSettingsPanel extends javax.swing.JPanel implements java.io.Seri
         include2DCheckBox.setSelected( satProps.getPlot2D() );
         showNameCheckBox.setSelected( satProps.isShowName2D() );
         colorPanel.setBackground( satProps.getSatColor() );
-        
+
         // footprint
         showFootPrintCheckBox.setSelected(satProps.getPlot2DFootPrint() );
         footPrintResTextField.setText(satProps.getNumPtsFootPrint()+"" );
         fillFootprintCheckBox.setSelected(satProps.isFillFootPrint() );
-        
+
         // ground track
         showGroundTrackCheckBox.setSelected(satProps.getShowGroundTrack() );
         groundTrackResTextField.setText(satProps.getGrnTrkPointsPerPeriod()+"");
         leadTrackTextField.setText(satProps.getGroundTrackLeadPeriodMultiplier()+"");
         lagTrackTextField.setText(satProps.getGroundTrackLagPeriodMultiplier()+"");
-        
+
         // 3d view
         showOrbit3DCheckBox.setSelected( satProps.isShow3DOrbitTrace()  );
         showfootprint3DCheckBox.setSelected(satProps.isShow3DFootprint());
@@ -109,7 +109,7 @@ public class SatSettingsPanel extends javax.swing.JPanel implements java.io.Seri
         groundTrack3dCheckBox.setSelected(satProps.isShowGroundTrack3d());
         eciRadioButton.setSelected( satProps.isShow3DOrbitTraceECI()  );
         ecefRadioButton.setSelected( !satProps.isShow3DOrbitTraceECI() );
-        
+
         // 3d models
         use3DModelCheckBox.setSelected(satProps.isUse3dModel());
         threeDModelTextField.setText(satProps.getThreeDModelPath());
@@ -117,7 +117,7 @@ public class SatSettingsPanel extends javax.swing.JPanel implements java.io.Seri
         browseModelButton.setEnabled(use3DModelCheckBox.isSelected());
         modelScaleTextField.setEditable(use3DModelCheckBox.isSelected());
         modelScaleTextField.setText( satProps.getThreeDModelSizeFactor()+"" );
-        
+
     } //iniSatProps
 
     public boolean isOkHit()
@@ -129,12 +129,12 @@ public class SatSettingsPanel extends javax.swing.JPanel implements java.io.Seri
     {
         this.okHit = okHit;
     }
-    
+
     public void setInternalFrame(JInternalFrame iframe)
     {
         this.iframe = iframe;
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -586,7 +586,7 @@ public class SatSettingsPanel extends javax.swing.JPanel implements java.io.Seri
         Color oldColor = colorPanel.getBackground();
         // show color Dialog
         Color newColor = JColorChooser.showDialog(app,"Choose Satellite Color", oldColor);
-        
+
         if (newColor != null)
         {
             colorPanel.setBackground(newColor);
@@ -598,7 +598,7 @@ public class SatSettingsPanel extends javax.swing.JPanel implements java.io.Seri
     {//GEN-HEADEREND:event_applyButtonActionPerformed
        // save settings
         boolean updateMaps = saveSettings();
-        
+
         // force repaint
         app.forceRepainting(updateMaps);
     }//GEN-LAST:event_applyButtonActionPerformed
@@ -617,21 +617,21 @@ public class SatSettingsPanel extends javax.swing.JPanel implements java.io.Seri
     {//GEN-HEADEREND:event_okButtonActionPerformed
         // save all settings back to satProp
          boolean updateMaps = saveSettings();
-        
-        
+
+
         // force repaint of 2D window
           // maybe do this from JSatTrack -- when internal frame is closed of this type and ok was hit?
         okHit = true;
         // force repaint
         app.forceRepainting(updateMaps);
-        
+
         // close internal frame
         try
         {
             iframe.dispose(); // could setClosed(true)
         }
         catch(Exception e){}
-        
+
     }//GEN-LAST:event_okButtonActionPerformed
 
     private void showOrbit3DCheckBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_showOrbit3DCheckBoxActionPerformed
@@ -660,7 +660,7 @@ private void use3DModelCheckBoxStateChanged(javax.swing.event.ChangeEvent evt) {
     threeDModelTextField.setEditable(use3DModelCheckBox.isSelected());
     browseModelButton.setEnabled(use3DModelCheckBox.isSelected());
     modelScaleTextField.setEditable(use3DModelCheckBox.isSelected());
-    
+
 }//GEN-LAST:event_use3DModelCheckBoxStateChanged
 
 private void browseModelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseModelButtonActionPerformed
@@ -668,11 +668,11 @@ private void browseModelButtonActionPerformed(java.awt.event.ActionEvent evt) {/
     //String localPathCononical = "data/models/";
     String localPath = "data"+File.separator+ "models" + File.separator;
     String userDir = System.getProperty("user.dir"); // path java was run from
-    
+
     final JFileChooser fc = new JFileChooser(localPath);
     CustomFileFilter xmlFilter = new CustomFileFilter("3ds", "*.3ds");
     CustomFileFilter xmlFilter2 = new CustomFileFilter("obj", "*.obj");
-    
+
     fc.addChoosableFileFilter(xmlFilter2);
     fc.addChoosableFileFilter(xmlFilter); // load last so 3ds is prefered
 
@@ -688,18 +688,18 @@ private void browseModelButtonActionPerformed(java.awt.event.ActionEvent evt) {/
             String relPath = RelativePath.getRelativePath(new File(test), new File(test2)); // returns conanical rel path
 
             threeDModelTextField.setText(relPath);
-     
+
         }
         catch(Exception e)
         {
             System.out.println("ERROR Selecting Model File: " + e.toString());
         }
     } // if file choosen
-    
-    
+
+
 }//GEN-LAST:event_browseModelButtonActionPerformed
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyButton;
     private javax.swing.JButton browseModelButton;
@@ -741,8 +741,8 @@ private void browseModelButtonActionPerformed(java.awt.event.ActionEvent evt) {/
     private javax.swing.JTextField threeDModelTextField;
     private javax.swing.JCheckBox use3DModelCheckBox;
     // End of variables declaration//GEN-END:variables
-    
-    
+
+
     // Save settings to SatProp
     // returns a boolean if Map data needs to be updated
     private boolean saveSettings()
@@ -753,7 +753,7 @@ private void browseModelButtonActionPerformed(java.awt.event.ActionEvent evt) {/
         satProps.setPlot2d( include2DCheckBox.isSelected() );
         satProps.setShowName2D(showNameCheckBox.isSelected() );
         satProps.setSatColor( colorPanel.getBackground() );
-                
+
         // footprint
         satProps.setPlot2DFootPrint( showFootPrintCheckBox.isSelected() );
         try
@@ -764,25 +764,25 @@ private void browseModelButtonActionPerformed(java.awt.event.ActionEvent evt) {/
         {System.out.println( e.getMessage() );}
         satProps.setFillFootPrint( fillFootprintCheckBox.isSelected() );
 
-        
+
         try
         {
-            // ground track 
+            // ground track
             satProps.setShowGroundTrack(showGroundTrackCheckBox.isSelected());
         }
         catch(Exception e)
         {
-            
+
         }
-        
-        
+
+
         try
         {
-            
+
             int oldGRes = satProps.getGrnTrkPointsPerPeriod();
-            
+
             satProps.setGrnTrkPointsPerPeriod( Integer.parseInt(groundTrackResTextField.getText()) );
-            
+
             if(oldGRes != satProps.getGrnTrkPointsPerPeriod())
             {
                 satProps.setGroundTrackIni2False();
@@ -793,15 +793,15 @@ private void browseModelButtonActionPerformed(java.awt.event.ActionEvent evt) {/
         {
             //System.out.println( e.getMessage() );
         }
-        
+
         // save old settings to compare to see if update is needed
         double oldLead = satProps.getGroundTrackLeadPeriodMultiplier();
         double oldLag = satProps.getGroundTrackLagPeriodMultiplier();
-        
+
         try
         {
             satProps.setGroundTrackLeadPeriodMultiplier( Double.parseDouble(leadTrackTextField.getText()) );
-            
+
             if( oldLead != satProps.getGroundTrackLeadPeriodMultiplier())
             {
                 // set ground tracks ini to false
@@ -822,23 +822,23 @@ private void browseModelButtonActionPerformed(java.awt.event.ActionEvent evt) {/
             }
         }
         catch(Exception e){System.out.println( e.getMessage() );}
-        
-        
+
+
         // 3d view
         satProps.setShow3DOrbitTrace(showOrbit3DCheckBox.isSelected() );
         satProps.setShow3DFootprint(showfootprint3DCheckBox.isSelected());
         satProps.setShow3DName(showName3DCheckBox.isSelected());
         satProps.setShowGroundTrack3d( groundTrack3dCheckBox.isSelected() );
         satProps.setShow3DOrbitTraceECI( eciRadioButton.isSelected() );
-        
+
         // 3d model
         satProps.setUse3dModel( use3DModelCheckBox.isSelected() );
         if(use3DModelCheckBox.isSelected())
         {
             satProps.setThreeDModelPath(threeDModelTextField.getText());
             satProps.setThreeDModelSizeFactor( Double.parseDouble(modelScaleTextField.getText()) );
-        }  
-        
+        }
+
         return updateMapData;
     } // saveSettings
 }

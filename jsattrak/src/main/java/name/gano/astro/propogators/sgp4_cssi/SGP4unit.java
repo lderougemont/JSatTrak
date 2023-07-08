@@ -3,13 +3,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -1308,6 +1308,7 @@ public class SGP4unit
      */
 // outputs not stored in SGP4SatData and are returned by this function:
 // [ainv, ao, con42, cosio, cosio2, eccsq, omeosq, posq, rp, rteosq, sinio]
+    @SuppressWarnings("unused")
     public static double[] initl(
             int satn, Gravconsttype whichconst,
             double ecco, double epoch, double inclo,
@@ -1505,6 +1506,7 @@ public class SGP4unit
      * @param satrec
      * @return if initialization was successful
      */
+    @SuppressWarnings("unused")
     public static boolean sgp4init(
             Gravconsttype whichconst, char opsmode, final int satn, final double epoch,
             final double xbstar, final double xecco, final double xargpo,
@@ -2009,6 +2011,7 @@ public class SGP4unit
      * @param v velocity [km/sec] return array (needs to be of size 3)
      * @return true if there were no errors, see satrec.error for error code
      */
+    @SuppressWarnings("unused")
     public static boolean sgp4(
             //Gravconsttype whichconst, // SEG removed as it should already be saved into satrec
             SGP4SatData satrec, double tsince,

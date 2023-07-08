@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,80 +51,80 @@ import name.gano.file.FileUtilities;
  */
 public class JTrackingPanel extends javax.swing.JPanel
 {
-    
+
     Hashtable<String,AbstractSatellite> satHash;
     Hashtable<String,GroundStation> gsHash;
-    
+
     // data to tell if Lead/Lag data should be updated
     double oldLeadX = -1;
     double oldLagX = -1;
-    
+
     String timeAsString;
-    
+
     // current time object - passed for use in pass predictions
     Time currentJulianDate;
-        
-    // table 
+
+    // table
     DefaultTableModel passTableModel;
-    
+
     // app
     JSatTrak app;
-    
+
     // hash table to store pass num and midpoint times -- used to setting time in app
     private Hashtable<Integer,Double> passHash = new Hashtable<Integer,Double>();
-    
-    Double nanDbl = new Double(Double.NaN);
-          
-    
+
+    Double nanDbl = Double.NaN;
+
+
     /** Creates new form JTrackingPanel
      * @param satHash
      * @param gsHash
      * @param timeAsStringIn
      * @param currentJulianDate
-     * @param app 
+     * @param app
      */
     public JTrackingPanel(Hashtable<String,AbstractSatellite> satHash, Hashtable<String,GroundStation> gsHash, String timeAsStringIn, Time currentJulianDate, JSatTrak app)
     {
         this.satHash = satHash;
         this.gsHash = gsHash;
-        
+
         this.currentJulianDate = currentJulianDate;
-        
+
         this.app = app;
-                
+
         initComponents();
-        
+
         // fill out choice boxes
         refreshComboBoxes();
-        
+
         // do this after components INI
         this.timeAsString = timeAsStringIn;
         updateTime(timeAsString);
-        
-        
-        // update pass table 
+
+
+        // update pass table
         passTableModel = new DefaultTableModel();
         passTable.setModel(passTableModel);
-        
+
         passTableModel.addColumn("#"); // pass number
         passTableModel.addColumn("Rise Time"); //
         passTableModel.addColumn("Rise Az."); // new
         passTableModel.addColumn("Set Time"); //
         passTableModel.addColumn("Set Az."); // new
-        passTableModel.addColumn("Duration [Sec]"); // 
+        passTableModel.addColumn("Duration [Sec]"); //
         passTableModel.addColumn("Visibility"); //
-        
+
         //passTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         passTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         //passTable.setAutoCreateRowSorter(true);
-        
+
         // add row highliters to passTable --oops not a swingx table
         //passTable.addHighlighter(new ColorHighlighter(HighlightPredicate.EVEN, Color.WHITE, Color.black)); // even, background, foregrond
         //passTable.addHighlighter(new ColorHighlighter(HighlightPredicate.ODD, new Color(229, 229, 229), Color.black)); // odd, background, foregrond
-        
-        
+
+
     }
-    
+
     public void refreshComboBoxes()
     {
         gsComboBox.removeAllItems();
@@ -132,37 +132,37 @@ public class JTrackingPanel extends javax.swing.JPanel
         {
             gsComboBox.addItem(gs.getStationName());
         }
-        
+
         satComboBox.removeAllItems();
         for(AbstractSatellite sat : satHash.values())
         {
             satComboBox.addItem(sat.getName());
         }
-        
-                
+
+
     } // refreshComboBoxes
-    
+
     // update time called .. update info in box
     // in future might not want to search hash each iteration for gs and sat objects
     public void updateTime(String timeAsString)
     {
         this.timeAsString = timeAsString;
-        
+
         if( gsComboBox.getSelectedIndex() < 0 ||  satComboBox.getSelectedIndex() < 0)
         {
             // something not set
             // erase all data
             aerTextArea.setText("");
             aerTextArea.setBackground(Color.white);
-            
+
             return;
         }
-        
+
         // get sat and gs objects they are null (otherwise same or if boxes changed?)
         // for now local vars = get them each time.
         GroundStation gs = gsHash.get(gsComboBox.getSelectedItem().toString());
         AbstractSatellite sat = satHash.get(satComboBox.getSelectedItem().toString());
-        
+
         // calculate AER
         //double[] aer = gs.calculate_AER( sat.getJ2000Position() ); // in J2k position - incorrect
         if(sat.getTEMEPos() != null && !nanDbl.equals(sat.getTEMEPos()[0])) // check for NAN
@@ -187,9 +187,9 @@ public class JTrackingPanel extends javax.swing.JPanel
             jPolarPlotLabel.setElevConst(gs.getElevationConst());
             jPolarPlotLabel.setTimeString(timeAsString);
             jPolarPlotLabel.setGs2SatNameString(gs.getStationName().trim() + " to " + sat.getName().trim());
-            
+
             // check to see if we need to update Lead/Lag data
-// no good J2000 positions not saved through time right now in satprops  
+// no good J2000 positions not saved through time right now in satprops
             // see if we even need to bother - lead data option selected in both 2D and polar plot
             if (jPolarPlotLabel.isShowLeadLagData() && sat.getShowGroundTrack())
             {
@@ -241,26 +241,26 @@ public class JTrackingPanel extends javax.swing.JPanel
                 }
 
             } // lead / lag data shown
-            
+
         } // NAN check
         else
         {
             aerTextArea.setText(timeAsString + "\n\n" + "Satellite Ephemeris Not Available");
             aerTextArea.setBackground(Color.RED);
-            
+
             jPolarPlotLabel.setTimeString(timeAsString);
             jPolarPlotLabel.setGs2SatNameString(gs.getStationName().trim() + " to " + sat.getName().trim());
-            
+
             // clear lead/lag data
             jPolarPlotLabel.clearLeadLagData();
             // clear current point?
             jPolarPlotLabel.resetCurrentPosition();
         }
-        
+
         jPolarPlotLabel.repaint(); // repaint
-        
+
     } //updateTime
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -272,9 +272,9 @@ public class JTrackingPanel extends javax.swing.JPanel
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        gsComboBox = new javax.swing.JComboBox();
+        gsComboBox = new javax.swing.JComboBox<String>();
         jLabel2 = new javax.swing.JLabel();
-        satComboBox = new javax.swing.JComboBox();
+        satComboBox = new javax.swing.JComboBox<String>();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         aerTextArea = new javax.swing.JTextArea();
@@ -303,13 +303,13 @@ public class JTrackingPanel extends javax.swing.JPanel
         printTableButton = new javax.swing.JButton();
         saveTableButton = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
-        azComboBox = new javax.swing.JComboBox();
+        azComboBox = new javax.swing.JComboBox<String>();
 
         jTabbedPane1.setMinimumSize(new java.awt.Dimension(53, 53));
 
         jLabel1.setText("Ground Station:"); // NOI18N
 
-        gsComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        gsComboBox.setModel(new javax.swing.DefaultComboBoxModel<String>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         gsComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 gsComboBoxActionPerformed(evt);
@@ -318,7 +318,7 @@ public class JTrackingPanel extends javax.swing.JPanel
 
         jLabel2.setText("Satellite:"); // NOI18N
 
-        satComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        satComboBox.setModel(new javax.swing.DefaultComboBoxModel<String>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         satComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 satComboBoxActionPerformed(evt);
@@ -480,14 +480,14 @@ public class JTrackingPanel extends javax.swing.JPanel
                 "#", "Rise Time", "Set Time"
             }
         ) {
-            Class[] types = new Class [] {
+            Class<?>[] types = new Class [] {
                 java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
                 false, true, true
             };
 
-            public Class getColumnClass(int columnIndex) {
+            public Class<?> getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
 
@@ -544,7 +544,7 @@ public class JTrackingPanel extends javax.swing.JPanel
 
         jLabel7.setText("Rise/Set Azimuth:");
 
-        azComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Degrees", "Compass Points" }));
+        azComboBox.setModel(new javax.swing.DefaultComboBoxModel<String>(new String[] { "Degrees", "Compass Points" }));
         azComboBox.setSelectedIndex(1);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -637,20 +637,20 @@ public class JTrackingPanel extends javax.swing.JPanel
         {
             oldGS = gsComboBox.getSelectedItem().toString();
         }
-        
+
         refreshComboBoxes();
-        
+
         // select old selections if there are any
         if(!oldSat.equalsIgnoreCase("null"))
         {
             satComboBox.setSelectedItem(oldSat);
         }
-        
+
         if(!oldGS.equalsIgnoreCase("null"))
         {
             gsComboBox.setSelectedItem(oldGS);
         }
-        
+
     }//GEN-LAST:event_refreshComboBoxesButtonActionPerformed
 
     private void gsComboBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_gsComboBoxActionPerformed
@@ -658,9 +658,9 @@ public class JTrackingPanel extends javax.swing.JPanel
         aerTextArea.setText(""); // clear box
         if(timeAsString != null)
             updateTime(timeAsString);
-        
+
         objectChangeReset();
-        
+
     }//GEN-LAST:event_gsComboBoxActionPerformed
 
     private void satComboBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_satComboBoxActionPerformed
@@ -668,7 +668,7 @@ public class JTrackingPanel extends javax.swing.JPanel
         aerTextArea.setText(""); // clear box
         if(timeAsString != null)
             updateTime(timeAsString);
-        
+
         objectChangeReset();
     }//GEN-LAST:event_satComboBoxActionPerformed
 
@@ -680,7 +680,7 @@ public class JTrackingPanel extends javax.swing.JPanel
     {
         gsComboBox.setSelectedItem(gsName);
     }
-    
+
     /**
      * functions for use for scripting purposes, sets Gound Station
      * @param gsName
@@ -689,7 +689,7 @@ public class JTrackingPanel extends javax.swing.JPanel
     {
         setGroundStation(gs.getStationName());
     }
-    
+
     /**
      * functions for use for scripting purposes, sets Satellite
      * @param gsName
@@ -698,7 +698,7 @@ public class JTrackingPanel extends javax.swing.JPanel
     {
         satComboBox.setSelectedItem(satName);
     }
-    
+
     /**
      * functions for use for scripting purposes, sets Satellite
      * @param gsName
@@ -707,11 +707,11 @@ public class JTrackingPanel extends javax.swing.JPanel
     {
         setSatellite(sat.getName());
     }
-    
+
     private void objectChangeReset()
     {
         // GUI changes needed when objects are changed
-        
+
         // clear pass table
         if (passTableModel != null) // ini of object
         {
@@ -734,9 +734,9 @@ public class JTrackingPanel extends javax.swing.JPanel
                 jPolarPlotLabel.setAerLag(AER.calculate_AER(new double[]{gs.getLatitude(), gs.getLongitude(), gs.getAltitude()}, sat.getTemePosLag(), sat.getTimeLag()));
             }
         }
-        
+
     }
-    
+
     private void leadLagCheckBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_leadLagCheckBoxActionPerformed
     {//GEN-HEADEREND:event_leadLagCheckBoxActionPerformed
         jPolarPlotLabel.setShowLeadLagData(leadLagCheckBox.isSelected());
@@ -754,34 +754,35 @@ public class JTrackingPanel extends javax.swing.JPanel
         runPassPrediction();
     }//GEN-LAST:event_runPassPredictionButtonActionPerformed
 
+    @SuppressWarnings("unused")
     public void runPassPrediction()
     {
         // get info:
         double timeSpanDays = Double.parseDouble( timeSpanTextField.getText() );
         double timeStepSec = Double.parseDouble( timeStepTextField.getText() );
         boolean onlyVisible = visibleOnlyCheckBox.isSelected();
-        
+
         // get sat and GS
         GroundStation gs = gsHash.get(gsComboBox.getSelectedItem().toString());
         AbstractSatellite sat = satHash.get(satComboBox.getSelectedItem().toString());
-        
+
         // start time Jul Date
         double jdStart = currentJulianDate.getJulianDate();
-        
+
         // clear hash
         passHash.clear();
-        
+
         // clear the table
         while(passTableModel.getRowCount() > 0)
         {
             passTableModel.removeRow(0);
         }
-        
+
         // Sun sun
-        
+
 //        // elevation data used in seach
 //        double h0=0,h1=0,h2=0;
-//        
+//
 //        // intially calculate elevations at 0/1 time points
 //        // AER.calculate_AER(new double[]{gs.getLatitude(), gs.getLongitude(), gs.getAltitude()}, sat.getModPosLead(), sat.getTimeLead())
 //        double time0 = jdStart - timeStepSec/(60.0*60.0*24.0);
@@ -789,27 +790,27 @@ public class JTrackingPanel extends javax.swing.JPanel
 //        double time1 = jdStart;
 //        h1 = AER.calculate_AER(gs.getLla_deg_m(), sat.calculateMODPositionFromUT(time1) , time1)[1];
 //        double time2 = jdStart + timeStepSec/(60.0*60.0*24.0);; // declare var
-//        
+//
 //        System.out.println(time0 + "," + h0 );
 //        System.out.println(time1 + "," + h1 );
-//        
+//
 //        // use quadratic fit to search for zeros
 //        for(double jd = jdStart; jd <= jdStart + timeSpanDays; jd += timeStepSec/(60.0*60.0*24.0))
 //        {
 //            time0 = time1;
 //            time1 = time2;
 //            time2 = jd + timeStepSec/(60.0*60.0*24.0);
-//            
+//
 //            // calculate elevations at each time step (if needed)
 //            h0 = h1;
 //            h1 = h2;
 //            // calculate the elevation at this newly visited point
 //            h2 = AER.calculate_AER(gs.getLla_deg_m(), sat.calculateMODPositionFromUT(time2) , time2)[1];
 //            System.out.println(time2 + "," + h2 );
-//            
+//
 //            // create a quadratic interpolator
 //            QuadraticInterpolatorSimp qis = new QuadraticInterpolatorSimp(time0, h0, time1, h1, time2, h2);
-//            
+//
 ////            if(qis.getRootCountInDomain() == 1)
 ////            {
 ////                System.out.println("Event(1): " + qis.getLowerRoot() );
@@ -818,50 +819,50 @@ public class JTrackingPanel extends javax.swing.JPanel
 ////                System.out.println("Event(2a): " + qis.getLowerRoot() );
 ////                System.out.println("Event(2b): " + qis.getUpperRoot() );
 ////            }
-//            
+//
 //        } // for loop seaching for rise/set events
-        
-        
+
+
         Sun internalSun = new Sun(jdStart - AstroConst.JDminusMJD); // new sun for internal calculations of Visibility
-        
+
         // linear search
         double time0, h0;
         double time1 = jdStart;
         double h1 = AER.calculate_AER(gs.getLla_deg_m(), sat.calculateTemePositionFromUT(time1) , time1)[1] - gs.getElevationConst();
-        
+
         int passCount = 0;
-        
+
         if(h1 > 0)
         {
             passCount++;
             passTableModel.addRow(new Object[] {passCount,"--","","",""});
         }
-        
+
         double lastRise = 0;
-        
+
         for(double jd = jdStart; jd <= jdStart + timeSpanDays; jd += timeStepSec/(60.0*60.0*24.0))
         {
             time0 = time1;
             time1 = jd + timeStepSec/(60.0*60.0*24.0);
-            
+
             // calculate elevations at each time step (if needed)
             h0 = h1;
             // calculate the elevation at this newly visited point
             h1 = AER.calculate_AER(gs.getLla_deg_m(), sat.calculateTemePositionFromUT(time1) , time1)[1] - gs.getElevationConst();
-            
+
             // rise
             if(h0<=0 && h1 >0)
             {
                 double riseTime =  findSatRiseSetRoot(sat, gs, time0, time1, h0, h1);
-                //System.out.println("Rise at " + riseTime  + " (" + time0 + "," + time1 + ")"); 
-                
+                //System.out.println("Rise at " + riseTime  + " (" + time0 + "," + time1 + ")");
+
                 lastRise = riseTime; // save
-                
+
                 // add to table
                 passCount++;
                 // use Time object to convert Julian date to string using program settings (i.e. time zone)
                 String crossTimeStr = currentJulianDate.convertJD2String(riseTime);
-                
+
                 passTableModel.addRow(new Object[] {passCount,crossTimeStr,"","","","",""});
 
                 // calculate using the rise time - the Azimuth
@@ -876,17 +877,17 @@ public class JTrackingPanel extends javax.swing.JPanel
                     passTableModel.setValueAt(CoordinateConversion.degrees2CompassPoints(az), passTableModel.getRowCount()-1, 2);
                 }
             }
-            
+
             // set
             if(h1<=0 && h0 >0)
             {
                 double setTime =  findSatRiseSetRoot(sat, gs, time0, time1, h0, h1);
-                //System.out.println("Set at " + setTime  + " (" + time0 + "," + time1 + ")"); 
-                
+                //System.out.println("Set at " + setTime  + " (" + time0 + "," + time1 + ")");
+
                 // add to table
                 String crossTimeStr = currentJulianDate.convertJD2String(setTime);
                 passTableModel.setValueAt(crossTimeStr, passTableModel.getRowCount()-1, 3); // last row, 3rd column (2)
-                
+
                 // calculate using the set time - the Azimuth
                 double az = AER.calculate_AER(gs.getLla_deg_m(), sat.calculateTemePositionFromUT(setTime) , setTime)[0];
                 if(azComboBox.getSelectedIndex() == 0)
@@ -904,42 +905,42 @@ public class JTrackingPanel extends javax.swing.JPanel
                 if(lastRise > 0)
                 {
                     DecimalFormat fmt2Dig = new DecimalFormat("00.000");
-                    
+
                     double duration = (setTime - lastRise)*24.0*60.0*60.0; // seconds
                     String durStr = fmt2Dig.format( duration );
                     passTableModel.setValueAt(durStr, passTableModel.getRowCount()-1, 5); // last row, 4rd column (3)
                 }
-                
+
                 // determine visibility
                 if(lastRise > 0)
                 {
                     // Visiable, Radar Night, Radar Night
-                    
+
                     // use the time 1/2 between rise and set for viz calculations
                     // DOES NOT CHECK FOR VIS NEAR END POINTS SO COULD MISS SOME PARTIAL PASS VISIBILITY
-                                        
+
                     double julDateVizCalc = (setTime - lastRise)/2.0 + lastRise;
-                    
+
                     // SAVE to hash - for use later
-                    passHash.put(new Integer(passCount), new Double(julDateVizCalc));
-                    
+                    passHash.put(passCount, julDateVizCalc);
+
                     // twilight offset
                     // 7 seems good
                     // 6 is used by heavens-above.com
                     double twilightOffset = 6; // degrees extra required for darkness
-                    
-                    // set the suns time 
+
+                    // set the suns time
                     internalSun.setCurrentMJD( julDateVizCalc - AstroConst.JDminusMJD );
-                    
+
                     // MOD - sun dot site positions to determine if station is in sunlight
                     double[] gsECI = AER.calculateECIposition(julDateVizCalc, gs.getLla_deg_m());
                     double sunDotSite = MathUtils.dot(internalSun.getCurrentPositionTEME(),gsECI );
-                    
+
                     // TEST - find angle between sun -> center of Earth -> Ground Station
                     double sinFinalSigmaGS = MathUtils.norm( MathUtils.cross(internalSun.getCurrentPositionTEME(), gsECI) )
                              / ( MathUtils.norm(internalSun.getCurrentPositionTEME()) * MathUtils.norm(gsECI)  );
                     double finalSigmaGS = Math.asin(sinFinalSigmaGS)*180.0/Math.PI; // in degrees
-                    
+
                     if(sunDotSite > 0 || (90.0-finalSigmaGS) < twilightOffset )
                     {
                         passTableModel.setValueAt("Radar Sun", passTableModel.getRowCount()-1, 6); // last row, 5rd column (4)
@@ -953,7 +954,7 @@ public class JTrackingPanel extends javax.swing.JPanel
                                 / ( MathUtils.norm(internalSun.getCurrentPositionTEME()) * MathUtils.norm(satMOD)  );
                         double finalSigma = Math.asin(sinFinalSigma);
                         double dist = MathUtils.norm(satMOD) * Math.cos( finalSigma - Math.PI/2.0);
-                        
+
                         if(dist > AstroConst.R_Earth_mean) // changed to mean 30/March/2009 SEG
                         {
                             // sat is in sunlight!
@@ -963,39 +964,39 @@ public class JTrackingPanel extends javax.swing.JPanel
                         {
                             passTableModel.setValueAt("Radar Night", passTableModel.getRowCount()-1, 6); // last row, 5rd column (4)
                         }
-                        
+
                     } // site in dark
-                    
-                } // visibility (with last rise)             
-                
+
+                } // visibility (with last rise)
+
             } // set
-            
-            
+
+
         }// linear seach
-        
+
         // if visible only checked remove other items from the list
         if(visibleOnlyCheckBox.isSelected())
         {
-            
+
             int vizColumn = 6;  // vis text column
             for(int i=passTableModel.getRowCount()-1; i>=0;i-- )
             {
-               
+
               if(!passTableModel.getValueAt(i, vizColumn).toString().equalsIgnoreCase("Visible"))
               {
                   passTableModel.removeRow(i);
               }
             }
-            
-            
-            
+
+
+
         } // remove non-visible
-        
-        
+
+
         // set first col to be small
         passTable.getColumnModel().getColumn(0).setPreferredWidth(10);
     } // runPassPrediction
-    
+
     private void go2passButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_go2passButtonActionPerformed
     {//GEN-HEADEREND:event_go2passButtonActionPerformed
         // get selected row in table
@@ -1003,6 +1004,7 @@ public class JTrackingPanel extends javax.swing.JPanel
         go2pass(tableRow);
     }//GEN-LAST:event_go2passButtonActionPerformed
 
+    @SuppressWarnings("unused")
     private void printTableButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_printTableButtonActionPerformed
     {//GEN-HEADEREND:event_printTableButtonActionPerformed
         // print table
@@ -1137,85 +1139,86 @@ public class JTrackingPanel extends javax.swing.JPanel
     {//GEN-HEADEREND:event_jCheckBox5ActionPerformed
         jPolarPlotLabel.setUseCompassPoints(jCheckBox5.isSelected());
     }//GEN-LAST:event_jCheckBox5ActionPerformed
-    
+
     /**
      * jumps time to the mid point of a pass
      * @param passNumber pass number from last solution, range: 0 to N-1
      */
     public void go2pass(int passNumber)
     {
-        
+
         if(passNumber >= 0)
         {
             // get # in that row
-            Integer passNum = new Integer( passTableModel.getValueAt(passNumber, 0).toString() );
-            
+            Integer passNum = Integer.valueOf( passTableModel.getValueAt(passNumber, 0).toString() );
+
             if( passHash.containsKey(passNum) )
             {
                 double jdMidPoint = passHash.get(passNum).doubleValue();
 
-                // get milliseconds from Julian Date            
-                long millis = currentJulianDate.convertJD2Calendar(jdMidPoint).getTimeInMillis();
+                // get milliseconds from Julian Date
+                long millis = Time.convertJD2Calendar(jdMidPoint).getTimeInMillis();
 
                 // get current app time
                 double daysDiff = Math.abs( currentJulianDate.getJulianDate() - jdMidPoint);
-                
+
                 // check to see if lead/lag data needs updating
                 app.checkTimeDiffResetGroundTracks(daysDiff);
-                        
+
                 // set app to new time
                 app.setTime(millis);
             }
         }
-                
+
     } // go2pass
-    
+
     // bisection method, crossing time should be bracketed by time0 and time1
+    @SuppressWarnings("unused")
     private double findSatRiseSetRoot(AbstractSatellite sat, GroundStation gs, double time0, double time1, double f0, double f1)
     {
         double tol = (1.157407E-5)/4; // 1/4 a sec (in units of a day)
-        
+
         int iterCount = 0;
-        
+
         while(Math.abs(time1-time0) > 2*tol)
         {
             //Calculate midpoint of domain
             double timeMid = (time1 + time0) / 2.0;
             double fmid = AER.calculate_AER(gs.getLla_deg_m(), sat.calculateTemePositionFromUT(timeMid) , timeMid)[1] - gs.getElevationConst();
-            
+
             if( f0 * fmid > 0) // same sign
             {
                 // replace f0 with fmid
                 f0 = fmid;
                 time0 = timeMid;
-                
+
             }else  // else replace f1 with fmid
             {
                 f1 = fmid;
                 time1 = timeMid;
             }
-            
+
             iterCount++;
         } // while not in tolerance
-        
+
         // return best gues using linear interpolation between last two points
         double a = (f1-f0)/(time1-time0);
         double b = f1-a*time1;
         double riseTime = -b/a;
-        
+
         //System.out.println("Bisection Iters: " + iterCount);
-        
+
         return riseTime; // return best guess  -typically:  (time0 + time1)/2.0;
         //return (time0 + time1)/2.0;
-        
+
     } // findSatRiseSetRoot
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea aerTextArea;
-    private javax.swing.JComboBox azComboBox;
+    private javax.swing.JComboBox<String> azComboBox;
     private javax.swing.JButton go2passButton;
-    private javax.swing.JComboBox gsComboBox;
+    private javax.swing.JComboBox<String> gsComboBox;
     private javax.swing.JButton jButton1;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
@@ -1242,23 +1245,23 @@ public class JTrackingPanel extends javax.swing.JPanel
     private javax.swing.JButton printTableButton;
     private javax.swing.JButton refreshComboBoxesButton;
     private javax.swing.JButton runPassPredictionButton;
-    private javax.swing.JComboBox satComboBox;
+    private javax.swing.JComboBox<String> satComboBox;
     private javax.swing.JButton saveTableButton;
     private javax.swing.JTextField timeSpanTextField;
     private javax.swing.JTextField timeStepTextField;
     private javax.swing.JCheckBox visibleOnlyCheckBox;
     // End of variables declaration//GEN-END:variables
- 
+
     public void setTimeSpanDays(double days)
     {
         timeSpanTextField.setText(""+days);
     }
-    
+
     public void setTimeStepSec(double sec)
     {
         timeStepTextField.setText(""+sec);
     }
-    
+
     public void setVisibleOnlyFilter(boolean visibleOnly)
     {
         visibleOnlyCheckBox.setSelected(visibleOnly);
@@ -1268,11 +1271,11 @@ public class JTrackingPanel extends javax.swing.JPanel
     {
         return passHash;
     }
-    
+
     public String[][] getPredictionTableData()
     {
         String[][] data = new String[passTableModel.getRowCount()][passTableModel.getColumnCount()];
-        
+
         for(int r = 0; r<passTableModel.getRowCount();r++)
         {
             for(int c = 0; c<passTableModel.getColumnCount();c++)
@@ -1280,10 +1283,10 @@ public class JTrackingPanel extends javax.swing.JPanel
                 data[r][c] = passTableModel.getValueAt(r, c).toString();
             }
         }
-        
+
         return data;
     } // getPredictionTableData
-    
+
     /**
      * can be used in a script to have the lable rendered off screen or to set its display settings
      * @return
@@ -1292,5 +1295,5 @@ public class JTrackingPanel extends javax.swing.JPanel
     {
         return jPolarPlotLabel;
     }
-    
+
 }

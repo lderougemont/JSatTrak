@@ -85,41 +85,76 @@
       <artifactId>bsh</artifactId>
       <version>2.0b6</version>
     </dependency>
+    <!-- <dependency>
+      <groupId>org.apache-extras.beanshell</groupId>
+      <artifactId>bsh</artifactId>
+      <version>local_2.0b4</version>
+    </dependency> -->
     <dependency>
       <groupId>gov.nist.math</groupId>
       <artifactId>jama</artifactId>
       <version>1.0.3</version>
     </dependency>
+    <!-- <dependency>
+      <groupId>gov.nist.math</groupId>
+      <artifactId>jama</artifactId>
+      <version>local_1.0.2</version>
+    </dependency> -->
     <dependency>
       <groupId>javax.media</groupId>
       <artifactId>jmf</artifactId>
       <version>2.1.1e</version>
     </dependency>
+    <!-- <dependency>
+      <groupId>javax.media</groupId>
+      <artifactId>jmf</artifactId>
+      <version>local_2.1.x</version>
+    </dependency> -->
     <dependency>
         <groupId>com.jgoodies</groupId>
         <artifactId>jgoodies-looks</artifactId>
         <version>2.7.0</version>
     </dependency>
+    <!-- <dependency>
+        <groupId>com.jgoodies</groupId>
+        <artifactId>jgoodies-looks</artifactId>
+        <version>2.2.1</version>
+    </dependency> -->
+    <!-- <dependency>
+      <groupId>org.jogamp.jogl</groupId>
+      <artifactId>jogl-all-main</artifactId>
+      <version>2.3.2</version>
+    </dependency> -->
     <dependency>
-      <groupId>jogl</groupId>
+      <groupId>org.jogamp.jogl</groupId>
       <artifactId>jogl</artifactId>
-      <version>1.1.2</version>
+      <version>local_1.1.2</version>
+    </dependency>
+    <!-- <dependency>
+      <groupId>org.jogamp.gluegen</groupId>
+      <artifactId>gluegen-rt</artifactId>
+      <version>2.3.2</version>
+    </dependency> -->
+    <dependency>
+      <groupId>org.jogamp.gluegen</groupId>
+      <artifactId>gluegen-rt</artifactId>
+      <version>local_1.1.2</version>
     </dependency>
     <dependency>
       <groupId>net.java.joglutils</groupId>
       <artifactId>joglutils</artifactId>
       <version>1.2008</version>
     </dependency>
-    <dependency>
-      <groupId>org.jogamp.gluegen</groupId>
-      <artifactId>gluegen-rt</artifactId>
-      <version>2.3.2</version>
-    </dependency>
     <!-- <dependency>
       <groupId>netscape</groupId>
       <artifactId>javascript</artifactId>
       <version>1.5.0</version>
     </dependency> -->
+    <dependency>
+      <groupId>netscape</groupId>
+      <artifactId>javascript</artifactId>
+      <version>1.2007</version>
+    </dependency>
     <dependency>
       <groupId>com.github.insubstantial</groupId>
       <artifactId>substance-swingx</artifactId>
@@ -131,9 +166,9 @@
       <version>7.3</version>
     </dependency>
     <dependency>
-        <groupId>com.github.insubstantial</groupId>
-        <artifactId>laf-plugin</artifactId>
-        <version>7.3</version>
+      <groupId>com.github.insubstantial</groupId>
+      <artifactId>laf-plugin</artifactId>
+      <version>7.3</version>
     </dependency>
     <dependency>
       <groupId>org.swinglabs</groupId>
@@ -150,10 +185,15 @@
       <artifactId>swingx</artifactId>
       <version>1.6.1</version>
     </dependency>
-    <dependency>
+    <!-- <dependency>
       <groupId>gov.nasa</groupId>
       <artifactId>worldwind</artifactId>
       <version>2.0.0-986</version>
+    </dependency> -->
+    <dependency>
+      <groupId>gov.nasa</groupId>
+      <artifactId>worldwind</artifactId>
+      <version>local_0.6.134.11486</version>
     </dependency>
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>

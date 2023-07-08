@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,16 +39,16 @@ import name.gano.astro.time.Time;
  */
 public class InitialConditionsPanel extends javax.swing.JPanel
 {
-    
+
     InitialConditionsNode icNode;
-    
+
     boolean componentsIni = false; // flag for when the components have been inialized
-    
+
    // used for diaplying settings panel
     private JInternalFrame iframe; // used to know what its parent frame is - to close window
-    
+
     final Time scenarioEpochDate; // used for date string functions
-    
+
     /** Creates new form InitialConditionsPanel
      * @param icNode inital conditions node
      * @param scenarioEpochDate  scenario epoch date
@@ -57,30 +57,30 @@ public class InitialConditionsPanel extends javax.swing.JPanel
     {
         this.icNode = icNode;
         this.scenarioEpochDate = scenarioEpochDate;
-        
+
         initComponents();
-        
+
         // fill out components with current settings
         if(icNode.isUsingKepElements())
         {
             // fill out kep
             double[] kep = icNode.getKeplarianElements();
-            
+
             setKepElementsInGUI(kep);
-            
+
         }
         else
         {
             // fill out cartesian j2k
             double[] state = icNode.getJ2kIniState();
-            
+
             setJ2kInGUI(state);
         }
-        
+
         // fill in epoch
         epochTextField.setText( scenarioEpochDate.convertJD2String( icNode.getIniJulDate() )  );
-        
-        
+
+
         // select kep or cartesian
        if(icNode.isUsingKepElements())
        {
@@ -90,11 +90,11 @@ public class InitialConditionsPanel extends javax.swing.JPanel
        {
             inputComboBox.setSelectedIndex(1);
        }
-        
-        
+
+
         componentsIni = true;
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -109,7 +109,7 @@ public class InitialConditionsPanel extends javax.swing.JPanel
         cancelButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        inputComboBox = new javax.swing.JComboBox();
+        inputComboBox = new javax.swing.JComboBox<String>();
         iniTabbedPane = new javax.swing.JTabbedPane();
         kepPanel = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
@@ -170,7 +170,7 @@ public class InitialConditionsPanel extends javax.swing.JPanel
 
         jLabel1.setText("Input Type:");
 
-        inputComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Keplarian Elements", "J2000.0 State" }));
+        inputComboBox.setModel(new javax.swing.DefaultComboBoxModel<String>(new String[] { "Keplarian Elements", "J2000.0 State" }));
         inputComboBox.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -558,47 +558,47 @@ public class InitialConditionsPanel extends javax.swing.JPanel
 
     private void inputComboBoxActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_inputComboBoxActionPerformed
     {//GEN-HEADEREND:event_inputComboBoxActionPerformed
-        
+
         if(inputComboBox.getSelectedItem().toString().equalsIgnoreCase("Keplarian Elements"))
         {
             iniTabbedPane.setEnabledAt(0, true); // kep
             iniTabbedPane.setEnabledAt(1, false); // j2k
             iniTabbedPane.setSelectedIndex(0);
-            
+
             // convert data from one panel to the other (this only runs when change has occured
             if(componentsIni)
             {
                 double[] j2k = getJ2kInGUI();
-                
-                double[] kep = Kepler.SingularOsculatingElements(AstroConst.GM_Earth, j2k); 
-                
+
+                double[] kep = Kepler.SingularOsculatingElements(AstroConst.GM_Earth, j2k);
+
                 setKepElementsInGUI(kep);
-            }   
+            }
         }
         else if(inputComboBox.getSelectedItem().toString().equalsIgnoreCase("J2000.0 State"))
         {
             iniTabbedPane.setEnabledAt(0, false); // kep
             iniTabbedPane.setEnabledAt(1, true); // j2k
             iniTabbedPane.setSelectedIndex(1);
-            
+
             // convert data from one panel to the other
             if(componentsIni)
             {
                 double[] kep = getKepElementsFromGUI();
-                
+
                 double [] j2k = Kepler.state(AstroConst.GM_Earth, kep, 0.0);
-                
+
                 setJ2kInGUI(j2k); // set values to GUI
-                
-            }                     
+
+            }
         }
-        
+
     }//GEN-LAST:event_inputComboBoxActionPerformed
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_okButtonActionPerformed
     {//GEN-HEADEREND:event_okButtonActionPerformed
         boolean success = saveSettings();
-        
+
          // close internal frame
         if (success)
         {
@@ -626,15 +626,15 @@ public class InitialConditionsPanel extends javax.swing.JPanel
     {//GEN-HEADEREND:event_applyButtonActionPerformed
         saveSettings();
     }//GEN-LAST:event_applyButtonActionPerformed
-    
+
     private boolean saveSettings()
     {
         // save settings back to Node
         boolean saveSuccess = true;
-        
+
          // save epoch
         saveSuccess = saveEpoch();
-        
+
         try
         {
             // get correct kep/j2k elements save them
@@ -659,26 +659,26 @@ public class InitialConditionsPanel extends javax.swing.JPanel
             }
 
         }
-        catch(Exception e) 
+        catch(Exception e)
         {
             JOptionPane.showMessageDialog(this, "Date format error, check input.", "Data ERROR", JOptionPane.ERROR_MESSAGE);
             saveSuccess = false;
         }
-        
+
         return saveSuccess;
-        
+
     }
-    
+
      // date formats for displaying and reading in
     private SimpleDateFormat dateformat = new SimpleDateFormat("dd MMM yyyy HH:mm:ss.SSS z");
     private SimpleDateFormat dateformatShort1 = new SimpleDateFormat("dd MMM y H:m:s.S z");
     private SimpleDateFormat dateformatShort2 = new SimpleDateFormat("dd MMM y H:m:s z"); // no Milliseconds
-    
-    
+
+
     private boolean saveEpoch()
     {
-       
-           
+
+
             // enter hit in date/time box...
             //System.out.println("Date Time Changed");
 
@@ -716,12 +716,12 @@ public class InitialConditionsPanel extends javax.swing.JPanel
                 // System.out.println(" -- Accepted");
 
                 // save
-                
+
                 Time newTime = new Time();
                 newTime.set( currentTimeDate.getTimeInMillis() );
-                
+
                 icNode.setIniJulDate( newTime.getJulianDate() );
-                
+
 
             } // if date accepted
             else
@@ -729,10 +729,10 @@ public class InitialConditionsPanel extends javax.swing.JPanel
                 JOptionPane.showMessageDialog(this, "Epoch Date format incorrect", "Epoch ERROR", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
-       
+
             return true;
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyButton;
     private javax.swing.JTextField argTextField;
@@ -744,7 +744,7 @@ public class InitialConditionsPanel extends javax.swing.JPanel
     private javax.swing.JTextField epochTextField;
     private javax.swing.JTextField iTextField;
     private javax.swing.JTabbedPane iniTabbedPane;
-    private javax.swing.JComboBox inputComboBox;
+    private javax.swing.JComboBox<String> inputComboBox;
     private javax.swing.JPanel j2kPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -771,22 +771,22 @@ public class InitialConditionsPanel extends javax.swing.JPanel
     private javax.swing.JTextField yTextField;
     private javax.swing.JTextField zTextField;
     // End of variables declaration//GEN-END:variables
-    
-    
+
+
     private double[] getKepElementsFromGUI()
     {
         double[] kepElements = new double[6];
-        
+
         kepElements[0] = Double.parseDouble(saTextField.getText());
         kepElements[1] = Double.parseDouble(eTextField.getText());
         kepElements[2] = Double.parseDouble(iTextField.getText())* Math.PI/180.0;
         kepElements[3] = Double.parseDouble(longTextField.getText())* Math.PI/180.0;
         kepElements[4] = Double.parseDouble(argTextField.getText())* Math.PI/180.0;
         kepElements[5] = Double.parseDouble(mTextField.getText())* Math.PI/180.0;
-        
+
         return kepElements;
     }
-    
+
     private void setKepElementsInGUI(double[] kep)
     {
         saTextField.setText(kep[0] + "");
@@ -796,21 +796,21 @@ public class InitialConditionsPanel extends javax.swing.JPanel
         argTextField.setText((kep[4] * 180.0 / Math.PI) + "");
         mTextField.setText((kep[5]*180.0/Math.PI) + "");
     }
-    
+
     private double[] getJ2kInGUI()
     {
         double[] state = new double[6];
-        
+
         state[0] = Double.parseDouble(xTextField.getText());
         state[1] = Double.parseDouble(yTextField.getText());
         state[2] = Double.parseDouble(zTextField.getText());
         state[3] = Double.parseDouble(dxTextField.getText());
         state[4] = Double.parseDouble(dyTextField.getText());
         state[5] = Double.parseDouble(dzTextField.getText());
-        
+
         return state;
     }
-    
+
     private void setJ2kInGUI(double[] state)
     {
         xTextField.setText(state[0] + "");
@@ -831,5 +831,5 @@ public class InitialConditionsPanel extends javax.swing.JPanel
         this.iframe = iframe;
     }
 
-    
+
 }

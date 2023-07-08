@@ -48,7 +48,7 @@ import javax.swing.SwingUtilities;
 
 /**
  * Contribution from NetBeans: Issue #319-swingx. <p>
- * 
+ *
  * PENDING: need to reconcile with OS, JVM... added as-is
  * because needed the shortcut handling to fix #
  *
@@ -57,10 +57,10 @@ import javax.swing.SwingUtilities;
 public class Utilities {
     private Utilities() {
     }
-    
+
     private static final int CTRL_WILDCARD_MASK = 32768;
     private static final int ALT_WILDCARD_MASK = CTRL_WILDCARD_MASK * 2;
-    
+
     /** Operating system is Windows NT. */
     public static final int OS_WINNT = 1 << 0;
 
@@ -128,10 +128,11 @@ public class Utilities {
     public static final int TYPICAL_WINDOWS_TASKBAR_HEIGHT = 27;
 
     /** A height of the Mac OS X's menu */
+    @SuppressWarnings("unused")
     private static final int TYPICAL_MACOSX_MENU_HEIGHT = 24;
-    
+
     private static int operatingSystem = -1;
-    
+
     /** reference to map that maps allowed key names to their values (String, Integer)
     and reference to map for mapping of values to their names */
     private static Reference<Object> namesAndValues;
@@ -179,7 +180,7 @@ public class Utilities {
                 operatingSystem = OS_MAC;
             } else if (osName.startsWith("Darwin")) { // NOI18N
                 operatingSystem = OS_MAC;
-            } else if (osName.toLowerCase(Locale.US).startsWith("freebsd")) { // NOI18N 
+            } else if (osName.toLowerCase(Locale.US).startsWith("freebsd")) { // NOI18N
                 operatingSystem = OS_FREEBSD;
             } else {
                 operatingSystem = OS_OTHER;
@@ -187,7 +188,7 @@ public class Utilities {
         }
         return operatingSystem;
     }
-    
+
     /** Test whether NetBeans is running on some variant of Windows.
     * @return <code>true</code> if Windows, <code>false</code> if some other manner of operating system
     */
@@ -202,7 +203,7 @@ public class Utilities {
     public static boolean isUnix() {
         return (getOperatingSystem() & OS_UNIX_MASK) != 0;
     }
-    
+
     /** Test whether the operating system supports icons on frames (windows).
     * @return <code>true</code> if it does <em>not</em>
     *
@@ -305,7 +306,7 @@ public class Utilities {
 
         return bounds;
     }
-    
+
 
     /** Initialization of the names and values
     * @return array of two hashmaps first maps
@@ -313,9 +314,9 @@ public class Utilities {
     *  and second
     * hashtable for mapping of values to their names (Integer, String)
     */
-    private static synchronized HashMap[] initNameAndValues() {
+    private static synchronized HashMap<?,?>[] initNameAndValues() {
         if (namesAndValues != null) {
-            HashMap[] arr = (HashMap[]) namesAndValues.get();
+            HashMap<?,?>[] arr = (HashMap[]) namesAndValues.get();
 
             if (arr != null) {
                 return arr;
@@ -327,7 +328,7 @@ public class Utilities {
         try {
             fields = KeyEvent.class.getDeclaredFields();
 //           fields = KeyEvent.class.getFields();
-        } catch (SecurityException e) { 
+        } catch (SecurityException e) {
             // JW: need to do better? What are the use-cases where we don't have
             // any access to the fields?
             fields = new Field[0];
@@ -346,8 +347,7 @@ public class Utilities {
                     name = name.substring(3);
 
                     try {
-                        int numb = fields[i].getInt(null);
-                        Integer value = new Integer(numb);
+                        int value = fields[i].getInt(null);
                         names.put(name, value);
                         values.put(value, name);
                     } catch (IllegalArgumentException ex) {
@@ -359,16 +359,16 @@ public class Utilities {
 
         if (names.get("CONTEXT_MENU") == null) { // NOI18N
 
-            Integer n = new Integer(0x20C);
+            Integer n = 0x20C;
             names.put("CONTEXT_MENU", n); // NOI18N
             values.put(n, "CONTEXT_MENU"); // NOI18N
 
-            n = new Integer(0x20D);
+            n = 0x20D;
             names.put("WINDOWS", n); // NOI18N
             values.put(n, "WINDOWS"); // NOI18N
         }
 
-        HashMap[] arr = { names, values };
+        HashMap<?,?>[] arr = { names, values };
 
         namesAndValues = new SoftReference<Object>(arr);
 
@@ -388,9 +388,9 @@ public class Utilities {
             sb.append('-');
         }
 
-        HashMap[] namesAndValues = initNameAndValues();
+        HashMap<?,?>[] namesAndValues = initNameAndValues();
 
-        String c = (String) namesAndValues[1].get(new Integer(stroke.getKeyCode()));
+        String c = (String) namesAndValues[1].get(stroke.getKeyCode());
 
         if (c == null) {
             sb.append(stroke.getKeyChar());
@@ -445,7 +445,7 @@ public class Utilities {
 
         int needed = 0;
 
-        HashMap names = initNameAndValues()[0];
+        HashMap<?,?> names = initNameAndValues()[0];
 
         int lastModif = -1;
 
@@ -488,16 +488,16 @@ public class Utilities {
                             if ((getOperatingSystem() & OS_MAC) != 0) {
                                 if (!usableKeyOnMac(i.intValue(), needed)) {
                                     needed &= ~getMenuShortCutKeyMask();
-                                    needed |= KeyEvent.CTRL_MASK;
+                                    needed |= KeyEvent.CTRL_DOWN_MASK;
                                 }
                             }
                         }
 
                         if (macAlt) {
                             if (getOperatingSystem() == OS_MAC) {
-                                needed |= KeyEvent.CTRL_MASK;
+                                needed |= KeyEvent.CTRL_DOWN_MASK;
                             } else {
-                                needed |= KeyEvent.ALT_MASK;
+                                needed |= KeyEvent.ALT_DOWN_MASK;
                             }
                         }
 
@@ -517,10 +517,10 @@ public class Utilities {
      */
     private static int getMenuShortCutKeyMask() {
         if (GraphicsEnvironment.isHeadless()) {
-            return ((getOperatingSystem() & OS_MAC) != 0) ? 
-                    KeyEvent.META_MASK : KeyEvent.CTRL_MASK;
+            return ((getOperatingSystem() & OS_MAC) != 0) ?
+                    KeyEvent.META_MASK : KeyEvent.CTRL_DOWN_MASK;
         }
- 
+
         return Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     }
 
@@ -532,7 +532,7 @@ public class Utilities {
 
         boolean isMeta = ((mask & KeyEvent.META_MASK) != 0) || ((mask & KeyEvent.CTRL_DOWN_MASK) != 0);
 
-        boolean isAlt = ((mask & KeyEvent.ALT_MASK) != 0) || ((mask & KeyEvent.ALT_DOWN_MASK) != 0);
+        boolean isAlt = ((mask & KeyEvent.ALT_DOWN_MASK) != 0) || ((mask & KeyEvent.ALT_DOWN_MASK) != 0);
 
         boolean isOnlyMeta = isMeta && ((mask & ~(KeyEvent.META_DOWN_MASK | KeyEvent.META_MASK)) == 0);
 
@@ -575,17 +575,17 @@ public class Utilities {
     private static boolean addModifiers(StringBuffer buf, int modif) {
         boolean b = false;
 
-        if ((modif & KeyEvent.CTRL_MASK) != 0) {
+        if ((modif & KeyEvent.CTRL_DOWN_MASK) != 0) {
             buf.append("C"); // NOI18N
             b = true;
         }
 
-        if ((modif & KeyEvent.ALT_MASK) != 0) {
+        if ((modif & KeyEvent.ALT_DOWN_MASK) != 0) {
             buf.append("A"); // NOI18N
             b = true;
         }
 
-        if ((modif & KeyEvent.SHIFT_MASK) != 0) {
+        if ((modif & KeyEvent.SHIFT_DOWN_MASK) != 0) {
             buf.append("S"); // NOI18N
             b = true;
         }
@@ -619,11 +619,11 @@ public class Utilities {
         for (int i = 0; i < s.length(); i++) {
             switch (s.charAt(i)) {
             case 'C':
-                m |= KeyEvent.CTRL_MASK;
+                m |= KeyEvent.CTRL_DOWN_MASK;
                 break;
 
             case 'A':
-                m |= KeyEvent.ALT_MASK;
+                m |= KeyEvent.ALT_DOWN_MASK;
                 break;
 
             case 'M':
@@ -631,7 +631,7 @@ public class Utilities {
                 break;
 
             case 'S':
-                m |= KeyEvent.SHIFT_MASK;
+                m |= KeyEvent.SHIFT_DOWN_MASK;
                 break;
 
             case 'D':
@@ -649,7 +649,7 @@ public class Utilities {
 
         return m;
     }
-    
+
     /**
     * Convert an array of objects to an array of primitive types.
     * E.g. an <code>Integer[]</code> would be changed to an <code>int[]</code>.
@@ -748,7 +748,7 @@ public class Utilities {
 
         throw new IllegalArgumentException();
     }
-    
+
     /**
     * Convert an array of primitive types to an array of objects.
     * E.g. an <code>int[]</code> would be turned into an <code>Integer[]</code>.
@@ -947,7 +947,7 @@ widthcheck:  {
 
         return (String[]) lines.toArray(s);
     }
-    
+
     private static String trimString(String s) {
         int idx = 0;
         char c;
@@ -973,5 +973,5 @@ widthcheck:  {
         } while (((c == '\n') || (c == '\r')) && (idx >= 0));
 
         return s.substring(0, idx + 2);
-    }    
+    }
 }

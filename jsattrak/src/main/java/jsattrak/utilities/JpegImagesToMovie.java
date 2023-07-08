@@ -3,20 +3,20 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  * =====================================================================
- * 
+ *
  * @(#)JpegImagesToMovie.java	1.3 01/03/13
  *
  * Copyright (c) 1999-2001 Sun Microsystems, Inc. All Rights Reserved.
@@ -94,7 +94,7 @@ import javax.media.format.VideoFormat;
  */
 public class JpegImagesToMovie implements ControllerListener, DataSinkListener {
 
-    public boolean doIt(int width, int height, int frameRate, Vector inFiles, MediaLocator outML) {
+    public boolean doIt(int width, int height, int frameRate, Vector<?> inFiles, MediaLocator outML) {
 	ImageDataSource ids = new ImageDataSource(width, height, frameRate, inFiles);
 
 	Processor p;
@@ -112,12 +112,12 @@ public class JpegImagesToMovie implements ControllerListener, DataSinkListener {
 	// Put the Processor into configured state so we can set
 	// some processing options on the processor.
 	p.configure();
-	if (!waitForState(p, p.Configured)) {
+	if (!waitForState(p, Processor.Configured)) {
 	    System.err.println("Failed to configure the processor.");
 	    return false;
 	}
 
-	// Set the output content descriptor to QuickTime. 
+	// Set the output content descriptor to QuickTime.
 	p.setContentDescriptor(new ContentDescriptor(FileTypeDescriptor.QUICKTIME));
 
 	// Query for the processor for supported formats.
@@ -136,7 +136,7 @@ public class JpegImagesToMovie implements ControllerListener, DataSinkListener {
 	// We are done with programming the processor.  Let's just
 	// realize it.
 	p.realize();
-	if (!waitForState(p, p.Realized)) {
+	if (!waitForState(p, Processor.Realized)) {
 	    System.err.println("Failed to realize the processor.");
 	    return false;
 	}
@@ -266,7 +266,7 @@ public class JpegImagesToMovie implements ControllerListener, DataSinkListener {
     boolean fileSuccess = true;
 
     /**
-     * Block until file writing is done. 
+     * Block until file writing is done.
      */
     boolean waitForFileDone() {
 	synchronized (waitFileSync) {
@@ -299,7 +299,8 @@ public class JpegImagesToMovie implements ControllerListener, DataSinkListener {
     }
 
 
-    public static void main(String args[]) 
+	@SuppressWarnings("unused")
+    public static void main(String args[])
     {
         args = new String[] {
         "-w",
@@ -344,17 +345,17 @@ public class JpegImagesToMovie implements ControllerListener, DataSinkListener {
 		i++;
 		if (i >= args.length)
 		    prUsage();
-		width = new Integer(args[i]).intValue();
+		width = Integer.valueOf(args[i]);
 	    } else if (args[i].equals("-h")) {
 		i++;
 		if (i >= args.length)
 		    prUsage();
-		height = new Integer(args[i]).intValue();
+		height = Integer.valueOf(args[i]);
 	    } else if (args[i].equals("-f")) {
 		i++;
 		if (i >= args.length)
 		    prUsage();
-		frameRate = new Integer(args[i]).intValue();
+		frameRate = Integer.valueOf(args[i]);
 	    } else if (args[i].equals("-o")) {
 		i++;
 		if (i >= args.length)
@@ -406,23 +407,24 @@ public class JpegImagesToMovie implements ControllerListener, DataSinkListener {
     /**
      * Create a media locator from the given string.
      */
+	@SuppressWarnings("unused")
     static MediaLocator createMediaLocator(String url) {
 
-	MediaLocator ml;
+		MediaLocator ml;
 
-	if (url.indexOf(":") > 0 && (ml = new MediaLocator(url)) != null)
-	    return ml;
+		if (url.indexOf(":") > 0 && (ml = new MediaLocator(url)) != null)
+			return ml;
 
-	if (url.startsWith(File.separator)) {
-	    if ((ml = new MediaLocator("file:" + url)) != null)
-		return ml;
-	} else {
-	    String file = "file:" + System.getProperty("user.dir") + File.separator + url;
-	    if ((ml = new MediaLocator(file)) != null)
-		return ml;
-	}
+		if (url.startsWith(File.separator)) {
+			if ((ml = new MediaLocator("file:" + url)) != null)
+			return ml;
+		} else {
+			String file = "file:" + System.getProperty("user.dir") + File.separator + url;
+			if ((ml = new MediaLocator(file)) != null)
+			return ml;
+		}
 
-	return null;
+		return null;
     }
 
 
@@ -441,7 +443,7 @@ public class JpegImagesToMovie implements ControllerListener, DataSinkListener {
 
 	ImageSourceStream streams[];
 
-	ImageDataSource(int width, int height, int frameRate, Vector images) {
+	ImageDataSource(int width, int height, int frameRate, Vector<?> images) {
 	    streams = new ImageSourceStream[1];
 	    streams[0] = new ImageSourceStream(width, height, frameRate, images);
 	}
@@ -504,14 +506,14 @@ public class JpegImagesToMovie implements ControllerListener, DataSinkListener {
      */
     class ImageSourceStream implements PullBufferStream {
 
-	Vector images;
+	Vector<?> images;
 	int width, height;
 	VideoFormat format;
 
 	int nextImage = 0;	// index of the next image to be read.
 	boolean ended = false;
 
-	public ImageSourceStream(int width, int height, int frameRate, Vector images) {
+	public ImageSourceStream(int width, int height, int frameRate, Vector<?> images) {
 	    this.width = width;
 	    this.height = height;
 	    this.images = images;
@@ -552,7 +554,7 @@ public class JpegImagesToMovie implements ControllerListener, DataSinkListener {
 
 	    System.err.println("  - reading image file: " + imageFile);
 
-	    // Open a random access file for the next image. 
+	    // Open a random access file for the next image.
 	    RandomAccessFile raFile;
 	    raFile = new RandomAccessFile(imageFile, "r");
 
@@ -577,7 +579,7 @@ public class JpegImagesToMovie implements ControllerListener, DataSinkListener {
 	    buf.setOffset(0);
 	    buf.setLength((int)raFile.length());
 	    buf.setFormat(format);
-	    buf.setFlags(buf.getFlags() | buf.FLAG_KEY_FRAME);
+	    buf.setFlags(buf.getFlags() | Buffer.FLAG_KEY_FRAME);
 
 	    // Close the random access file.
 	    raFile.close();

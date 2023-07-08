@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,22 +31,18 @@ import java.awt.Frame;
  */
 public class JProgressDialog extends javax.swing.JDialog
 {
-    
+
     /** Creates new form JProgressDialog */
     public JProgressDialog(Frame parent, boolean modal)
     {
         super(parent, modal);
         initComponents();
-        
+
         //this.setLocation(300,300);
-        
+
         this.setLocation( parent.getX() + parent.getWidth()/3, parent.getY()+parent.getHeight()/2 );
-        if(parent == null)
-        {
-            System.out.println("JProgress Dialog Parent == NULL" );
-        }
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -89,7 +85,7 @@ public class JProgressDialog extends javax.swing.JDialog
         );
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    
+
     /**
      * @param args the command line arguments
      */
@@ -103,24 +99,24 @@ public class JProgressDialog extends javax.swing.JDialog
             }
         });
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JProgressBar jProgressBar;
     private javax.swing.JLabel statusLabel;
     // End of variables declaration//GEN-END:variables
-    
-    
+
+
     public void setProgress(int percent)
     {
         jProgressBar.setValue(percent);
         this.repaint();
     }
-    
+
     public void setStatusText(String txt)
     {
         statusLabel.setText(txt);
     }
-    
-    
-    
+
+
+
 }

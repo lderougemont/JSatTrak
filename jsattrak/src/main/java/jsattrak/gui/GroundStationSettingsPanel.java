@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,32 +32,33 @@ import javax.swing.JInternalFrame;
  *
  * @author  sgano
  */
+@SuppressWarnings("unused")
 public class GroundStationSettingsPanel extends javax.swing.JPanel
 {
-    
+
     GroundStation gsProps;
-    
-    private boolean okHit = false; // if okay was hit
-    
+
+    // private boolean okHit = false; // if okay was hit
+
     JInternalFrame iframe; // used to know what its parent frame is - to close window
-    
+
     JSatTrak app; // used to force repaints
-    
-    
+
+
     /** Creates new form GroundStationSettingsPanel */
     public GroundStationSettingsPanel(GroundStation gsProps, JSatTrak app)
     {
         initComponents();
-        
+
         this.gsProps = gsProps;
         this.app = app;
-               
+
         // setup the fields
         iniGSProps();
     }
-    
-    
-    // initialize properties in the dialog 
+
+
+    // initialize properties in the dialog
     private void iniGSProps()
     {
         // general 2d
@@ -65,19 +66,19 @@ public class GroundStationSettingsPanel extends javax.swing.JPanel
         showNameCheckBox.setSelected( gsProps.isShow2DName() );
         colorPanel.setBackground( gsProps.getStationColor() );
         pixelSizeSpinner.setValue(gsProps.getGroundStation2DPixelSize());
-        
+
         // general 3d
         include3DCheckBox.setSelected( gsProps.isShow3D());
         showName3DCheckBox.setSelected(gsProps.isShow3DName());
-        
-        
+
+
     } // iniGSProps
-    
+
     public void setInternalFrame(JInternalFrame iframe)
     {
         this.iframe = iframe;
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -292,7 +293,7 @@ public class GroundStationSettingsPanel extends javax.swing.JPanel
         Color oldColor = colorPanel.getBackground();
         // show color Dialog
         Color newColor = JColorChooser.showDialog(app,"Choose Satellite Color", oldColor);
-        
+
         if (newColor != null)
         {
             colorPanel.setBackground(newColor);
@@ -303,7 +304,7 @@ public class GroundStationSettingsPanel extends javax.swing.JPanel
     {//GEN-HEADEREND:event_applyButtonActionPerformed
         // save settings
         boolean updateMaps = saveSettings();
-        
+
         // force repaint
         app.forceRepainting(updateMaps);
     }//GEN-LAST:event_applyButtonActionPerformed
@@ -312,14 +313,14 @@ public class GroundStationSettingsPanel extends javax.swing.JPanel
     {//GEN-HEADEREND:event_okButtonActionPerformed
         // save all settings back to satProp
         boolean updateMaps = saveSettings();
-        
-        
+
+
         // force repaint of 2D window
         // maybe do this from JSatTrack -- when internal frame is closed of this type and ok was hit?
-        okHit = true;
+        // okHit = true;
         // force repaint
         app.forceRepainting(updateMaps);
-        
+
         // close internal frame
         try
         {
@@ -339,8 +340,8 @@ public class GroundStationSettingsPanel extends javax.swing.JPanel
         catch(Exception e)
         {}
     }//GEN-LAST:event_cancelButtonActionPerformed
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyButton;
     private javax.swing.JButton cancelButton;
@@ -359,8 +360,8 @@ public class GroundStationSettingsPanel extends javax.swing.JPanel
     private javax.swing.JCheckBox showName3DCheckBox;
     private javax.swing.JCheckBox showNameCheckBox;
     // End of variables declaration//GEN-END:variables
-    
-    
+
+
         // Save settings to SatProp
     // returns a boolean if Map data needs to be updated
     private boolean saveSettings()
@@ -372,14 +373,14 @@ public class GroundStationSettingsPanel extends javax.swing.JPanel
         gsProps.setShow2DName( showNameCheckBox.isSelected() );
         gsProps.setStationColor( colorPanel.getBackground() );
         gsProps.setGroundStation2DPixelSize( ((Integer)pixelSizeSpinner.getValue()).intValue() );
-        
+
         // 3d view
         gsProps.setShow3D(include3DCheckBox.isSelected());
         gsProps.setShow3DName(showName3DCheckBox.isSelected());
-        
-        
+
+
         return updateMapData;
     } // saveSettings
-    
-    
+
+
 }

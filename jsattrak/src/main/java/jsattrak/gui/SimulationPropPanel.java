@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,7 +23,6 @@
 
 package jsattrak.gui;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
@@ -33,32 +32,32 @@ import javax.swing.JInternalFrame;
  *
  * @author  sgano
  */
-public class SimulationPropPanel extends javax.swing.JPanel implements Serializable
+public class SimulationPropPanel extends javax.swing.JPanel
 {
-    
+
     JSatTrak app;
     JInternalFrame iframe; // used to know what its parent frame is - to close window
-    
+
     // date formats for displaying and reading in
     private SimpleDateFormat dateformat = new SimpleDateFormat("dd MMM yyyy HH:mm:ss.SSS z");
     private SimpleDateFormat dateformatShort1 = new SimpleDateFormat("dd MMM y H:m:s.S z");
     private SimpleDateFormat dateformatShort2 = new SimpleDateFormat("dd MMM y H:m:s z"); // no Milliseconds
-    
+
     /** Creates new form SimulationPropPanel */
     public SimulationPropPanel()
     {
         initComponents();
     }
-    
+
      public SimulationPropPanel(JSatTrak app)
     {
         this.app = app;
         initComponents();
-        
+
         // update ini gui with current options
         realTimeTextField.setText( app.getRealTimeAnimationRefreshRateMs() + "");
         nonRealTimeTextField.setText( app.getNonRealTimeAnimationRefreshRateMs() + "");
-        
+
         if(app.isEpochTimeEqualsCurrentTime())
         {
             currentTimeRadioButton.doClick();
@@ -67,19 +66,19 @@ public class SimulationPropPanel extends javax.swing.JPanel implements Serializa
         {
             specifiedTimeRadioButton.doClick();
         }
-        
+
         timeTextField.setText( app.getScenarioEpochDate().getDateTimeStr() );
-        
+
         // get wwj online mode
         wwjOnlineModeCheckBox.setSelected( !app.isWwjOfflineMode() );
-        
+
     }
-     
+
      public void setInternalFrame(JInternalFrame iframe)
      {
          this.iframe = iframe;
      }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -259,7 +258,7 @@ public class SimulationPropPanel extends javax.swing.JPanel implements Serializa
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_okButtonActionPerformed
     {//GEN-HEADEREND:event_okButtonActionPerformed
         saveSettings();
-        
+
         // close internal frame
         try
         {
@@ -296,8 +295,8 @@ public class SimulationPropPanel extends javax.swing.JPanel implements Serializa
         specifiedTimeRadioButton.setSelected(true);
         timeTextField.setEnabled(true);
     }//GEN-LAST:event_specifiedTimeRadioButtonActionPerformed
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyButton;
     private javax.swing.JButton cancelButton;
@@ -314,6 +313,7 @@ public class SimulationPropPanel extends javax.swing.JPanel implements Serializa
     private javax.swing.JTextField timeTextField;
     private javax.swing.JCheckBox wwjOnlineModeCheckBox;
     // End of variables declaration//GEN-END:variables
+    @SuppressWarnings("unused")
     private void saveSettings()
     {
 
@@ -327,7 +327,7 @@ public class SimulationPropPanel extends javax.swing.JPanel implements Serializa
         {
         }
 
-        
+
         // get wwj online mode
         app.setWwjOfflineMode( !wwjOnlineModeCheckBox.isSelected() );
         // set WWJ value
@@ -392,8 +392,8 @@ public class SimulationPropPanel extends javax.swing.JPanel implements Serializa
 
             } // if date accepted
         } // save time if needed
-        
-                
+
+
     } // saveSettings
-    
+
 }

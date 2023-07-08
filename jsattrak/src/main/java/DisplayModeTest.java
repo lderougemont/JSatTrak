@@ -27,7 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 /*
   test @(#)DisplayModeTest.java	1.4 01/07/17
@@ -116,6 +116,7 @@ class DisplayModeModel extends DefaultTableModel {
 
 }
 
+@SuppressWarnings("unused")
 public class DisplayModeTest extends JFrame implements ActionListener,
     ListSelectionListener {
 
@@ -157,19 +158,19 @@ public class DisplayModeTest extends JFrame implements ActionListener,
     public void actionPerformed(ActionEvent ev) {
         Object source = ev.getSource();
         if (source == exit) {
-            
-            
-            
-            
+
+
+
+
             device.setDisplayMode(originalDM);
-            
+
             device.setFullScreenWindow(null); // back to windowed mode
-            
+
             pack();
             setVisible(true);
             //setUndecorated(false);
             setResizable(true);
-            
+
             //System.exit(0);
         } else { // if (source == changeDM)
             int index = dmList.getSelectionModel().getAnchorSelectionIndex();
@@ -257,14 +258,14 @@ public class DisplayModeTest extends JFrame implements ActionListener,
     }
 
     public void begin() {
-        
+
         if(!device.isFullScreenSupported())
         {
             isFullScreen = false; // always false
         }
 //        isFullScreen = device.isFullScreenSupported();
 //        isFullScreen = false;
-        
+
         setUndecorated(isFullScreen);
         setResizable(!isFullScreen);
         if (isFullScreen) {
@@ -273,7 +274,7 @@ public class DisplayModeTest extends JFrame implements ActionListener,
             validate();
         } else {
             // Windowed mode
-            
+
             pack();
             setVisible(true);
         }

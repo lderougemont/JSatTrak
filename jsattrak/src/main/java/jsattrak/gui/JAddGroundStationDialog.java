@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,25 +31,25 @@ import javax.swing.JOptionPane;
  */
 public class JAddGroundStationDialog extends javax.swing.JDialog
 {
-    
+
     private boolean okHit = false; // set to true if user hit okay
-    
+
     private String network;
     private String siteName;
     private double latitude;
     private double longitude;
     private double altitude;
     private boolean saveData;
-    
+
     /** Creates new form JAddGroundStationDialog */
     public JAddGroundStationDialog(java.awt.Frame parent, boolean modal)
     {
         super(parent, modal);
         initComponents();
-        
+
         this.setLocation(parent.getLocation().x+40,parent.getLocation().y+40 );
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -232,10 +232,10 @@ public class JAddGroundStationDialog extends javax.swing.JDialog
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_okButtonActionPerformed
     {//GEN-HEADEREND:event_okButtonActionPerformed
-        
+
         // error
         boolean error = false;
-        
+
         // save data
         network = networkTextField.getText();
         siteName = siteNameTextField.getText();
@@ -250,7 +250,7 @@ public class JAddGroundStationDialog extends javax.swing.JDialog
             error = true;
         }
         saveData = saveCheckBox.isSelected();
-        
+
         // make sure fields are filled in
         if( network.equalsIgnoreCase("") || siteName.equalsIgnoreCase("") || error)
         {
@@ -259,7 +259,7 @@ public class JAddGroundStationDialog extends javax.swing.JDialog
             JOptionPane.showMessageDialog(this, "Data in incomplete or inaccurate!", "Data ERROR", JOptionPane.ERROR_MESSAGE);
             return; // return from function do not allow ok
         }
-        
+
         // set okay hit
         okHit = true;
         this.setVisible(false); // close dialog
@@ -270,7 +270,7 @@ public class JAddGroundStationDialog extends javax.swing.JDialog
         okHit = false;
         this.setVisible(false); // close dialog
     }//GEN-LAST:event_cancelButtonActionPerformed
-    
+
     /**
      * @param args the command line arguments
      */
@@ -292,7 +292,7 @@ public class JAddGroundStationDialog extends javax.swing.JDialog
             }
         });
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField altTextField;
     private javax.swing.JButton cancelButton;
@@ -349,5 +349,5 @@ public class JAddGroundStationDialog extends javax.swing.JDialog
     {
         return saveData;
     }
-    
+
 }

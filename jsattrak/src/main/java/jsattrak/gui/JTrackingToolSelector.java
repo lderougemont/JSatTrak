@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,41 +34,41 @@ import javax.swing.DefaultListModel;
  */
 public class JTrackingToolSelector extends javax.swing.JPanel
 {
-    
+
     Hashtable<String,SatelliteTleSGP4> satHash;
     Hashtable<String,GroundStation> gsHash;
     JSatTrak app;
-    
-    DefaultListModel satListModel;
-    DefaultListModel gsListModel;
-    
+
+    DefaultListModel<String> satListModel;
+    DefaultListModel<String> gsListModel;
+
     /** Creates new form JTrackingToolSelector */
     public JTrackingToolSelector(Hashtable<String,SatelliteTleSGP4> satHash, Hashtable<String,GroundStation> gsHash, JSatTrak app)
     {
         this.satHash = satHash;
         this.gsHash = gsHash;
         this.app = app;
-        
+
         initComponents();
-        
+
         // fill out sat and GS lists
-        satListModel = new DefaultListModel();
+        satListModel = new DefaultListModel<>();
         satList.setModel(satListModel); // list is empty to start with
-        gsListModel = new DefaultListModel();
+        gsListModel = new DefaultListModel<>();
         gsList.setModel(gsListModel); // list is empty to start with
-        
+
         for(GroundStation gs : gsHash.values())
         {
             gsListModel.addElement(gs.getStationName());
         }
-        
+
         for(SatelliteTleSGP4 sat : satHash.values())
         {
             satListModel.addElement(sat.getName());
         }
-        
+
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -83,10 +83,10 @@ public class JTrackingToolSelector extends javax.swing.JPanel
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        gsList = new javax.swing.JList();
+        gsList = new javax.swing.JList<>();
         openTrackingToolButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        satList = new javax.swing.JList();
+        satList = new javax.swing.JList<>();
         jLabel4 = new javax.swing.JLabel();
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -115,11 +115,11 @@ public class JTrackingToolSelector extends javax.swing.JPanel
 
         jLabel3.setText("Ground Stations:");
 
-        gsList.setModel(new javax.swing.AbstractListModel()
+        gsList.setModel(new javax.swing.AbstractListModel<>()
         {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
+            public String getElementAt(int i) { return strings[i]; }
         });
         jScrollPane1.setViewportView(gsList);
 
@@ -132,11 +132,11 @@ public class JTrackingToolSelector extends javax.swing.JPanel
             }
         });
 
-        satList.setModel(new javax.swing.AbstractListModel()
+        satList.setModel(new javax.swing.AbstractListModel<>()
         {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
+            public String getElementAt(int i) { return strings[i]; }
         });
         jScrollPane2.setViewportView(satList);
 
@@ -191,22 +191,22 @@ public class JTrackingToolSelector extends javax.swing.JPanel
         if (satList.getSelectedIndex() < 0 || gsList.getSelectedIndex() <0)
         {
             // alert user
-            
+
             return; // do nothing
-        } // 
-        
-        SatelliteTleSGP4 sat = satHash.get( satList.getSelectedValue().toString() );
-        GroundStation gs = gsHash.get( gsList.getSelectedValue().toString() );
-        
+        } //
+
+        // SatelliteTleSGP4 sat = satHash.get( satList.getSelectedValue().toString() );
+        // GroundStation gs = gsHash.get( gsList.getSelectedValue().toString() );
+
         // create a internal frame with a TrackingTool
-        
+
         // add tracking tool to main app desktop and hash to be updated
-        
+
     }//GEN-LAST:event_openTrackingToolButtonActionPerformed
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JList gsList;
+    private javax.swing.JList<String> gsList;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -215,7 +215,7 @@ public class JTrackingToolSelector extends javax.swing.JPanel
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JButton openTrackingToolButton;
-    private javax.swing.JList satList;
+    private javax.swing.JList<String> satList;
     // End of variables declaration//GEN-END:variables
-    
+
 }

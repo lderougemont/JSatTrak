@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,49 +35,49 @@ public class PropogatorPanel extends javax.swing.JPanel
 {
     PropogatorNode pNode;
     private JInternalFrame iframe; // used to know what its parent frame is - to close window
-    
-    
+
+
     /** Creates new form PropogatorPanel */
     public PropogatorPanel(PropogatorNode pNode, JInternalFrame iframe)
     {
         this.pNode = pNode;
         this.iframe = iframe;
-        
+
         initComponents();
-        
+
         // fill in fields with saved values
         jSpinner1.setValue( pNode.getN_max() );
         jSpinner2.setValue( pNode.getM_max() );
-        
+
         jCheckBox1.setSelected( pNode.isIncludeLunarPert() );
         jCheckBox2.setSelected( pNode.isIncludeSunPert() );
         jCheckBox3.setSelected( pNode.isIncludeSolRadPress() );
         jCheckBox4.setSelected( pNode.isIncludeAtmosDrag() );
-        
+
         jTextField1.setText(""+pNode.getMass());
         jTextField2.setText(""+pNode.getArea());
         jTextField3.setText(""+pNode.getCR());
         jTextField4.setText(""+pNode.getCD());
-        
+
         jTextField5.setText(""+pNode.getStepSize());
-        
+
         // Hprop-7/8
         jTextField6.setText(""+pNode.getMaxStepSize());
         jTextField7.setText(""+pNode.getMinStepSize());
         jTextField8.setText(""+pNode.getRelAccuracy());
-      
+
         // set which prop in use
         inputComboBox.setSelectedIndex(pNode.getPropogator());
-        
+
         // prop len
         jTextField9.setText(""+pNode.getPopogateTimeLen());
-        
+
         // stoppping conditions
         perigeeCheckBox.setSelected( pNode.isStopOnPerigee());
         apogeeCheckBox.setSelected( pNode.isStopOnApogee());
-       
+
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -87,7 +87,7 @@ public class PropogatorPanel extends javax.swing.JPanel
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        inputComboBox = new javax.swing.JComboBox();
+        inputComboBox = new javax.swing.JComboBox<String>();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         applyButton = new javax.swing.JButton();
@@ -131,7 +131,7 @@ public class PropogatorPanel extends javax.swing.JPanel
 
         jLabel1.setText("Propogator:");
 
-        inputComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Hprop RK4", "Hprop RK8", "Hprop RK7-8" }));
+        inputComboBox.setModel(new javax.swing.DefaultComboBoxModel<String>(new String[] { "Hprop RK4", "Hprop RK8", "Hprop RK7-8" }));
         inputComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 inputComboBoxActionPerformed(evt);
@@ -483,21 +483,21 @@ public class PropogatorPanel extends javax.swing.JPanel
             propTabbedPane.setEnabledAt(0, true); // kep
             propTabbedPane.setEnabledAt(1, false); // j2k
             propTabbedPane.setSelectedIndex(0);
-            
+
         }
         else if(inputComboBox.getSelectedIndex() == 2) // Hprop 7-8, adaptive
         {
             propTabbedPane.setEnabledAt(0, true); // kep
             propTabbedPane.setEnabledAt(1, true); // j2k
             //propTabbedPane.setSelectedIndex(1);
-            
+
         }
     }//GEN-LAST:event_inputComboBoxActionPerformed
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_okButtonActionPerformed
     {//GEN-HEADEREND:event_okButtonActionPerformed
         boolean success = saveSettings();
-        
+
         // close internal frame
         if (success)
         {
@@ -526,13 +526,13 @@ public class PropogatorPanel extends javax.swing.JPanel
     {//GEN-HEADEREND:event_applyButtonActionPerformed
         saveSettings();
     }//GEN-LAST:event_applyButtonActionPerformed
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox apogeeCheckBox;
     private javax.swing.JButton applyButton;
     private javax.swing.JButton cancelButton;
-    private javax.swing.JComboBox inputComboBox;
+    private javax.swing.JComboBox<String> inputComboBox;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JCheckBox jCheckBox3;
@@ -572,14 +572,14 @@ public class PropogatorPanel extends javax.swing.JPanel
     private javax.swing.JCheckBox perigeeCheckBox;
     private javax.swing.JTabbedPane propTabbedPane;
     // End of variables declaration//GEN-END:variables
- 
-    
+
+
     private boolean saveSettings()
     {
         // save settings back to Node
         boolean saveSuccess = true;
-        
-       
+
+
         try
         {
             // fill in fields with saved values
@@ -590,14 +590,14 @@ public class PropogatorPanel extends javax.swing.JPanel
             pNode.setIncludeSunPert(jCheckBox2.isSelected());
             pNode.setIncludeSolRadPress(jCheckBox3.isSelected());
             pNode.setIncludeAtmosDrag(jCheckBox4.isSelected());
-            
+
             pNode.setMass( Double.parseDouble( jTextField1.getText() ) );
             pNode.setArea( Double.parseDouble( jTextField2.getText() ) );
             pNode.setCR( Double.parseDouble( jTextField3.getText() ) );
             pNode.setCD( Double.parseDouble( jTextField4.getText() ) );
-            
+
             pNode.setStepSize( Double.parseDouble( jTextField5.getText() ) );
-            
+
             pNode.setPopogateTimeLen( Double.parseDouble( jTextField9.getText() ) );
 
             // Hprop-7/8 only if needed
@@ -606,25 +606,25 @@ public class PropogatorPanel extends javax.swing.JPanel
                 pNode.setMaxStepSize( Double.parseDouble( jTextField6.getText() ) );
                 pNode.setMinStepSize( Double.parseDouble( jTextField7.getText() ) );
                 pNode.setRelAccuracy( Double.parseDouble( jTextField8.getText() ) );
-                
+
             }
 
             // set which prop in use
             pNode.setPropogator(inputComboBox.getSelectedIndex());
-            
+
             // stopping conditions
             pNode.setStopOnPerigee(perigeeCheckBox.isSelected());
             pNode.setStopOnApogee(apogeeCheckBox.isSelected());
 
         }
-        catch(Exception e) 
+        catch(Exception e)
         {
             JOptionPane.showMessageDialog(this, "Date format error, check input.", "Data ERROR", JOptionPane.ERROR_MESSAGE);
             saveSuccess = false;
         }
-        
+
         return saveSuccess;
-        
+
     } // save settings
-    
+
 }

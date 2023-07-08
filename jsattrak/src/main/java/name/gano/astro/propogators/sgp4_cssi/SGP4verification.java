@@ -3,13 +3,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,12 +45,13 @@ import java.io.InputStreamReader;
  */
 public class SGP4verification
 {
+    @SuppressWarnings("unused")
     public static void main(String[] args)
     {
         // settings
         char opsmode = SGP4utils.OPSMODE_IMPROVED; // OPSMODE_IMPROVED
         SGP4unit.Gravconsttype gravconsttype = SGP4unit.Gravconsttype.wgs72;
-        
+
         // tle verification file (with extra start, stop, timestep params on line 2)
         String verTLEfile = "sgp4-ver.tle"; // sgp4-ver.tle shawn_ver.tle
 
@@ -188,7 +189,7 @@ public class SGP4verification
                         } // if satrec.error == 0
 
                     } // while propagating the orbit
-                    
+
                 } // ignore lines starting with #
             }
             //Close the input stream
@@ -268,7 +269,7 @@ public class SGP4verification
             {
                 System.out.println("** Files have DIFFERENT number of lines **");
             }
-            
+
             System.out.println("Total lines that don't match: " + lineMismatches);
             System.out.println("Total number of lines in shortest file: " + (line-1));
 

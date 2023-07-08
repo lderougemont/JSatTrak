@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,47 +37,47 @@ import jsattrak.utilities.J3DEarthComponent;
  */
 public class JThreeDViewPropPanel extends javax.swing.JPanel
 {
-    
-    private boolean okHit = false; // if okay was hit
-    
+
+    // private boolean okHit = false; // if okay was hit
+
     JDialog iframe; // used to know what its parent frame is - to close window
-    
+
     JSatTrak app; // used to force repaints
-    
+
     J3DEarthComponent threeDPanel; // parent Panel
     public WorldWindow wwd; // wwj object
-    
+
     /** Creates new form JThreeDViewPropPanel */
     public JThreeDViewPropPanel()
     {
         initComponents();
     }
-    
+
     public JThreeDViewPropPanel(JSatTrak app, J3DEarthComponent threeDPanel, WorldWindow wwd)
     {
         this.app = app;
         this.threeDPanel = threeDPanel;
         this.wwd = wwd;
-        
+
 //        //((OrbitView)wwd.getView()).setLatitude(Angle.fromDegrees(-45));
 //        //System.out.println("Eye pos: lat: deg:" + ((OrbitView)wwd.getView()).getLatitude().getDegrees());
 //        double viewPitch = ((OrbitView) wwd.getView()).getPitch().getDegrees();
 //        double viewHeading = ((OrbitView) wwd.getView()).getHeading().getDegrees();
 //        System.out.println("pitch:" + viewPitch + ", heading:" + viewHeading);
-//        
+//
 //        //double viewLat = ((OrbitView) wwd.getView()).getLatitude().getDegrees();
 //        double viewLat = ((OrbitView) wwd.getView()).getLookAtLatitude().getDegrees();
 //        double viewLon = ((OrbitView) wwd.getView()).getLookAtLongitude().getDegrees();
 //        double viewAlt = ((OrbitView) wwd.getView()).getAltitude();
 //        System.out.println("lat:" + viewLat + "(" + ((OrbitView) wwd.getView()).getLatitude().getDegrees() + ")"+", lon:" + viewLon + ", alt:"+viewAlt);
-        
+
         initComponents();
-        
+
         //set inital settings
         // === Camera Properties =============
         Angle fov = wwd.getView().getFieldOfView();
         fovTextField.setText("" + fov.getDegrees() );
-        
+
         if(threeDPanel.isViewModeECI())
         {
             eciRadioButton.setSelected(true);
@@ -88,7 +88,7 @@ public class JThreeDViewPropPanel extends javax.swing.JPanel
             ecefRadioButton.setSelected(true);
             eciRadioButton.setSelected(false);
         }
-        
+
         if(threeDPanel.isModelViewMode())
         {
             modelViewRadioButton.doClick();
@@ -133,12 +133,12 @@ public class JThreeDViewPropPanel extends javax.swing.JPanel
 
 
     } // JThreeDViewPropPanel
-    
+
     public void setParentDialog(JDialog iframe)
     {
         this.iframe = iframe;
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -161,7 +161,7 @@ public class JThreeDViewPropPanel extends javax.swing.JPanel
         jPanel2 = new javax.swing.JPanel();
         earthViewRadioButton = new javax.swing.JRadioButton();
         modelViewRadioButton = new javax.swing.JRadioButton();
-        modeViewComboBox = new javax.swing.JComboBox();
+        modeViewComboBox = new javax.swing.JComboBox<String>();
         jPanel3 = new javax.swing.JPanel();
         sunShadingCheckBox = new javax.swing.JCheckBox();
         flareCheckBox = new javax.swing.JCheckBox();
@@ -296,7 +296,7 @@ public class JThreeDViewPropPanel extends javax.swing.JPanel
             }
         });
 
-        modeViewComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        modeViewComboBox.setModel(new javax.swing.DefaultComboBoxModel<String>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         modeViewComboBox.setEnabled(false);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -560,7 +560,7 @@ public class JThreeDViewPropPanel extends javax.swing.JPanel
     {//GEN-HEADEREND:event_applyButtonActionPerformed
         // save settings
         boolean updateMaps = saveSettings();
-        
+
         // force repaint
         app.forceRepainting(updateMaps);
     }//GEN-LAST:event_applyButtonActionPerformed
@@ -569,21 +569,21 @@ public class JThreeDViewPropPanel extends javax.swing.JPanel
     {//GEN-HEADEREND:event_okButtonActionPerformed
         // save all settings back to satProp
          boolean updateMaps = saveSettings();
-        
-        
+
+
         // force repaint of 2D window
           // maybe do this from JSatTrack -- when internal frame is closed of this type and ok was hit?
-        okHit = true;
+        // okHit = true;
         // force repaint
         app.forceRepainting(updateMaps);
-        
+
         // close internal frame
         try
         {
             iframe.dispose(); // could setClosed(true)
         }
         catch(Exception e){}
-        
+
     }//GEN-LAST:event_okButtonActionPerformed
 
     private void ecefRadioButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ecefRadioButtonActionPerformed
@@ -595,39 +595,39 @@ public class JThreeDViewPropPanel extends javax.swing.JPanel
     private void eciRadioButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_eciRadioButtonActionPerformed
     {//GEN-HEADEREND:event_eciRadioButtonActionPerformed
         ecefRadioButton.setSelected(false);
-        eciRadioButton.setSelected(true);    
+        eciRadioButton.setSelected(true);
     }//GEN-LAST:event_eciRadioButtonActionPerformed
 
 private void earthViewRadioButtonStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_earthViewRadioButtonStateChanged
-    
-    // if selected - auto set 
+
+    // if selected - auto set
     if(earthViewRadioButton.isSelected())
     {
         eciRadioButton.setEnabled(true);
         eciRadioButton.doClick(); // auto pick this
     }
-    
+
     modeViewComboBox.setEnabled(!earthViewRadioButton.isSelected());
 }//GEN-LAST:event_earthViewRadioButtonStateChanged
 
 private void modelViewRadioButtonStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_modelViewRadioButtonStateChanged
-    
-    
+
+
     if(modelViewRadioButton.isSelected())
     {
         modeViewComboBox.setEnabled(modelViewRadioButton.isSelected());
         ecefRadioButton.doClick();
-        
+
         eciRadioButton.setEnabled(false); // hide so user can't seletct this (not possible in this view anyways)
     }
-    
+
     // fill in object list with all satellites
     modeViewComboBox.removeAllItems();
     for(AbstractSatellite sat : app.getSatHash().values())
     {
         modeViewComboBox.addItem(sat.getName());
     }
-    
+
 }//GEN-LAST:event_modelViewRadioButtonStateChanged
 
 private void terminatorColorLabelMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_terminatorColorLabelMouseClicked
@@ -658,8 +658,8 @@ private void gridColorLabelMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRS
         gridColorLabel.setBackground(newColor);
     }
 }//GEN-LAST:event_gridColorLabelMouseClicked
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider ambientSlider;
     private javax.swing.JButton applyButton;
@@ -687,7 +687,7 @@ private void gridColorLabelMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRS
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JComboBox modeViewComboBox;
+    private javax.swing.JComboBox<String> modeViewComboBox;
     private javax.swing.JTextField modelFarTextField;
     private javax.swing.JTextField modelNearTextField;
     private javax.swing.JRadioButton modelViewRadioButton;
@@ -699,12 +699,12 @@ private void gridColorLabelMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRS
     private javax.swing.JCheckBox terminatorCheckBox;
     private javax.swing.JLabel terminatorColorLabel;
     // End of variables declaration//GEN-END:variables
-    
-    
+
+
     private boolean saveSettings()
     {
         boolean updateMapData = false;
-        
+
         // === Camera Properties =============
         try
         {
@@ -712,8 +712,8 @@ private void gridColorLabelMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRS
             wwd.getView().setFieldOfView(Angle.fromDegrees(fov));
         }
         catch(Exception e){}
-        
-        
+
+
         if(eciRadioButton.isSelected())
         {
             threeDPanel.setViewModeECI(true);
@@ -722,11 +722,11 @@ private void gridColorLabelMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRS
         {
              threeDPanel.setViewModeECI(false);
         }
-        
+
         if(modelViewRadioButton.isSelected())
         {
             threeDPanel.setModelViewString(modeViewComboBox.getSelectedItem().toString()); // save name
-            
+
             threeDPanel.setModelViewMode(true); // do this last!
         }
         else

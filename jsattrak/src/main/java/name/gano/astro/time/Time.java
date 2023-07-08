@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,7 +18,7 @@
  *   limitations under the License.
  * =====================================================================
  * Shawn Gano
- * 1 Sept 2007 
+ * 1 Sept 2007
  *
  * Function to hold current UTCG time and convert to TT/ET if needed or Julian Date / MJD etc.
  * Main date contruct is the GreogorianCalendar
@@ -38,7 +38,7 @@ import java.util.TimeZone;
  * @author Shawn E. Gano
  */
 public class Time implements java.io.Serializable
-{     
+{
     // time units
     /**
      * year type
@@ -72,25 +72,25 @@ public class Time implements java.io.Serializable
      * Millisecond type
      */
     public final static int MILLISECOND=Calendar.MILLISECOND;
-    
+
     // main calendar
     private GregorianCalendar currentTime;
     // other date formats
     private double mjd; // Modified Julian date
-    private double mjde; // Modified Julian Day Ephemeris time 
-    
+    private double mjde; // Modified Julian Day Ephemeris time
+
     // decimal formats
     private final static DecimalFormat fmt4Dig = new DecimalFormat("0000");
     private final static DecimalFormat fmt2Dig = new DecimalFormat("00");
-    
+
     // output format
     private DateFormat dateFormat=null;
-    
+
     // time zone
     private final static TimeZone tz=TimeZone.getTimeZone("UTC");  // default internal timezone
     private TimeZone tzStringFormat = TimeZone.getTimeZone("UTC"); // SEG removed static April 16 2009
-    
-    
+
+
     public static void main(String args[])
     {
         Time t = new Time(2007,9,1,11,59,0.0);
@@ -101,13 +101,13 @@ public class Time implements java.io.Serializable
         // 2454344.5
         t.addSeconds(120.0); // add 60 sec
         System.out.println("Jul Date + 120 sec:" + t.getJulianDate()+ ", string:" + t.getDateTimeStr());
-        
+
         t.add(Time.HOUR,12);
         System.out.println("Jul Date + 12 hour:" + t.getJulianDate()+ ", string:" + t.getDateTimeStr());
-        
+
     }
-    
-    
+
+
     /**
      * Default Constructor
      */
@@ -115,12 +115,12 @@ public class Time implements java.io.Serializable
     {
         // create new calendar with default timezone
         currentTime = new GregorianCalendar(tz);
-        
+
         // update other time formates
         updateTimeMeasures();
     }
-    
-  
+
+
     /**
      * Constructor with given calendar date (UT)
      *
@@ -133,24 +133,24 @@ public class Time implements java.io.Serializable
      */
     public Time(int year, int month, int day, int hour, int min, double sec)
     {
-        int secInt = new Double( Math.floor(sec) ).intValue();
-        int millisec = new Double( Math.round((sec - Math.floor(sec))*1000.0) ).intValue();
-        
+        int secInt = (int) Math.floor(sec);
+        long millisec = Math.round((sec - Math.floor(sec))*1000.0);
+
         currentTime = new GregorianCalendar(tz); // set default timezone
-        
+
         currentTime.set(Calendar.YEAR,year);
         currentTime.set(Calendar.MONTH,month-1);
         currentTime.set(Calendar.DATE,day);
         currentTime.set(Calendar.HOUR_OF_DAY,hour);
         currentTime.set(Calendar.MINUTE,min);
         currentTime.set(Calendar.SECOND,secInt);
-        currentTime.set(Calendar.MILLISECOND,millisec);
-        
+        currentTime.set(Calendar.MILLISECOND,(int)millisec);
+
         // update other time formats
         updateTimeMeasures();
     }
-    
-    
+
+
 /**
  * Updates the time to current system time
  */
@@ -160,7 +160,7 @@ public class Time implements java.io.Serializable
         //currentTime =new GregorianCalendar(tz);
         currentTime.setTimeInMillis( System.currentTimeMillis() );
         //currentTime.setTime( new Date() );
-        
+
         // update other time formats
         updateTimeMeasures();
     } // update2CurrentTime
@@ -172,25 +172,25 @@ public class Time implements java.io.Serializable
     public void set(long milliseconds)
     {
         currentTime.setTimeInMillis(milliseconds);
-        
+
         // update other time formats
         updateTimeMeasures();
     } // set
-    
+
      /**
      * Add specified value in specified time unit to current time
      *
      * @param unit int Time unit
      * @param val int Time increment
      */
-    public void add(int unit, int val) 
+    public void add(int unit, int val)
     {
         currentTime.add(unit, val);
-        
+
         // update other time formats
         updateTimeMeasures();
     }
-    
+
     /**
      * Add specified seconds to current time
      *
@@ -200,15 +200,15 @@ public class Time implements java.io.Serializable
     {
         if(seconds > Integer.MAX_VALUE)
         {
-            Double hours2Add = new Double(seconds / (60 * 60));
+            Double hours2Add = seconds / (60. * 60.);
             //hours must be less than 2,147,483,647 which is about 89,478,485
             //days, that should be plenty
             currentTime.add(Calendar.HOUR, hours2Add.intValue());
             seconds = seconds - hours2Add.intValue() * 60 * 60;
         }
 
-        int seconds2Add = new Double(seconds).intValue();
-        int millis2Add = new Double(Math.round((seconds - seconds2Add) * 1000)).intValue();
+        int seconds2Add = (int) seconds;
+        int millis2Add = (int) Math.round((seconds - seconds2Add) * 1000);
         currentTime.add(Calendar.SECOND, seconds2Add);
         currentTime.add(Calendar.MILLISECOND, millis2Add);
 
@@ -219,14 +219,14 @@ public class Time implements java.io.Serializable
 //    public void addSeconds(double seconds)
 //    {
 //        // multiply input by 1000 then round off and add this number of milliseconds to date
-//        int millis2Add = new Double(Math.round( seconds*1000 )).intValue();
+//        int millis2Add = Math.round( seconds*1000 )).intValue();
 //
 //        currentTime.add(Calendar.MILLISECOND, millis2Add);
 //
 //        // update other time formats
 //        updateTimeMeasures();
 //    }
-    
+
     /**
      * Updates the Julian and Julian Epehermis Dates using Current GregorianCalendar
      */
@@ -235,7 +235,7 @@ public class Time implements java.io.Serializable
         mjd = calcMjd(currentTime);
         mjde = mjd + deltaT(mjd);
     }
-    
+
     /**
      * Gets the Julian Date (UT)
      * @return Returns the Julian Date
@@ -244,7 +244,7 @@ public class Time implements java.io.Serializable
     {
         return mjd + 2400000.5;
     }
-    
+
     /**
      * Gets the Modified Julian Date (Julian date minus 2400000.5) (UT)
      * @return Returns the Modified Julian Date
@@ -253,7 +253,7 @@ public class Time implements java.io.Serializable
     {
         return mjd ;
     }
-    
+
     /**
      * Gets the Modified Julian Ephemeris Date (Julian date minus 2400000.5) (TT)
      * @return Returns the Modified Julian Ephemeris Date
@@ -262,7 +262,7 @@ public class Time implements java.io.Serializable
     {
         return mjde;
     }
-    
+
     /**
      * Sets timezone for the output string to use via the function getDateTimeStr()
      * @param aTzStringFormat time zone to format output strings with
@@ -271,13 +271,13 @@ public class Time implements java.io.Serializable
     {
         tzStringFormat = aTzStringFormat;
     }
-    
-    
+
+
 /**
  * Set SimpleDateFormat for displaying date/time string
  * @param dateFormat SimpleDateFormat
  */
-public void setDateFormat(SimpleDateFormat dateFormat) 
+public void setDateFormat(SimpleDateFormat dateFormat)
 {
     this.dateFormat=dateFormat;
 }
@@ -309,7 +309,7 @@ public DateFormat getDateFormat()
  * @param field int The specified field
  * @return int The field value
  */
-public final int get(int field) 
+public final int get(int field)
 {
     return currentTime.get(field);
 }
@@ -323,7 +323,7 @@ public final int get(int field)
 public String getDateTimeStr()
 {
     String retStr="";
-    
+
     if ((dateFormat!=null) &&( getJulianDate() >= 2440587.5))
     {
         dateFormat.setTimeZone(tzStringFormat);
@@ -348,10 +348,10 @@ public String getDateTimeStr()
     }
     return retStr;
 }
-    
+
     // ============================== STATIC Functions ====================================
-    
-  /** 
+
+  /**
    *  Calculate Modified Julian Date from calendar object
    *
    * @param cal  Calendar object
@@ -362,8 +362,8 @@ public String getDateTimeStr()
         double sec = cal.get(Calendar.SECOND) + cal.get(Calendar.MILLISECOND)/1000.0;
         return calcMjd(cal.get(Calendar.YEAR),cal.get(Calendar.MONTH)+1,cal.get(Calendar.DATE),cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), sec);
     }
-        
-  /** 
+
+  /**
    *  Calculate Modified Julian Date from calendar date and time elements
    *
    * @param year  calendar year
@@ -380,10 +380,10 @@ public String getDateTimeStr()
             long    MjdMidnight;
             double  FracOfDay;
             int     b;
-            
+
             if (month<=2)
             { month+=12; --year;}
-            
+
             if ( (10000L*year+100L*month+day) <= 15821004L )
             {
                 b = -2 + ((year+4716)/4) - 1179;     // Julian calendar
@@ -392,14 +392,14 @@ public String getDateTimeStr()
             {
                 b = (year/400)-(year/100)+(year/4);  // Gregorian calendar
             }
-            
+
             MjdMidnight = 365L*year - 679004L + b + (int) (30.6001*(month+1)) + day;
             FracOfDay   = (hour+min/60.0+sec/3600.0) / 24.0;
-            
+
             return MjdMidnight + FracOfDay;
         } //calcMjd
-        
-        
+
+
     /**
      * Return TT minus UT.
      *
@@ -457,38 +457,38 @@ public String getDateTimeStr()
      * 2015.  For such times we use the equation of Morrison and Stephenson:
      *
      * <p>t = Ep - 1810
-     * <p>DeltaT/s = -15 + 0.00325 * t<sup>2</sup> 
+     * <p>DeltaT/s = -15 + 0.00325 * t<sup>2</sup>
      *
      *  @param givenMJD Modified Julian Date (UT)
      *  @return TT minus UT in days
      */
-    
+
     public static double deltaT(double givenMJD)
     {
         double theEpoch; /* Julian Epoch */
         double t; /* Time parameter used in the equations. */
         double D; /* The return value. */
-        
+
         givenMJD -= 50000;
-        
+
         theEpoch = 2000. + (givenMJD - 1545.) / 365.25;
-        
+
     /* For 1987 to 2015 we use a graphical linear fit to the annual tabulation
      * from USNO/RAL, 2001, Astronomical Almanach 2003, p.K9.  We use this up
      * to 2015 about as far into the future as it is based on data in the past.
      * The result is slightly higher than the predictions from that source. */
-        
+
         if (1987 <= theEpoch && 2015 >= theEpoch)
         {
             t = (theEpoch - 2002.);
             D = 9.2 * t / 15. + 65.;
             D /= 86400.;
         }
-        
+
     /* For 1900 to 1987 we use the equation from Schmadl and Zech as quoted in
      * Meeus, 1991, Astronomical Algorithms, p.74.  This is precise within
      * 1.0 second. */
-        
+
         else if (1900 <= theEpoch && 1987 > theEpoch)
         {
             t  = (theEpoch - 1900.) / 100.;
@@ -501,11 +501,11 @@ public String getDateTimeStr()
                     + 0.000297 * t
                     - 0.000020;
         }
-        
+
     /* For 1800 to 1900 we use the equation from Schmadl and Zech as quoted in
      * Meeus, 1991, Astronomical Algorithms, p.74.  This is precise within 1.0
      * second. */
-        
+
         else if (1800 <= theEpoch && 1900 > theEpoch)
         {
             t  = (theEpoch - 1900.) / 100.;
@@ -521,38 +521,38 @@ public String getDateTimeStr()
                     +  0.003844 * t
                     -  0.000009;
         }
-        
+
     /* For 948 to 1600 we use the equation from Stephenson and Houlden as
      * quoted in Meeus, 1991, Astronomical Algorithms, p.73. */
-        
+
         else if (948 <= theEpoch && 1600 >= theEpoch)
         {
             t  = (theEpoch - 1850.) / 100.;
             D  = 22.5 * t * t;
             D /= 86400.;
         }
-        
+
     /* Before 948 we use the equation from Stephenson and Houlden as quoted
      * in Meeus, 1991, Astronomical Algorithms, p.73. */
-        
+
         else if (948 > theEpoch)
         {
             t  = (theEpoch - 948.) / 100.;
             D  = 46.5 * t * t - 405. * t + 1830.;
             D /= 86400.;
         }
-        
+
     /* Else (between 1600 and 1800 and after 2010) we use the equation from
      * Morrison and Stephenson, quoted as eqation 9.1 in Meeus, 1991,
      * Astronomical Algorithms, p.73. */
-        
+
         else
         {
             t  = theEpoch - 1810.;
             D  = 0.00325 * t * t - 15.;
             D /= 86400.;
         }
-        
+
         return D; // in days
     } // deltaT
 
@@ -560,14 +560,14 @@ public String getDateTimeStr()
     {
         return currentTime;
     }
-    
+
     // function to take a given Julian date and parse it to a Gerorian Calendar
     public static GregorianCalendar convertJD2Calendar(double jd)
     {
          /**
          * Calculate calendar date for Julian date field this.jd
          */
-        Double jd2 = new Double(jd + 0.5);
+        Double jd2 = jd + 0.5;
         long I = jd2.longValue();
         double F = jd2.doubleValue() - (double) I;
         long A = 0;
@@ -575,9 +575,9 @@ public String getDateTimeStr()
 
         if (I > 2299160)
         {
-            Double a1 = new Double(((double) I - 1867216.25) / 36524.25);
+            Double a1 = (I - 1867216.25) / 36524.25;
             A = a1.longValue();
-            Double a3 = new Double((double) A / 4.0);
+            Double a3 = A / 4.0;
             B = I + 1 + A - a3.longValue();
         }
         else
@@ -586,82 +586,82 @@ public String getDateTimeStr()
         }
 
         double C = (double) B + 1524;
-        Double d1 = new Double((C - 122.1) / 365.25);
+        Double d1 = (C - 122.1) / 365.25;
         long D = d1.longValue();
-        Double e1 = new Double(365.25 * (double) D);
+        Double e1 = 365.25 * D;
         long E = e1.longValue();
-        Double g1 = new Double((double) (C - E) / 30.6001);
+        Double g1 = (C - E) / 30.6001;
         long G = g1.longValue();
-        Double h = new Double((double) G * 30.6001);
+        Double h =  G * 30.6001;
         long da = (long) C - E - h.longValue();
-        
-        Integer date = new Integer((int) da); // DATE
 
-        Integer month;
-        Integer year;
-        
+        long date = da; // DATE
+
+        int month;
+        int year;
+
         if (G < 14L)
         {
-            month = new Integer((int) (G - 2L));
+            month = (int) (G - 2L);
         }
         else
         {
-            month = new Integer((int) (G - 14L));
+            month = (int) (G - 14L);
         }
 
-        if (month.intValue() > 1)
+        if (month > 1)
         {
-            year = new Integer((int) (D - 4716L));
+            year = (int) (D - 4716L);
         }
         else
         {
-            year = new Integer((int) (D - 4715L));
+            year = (int) (D - 4715L);
         }
 
         // Calculate fractional part as hours, minutes, and seconds
-        Double dhr = new Double(24.0 * F);
-        Integer hour = new Integer(dhr.intValue());
-        Double dmin = new Double((dhr.doubleValue() - (double) dhr.longValue()) * 60.0);
-        Integer minute = new Integer(dmin.intValue());
-        
-        Double dsec = new Double((dmin.doubleValue() - (double) dmin.longValue()) * 60.0);
-        Integer second=new Integer(dsec.intValue());
-        
+        Double dhr = 24.0 * F;
+        Integer hour = dhr.intValue();
+        Double dmin = (dhr - (double) dhr.longValue()) * 60.0;
+        Integer minute = dmin.intValue();
+
+        Double dsec = (dmin - (double) dmin.longValue()) * 60.0;
+        Integer second= dsec.intValue();
+
         //int ms = (int)((dsec.doubleValue() - (double) second.longValue()) * 1000.0);
         // rounding fix - e-mailed to SEG by Hani A. Altwaijry 28 May 2009
         int ms = (int) Math.round((dsec.doubleValue() - (double) second.longValue()) * 1000.0);
-        
+
         // create Calendar object
         GregorianCalendar newTime = new GregorianCalendar(tz); // set default timezone
-        
+
         newTime.set(Calendar.YEAR,year);
         newTime.set(Calendar.MONTH,month);
-        newTime.set(Calendar.DATE,date);
+        newTime.set(Calendar.DATE,(int)date);
         newTime.set(Calendar.HOUR_OF_DAY,hour);
         newTime.set(Calendar.MINUTE,minute);
         newTime.set(Calendar.SECOND,second);
         newTime.set(Calendar.MILLISECOND,ms);
-        
+
         return newTime;
-        
+
     } // convertJD2Calendar
-    
-    // function used to take a given Julian Date and parse it as a string using the current settings 
+
+    // function used to take a given Julian Date and parse it as a string using the current settings
     public String convertJD2String(double jd)
     {
         // convert to calendar
         GregorianCalendar newTime = convertJD2Calendar(jd);
-        
+
         // format as String -- ASSUMES dateFromat is not NULL!!
         dateFormat.setTimeZone(tzStringFormat);
         String retStr=dateFormat.format( newTime.getTime() );
-        
+
         return retStr;
-        
+
 
     } // convertJD2String
-    
 
-    
-    
+
+
+
 }

@@ -3,13 +3,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,53 +53,53 @@ public class CustomSatellite  extends AbstractSatellite
     // internal ephemeris (Time store in TT)
     private Vector<StateVector> ephemeris = new Vector<StateVector>(ephemerisIncrement, ephemerisIncrement); // array to store ephemeris
     //====================================
-    
-    
-    // table model for the custom config panel and holds all the mission Nodes 
+
+
+    // table model for the custom config panel and holds all the mission Nodes
     private DefaultTreeTableModel missionTableModel = new DefaultTreeTableModel(); // any TreeTableModel
-    
+
     String name = "Custom Sat";
-    
+
     // current time - julian date
     double currentJulianDate = -1;
-    
+
     // TLE epoch -- used to calculate how old is TLE - Julian Date
     double tleEpochJD = -1; // no age
-    
+
     // current J2000 position and velocity vectors
     private double[] j2kPos;// = new double[3];
     private double[] j2kVel;// = new double[3];
     // true-equator, mean equinox TEME of date
     private double[] posTEME;// = new double[3];  // true-equator, mean equinox TEME of date position for LLA calcs
     private double[] velTEME = new double[3];
-    
+
     // current lat,long,alt  [radians, radians, km/m ?]
     private double[] lla;// = new double[3];
-    
-    // plot options 
+
+    // plot options
     private boolean plot2d = true;
     private Color satColor = Color.RED; // randomize in future
     private boolean plot2DFootPrint = true;
     private boolean fillFootPrint = true;
     private int numPtsFootPrint = 101; // number of points in footprint
-    
+
     // ground track options  -- grounds tracks draw to asending nodes, re-calculated at acending nodes
     boolean showGroundTrack = true;
     private int grnTrkPointsPerPeriod = 121; // equally space in time >=2
     private double groundTrackLeadPeriodMultiplier = 2.0;  // how far forward to draw ground track - in terms of periods
     private double groundTrackLagPeriodMultiplier = 1.0;  // how far behind to draw ground track - in terms of periods
-    
+
     double[][] latLongLead; // leading lat/long coordinates for ground track
     double[][] latLongLag; // laging lat/long coordinates for ground track
     private double[][] temePosLead; // leading Mean of date position coordinates for ground track
     private double[][] temePosLag; // laging Mean of date position coordinates for ground track
     private double[]   timeLead; // array for holding times associated with lead coordinates (Jul Date) - UTC?
     private double[]   timeLag; // array - times associated with lag coordinates (Jul Date)
-    
-    boolean groundTrackIni = false; // if ground track has been initialized    
-    
+
+    boolean groundTrackIni = false; // if ground track has been initialized
+
     private boolean showName2D = true; // show name in 2D plots
-    
+
     // 3D Options
     private boolean show3DOrbitTrace = true;
     private boolean show3DFootprint = true;
@@ -107,28 +107,28 @@ public class CustomSatellite  extends AbstractSatellite
     private boolean show3D = true; // no implemented to change yet, or to modify showing of sat
     private boolean showGroundTrack3d = false;
     private boolean show3DOrbitTraceECI = true; // show orbit in ECI mode otherwise , ECEF
-    
+
     private boolean showConsoleOnPropogate = true;
-           
-    
+
+
     // 3D model parameters
     private boolean use3dModel = false; // use custom 3D model (or default sphere)
     private String threeDModelPath = "globalstar/Globalstar.3ds"; // path to the custom model, default= globalstar/Globalstar.3ds ?
     private transient WWModel3D_new threeDModel; // DO NOT STORE when saving -- need to reload this -- TOO MUCH DATA!
     private double threeDModelSizeFactor = 300000;
-    
+
 //    // Constructors
 //    public CustomSatellite()
 //    {
 //        iniMissionTableModel();
 //    }
-    
+
     public CustomSatellite(String name, Time scenarioEpochDate)
     {
         this.name = name;
         iniMissionTableModel(scenarioEpochDate);
     }
-    
+
     // initalizes the mission Table Model
     private void iniMissionTableModel(Time scenarioEpochDate)
     {
@@ -137,56 +137,56 @@ public class CustomSatellite  extends AbstractSatellite
         tableHeaders.add("Mission Objects");
 //        tableHeaders.add("Time Start?");
 //        tableHeaders.add("Time Stop?");
-        
+
         missionTableModel.setColumnIdentifiers(tableHeaders);
-        
+
         // Add root Node
         String[] str = new String[3];
         str[0] = name;
-        
+
         //DefaultMutableTreeTableNode ttn = new DefaultMutableTreeTableNode(str);
         CustomTreeTableNode rootNode = new CustomTreeTableNode(str);
         rootNode.setIcon( new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/custom/sat_icon.png")) ) );
         missionTableModel.setRoot(rootNode);
-        
+
         // must add Initial conditions
         new InitialConditionsNode(rootNode, scenarioEpochDate);
-        
+
         // by default also add a propogator node
         new PropogatorNode(rootNode);
-       
+
         // ADD SOME NODES (example) -----
 //        CustomTreeTableNode ttn2 = new PropogatorNode(rootNode);
 //        ttn2.setValueAt("3 Jan 2008", 1); // example at setting a columns value
-//        
+//
 //        ttn2 = new SolverNode(rootNode, true); // parent / add default children
-//                        
+//
 //        ttn2 = new StopNode(rootNode);
-//                
+//
         // ------------------------------
-        
+
         //must add stop node
         new StopNode(rootNode);
-        
+
     }
-    
+
     // ================================================================
     // functions that have to be fixed yet =========================
     // =================================================================
-    
+
     // this function is basically given time update all current info and update lead/lag data if needed
     @Override
     public void propogate2JulDate(double julDate)
     {
         // save date
         this.currentJulianDate = julDate; // UTC
-        
+
         double tempTime, maxTime, minTime;
-		
+
 	double currentMJDtime = julDate - AstroConst.JDminusMJD;
-        
+
         // CAREFUL ON TIMES... TIME IN EPHMERIS IN TT NOT UTC!!
-        
+
         double deltaTT2UTC = Time.deltaT(currentMJDtime); // = TT - UTC
 
 
@@ -206,10 +206,10 @@ public class CustomSatellite  extends AbstractSatellite
                 /// very simple search (slow!)
                 StateVector tempState = ephemeris.elementAt(1); // first item
                 tempTime = ephemeris.get(1).state[0]- deltaTT2UTC;
-                
+
                 int i = 1;
                 // find where in the ephemeris to interpolat around
-                
+
                 while (tempTime < julDate) // not <= causes out of bounds errors
                 {
                     i++;
@@ -254,8 +254,8 @@ public class CustomSatellite  extends AbstractSatellite
                 double y3 = tempState.state[2];
                 double z3 = tempState.state[3];
 
-                double timeSecEpoch = julDate + deltaTT2UTC; // in TT 
-                
+                double timeSecEpoch = julDate + deltaTT2UTC; // in TT
+
                 if(j2kPos == null)
                 {
                     j2kPos = new double[3];
@@ -282,7 +282,7 @@ public class CustomSatellite  extends AbstractSatellite
                 x3 = tempState.state[4];
                 y3 = tempState.state[5];
                 z3 = tempState.state[6];
-                
+
                 if(j2kVel == null)
                 {
                     j2kVel = new double[3];
@@ -291,8 +291,8 @@ public class CustomSatellite  extends AbstractSatellite
                 j2kVel[0] = LagrangeInterp.Lagrange3pt(timeSecEpoch, t1, x1, t2, x2, t3, x3);
                 j2kVel[1] = LagrangeInterp.Lagrange3pt(timeSecEpoch, t1, y1, t2, y2, t3, y3);
                 j2kVel[2] = LagrangeInterp.Lagrange3pt(timeSecEpoch, t1, z1, t2, z2, t3, z3);
-                
-                
+
+
                 // convert to LLA -- time in days since J2000
                 //posMOD = CoordinateConversion.EquatorialEquinoxFromJ2K( currentMJDtime , j2kPos);
                 //velMOD = CoordinateConversion.EquatorialEquinoxFromJ2K( currentMJDtime , j2kVel);
@@ -307,15 +307,15 @@ public class CustomSatellite  extends AbstractSatellite
 
                 //System.out.println("Date: " + julDate +", MOD/TEME Pos: " + posMOD[0] + ", " + posMOD[1] + ", " + posMOD[2]);
 
-                
-                
+
+
                 // save old lat/long for ascending node check
                 double[] oldLLA = new double[3];
                 if(lla != null)
                 {
                     oldLLA = lla.clone(); // copy old LLA
                 }
-                
+
                 // current LLA
                 lla = GeoFunctions.GeodeticLLA(posTEME, currentMJDtime);
 
@@ -339,8 +339,8 @@ public class CustomSatellite  extends AbstractSatellite
                     }
 
                 } // if show ground track is true
-                
-                
+
+
                 //isInTime = true;
             //System.out.println("true");
 
@@ -364,7 +364,7 @@ public class CustomSatellite  extends AbstractSatellite
                     timeLead = null;
                     timeLag = null;
                 }
-                
+
                 //isInTime = false;
                 //System.out.println("false1");
             }
@@ -375,11 +375,11 @@ public class CustomSatellite  extends AbstractSatellite
             //isInTime = false;
         //System.out.println("false2");
         }
-		
-        
-        
+
+
+
     } // propogate2JulDate
-    
+
      public double getSatTleEpochJulDate()
     {
         if(ephemeris.size() > 0)
@@ -387,18 +387,18 @@ public class CustomSatellite  extends AbstractSatellite
             return ephemeris.firstElement().state[0]; // returns TT time
         }
         else
-        {   
+        {
             return 0; // means it hasn't been propagated yet
         }
     }
-    
+
      /**
      * Calculate MOD position of this sat at a given JulDateTime (doesn't save the time) - can be useful for event searches or optimization
      * @param julDate - julian date
      * @return j2k position of satellite in meters
      */
     public double[] calculateTemePositionFromUT(double julDate)
-    {      
+    {
         double[] j2kPosTemp = calculateJ2KPositionFromUT(julDate);
         double[] ptPos = new double[3];
 
@@ -415,11 +415,11 @@ public class CustomSatellite  extends AbstractSatellite
                 ptPos = J2kCoordinateConversion.matvecmult( A, j2kPosTemp);
 
         } // if in time and ephemeris is generated
-        
+
         return ptPos;
-        
+
     } // calculatePositionFromUT
-    
+
     /**
      * Calculate J2K position of this sat at a given JulDateTime (doesn't save the time) - can be useful for event searches or optimization
      * @param julDate - julian date
@@ -432,7 +432,7 @@ public class CustomSatellite  extends AbstractSatellite
 
         double tempTime, maxTime, minTime;
 
-        // CAREFUL ON TIMES... TIME IN EPHMERIS IN TT NOT UTC!!  
+        // CAREFUL ON TIMES... TIME IN EPHMERIS IN TT NOT UTC!!
         double deltaTT2UTC = Time.deltaT(julDate - AstroConst.JDminusMJD); // = TT - UTC
 
 
@@ -500,7 +500,7 @@ public class CustomSatellite  extends AbstractSatellite
                 double y3 = tempState.state[2];
                 double z3 = tempState.state[3];
 
-                double timeSecEpoch = julDate + deltaTT2UTC; // in TT 
+                double timeSecEpoch = julDate + deltaTT2UTC; // in TT
 
                 // interpolate J2K position
                 ptPos[0] = LagrangeInterp.Lagrange3pt(timeSecEpoch, t1, x1, t2, x2, t3, x3);
@@ -518,35 +518,35 @@ public class CustomSatellite  extends AbstractSatellite
         return ptPos;
 
     } // calculatePositionFromUT
-    
+
     private void initializeGroundTrack()
     {
         //System.out.println("Ground Track Ini");
-        
+
         if(currentJulianDate == -1)
         {
             // nothing to do yet, we haven't been given an initial time
             return;
         }
-        
-        // initial guess -- the current time  (UTC)        
+
+        // initial guess -- the current time  (UTC)
         double lastAscendingNodeTime = currentJulianDate; // time of last ascending Node Time
-        
+
         // calculate period - in minutes
         double periodMin = Kepler.CalculatePeriod(AstroConst.GM_Earth,j2kPos,j2kVel)/(60.0);
         //System.out.println("period [min] = "+periodMin);
-        
+
 //        // time step divisions (in fractions of a day)
 //        double fracOfPeriod = 15.0;
 //        double timeStep = (periodMin/(60.0*24.0)) / fracOfPeriod;
-//        
+//
 //        // first next guess
 //        double newGuess1 = lastAscendingNodeTime - timeStep;
-//        
+//
 //        // latitude variables
 //        double lat0 =  lla[0]; //  current latitude
-//        double lat1 = (calculateLatLongAltXyz(newGuess1))[0]; // calculate latitude values       
-//        
+//        double lat1 = (calculateLatLongAltXyz(newGuess1))[0]; // calculate latitude values
+//
 //        // bracket the crossing using timeStep step sizes
 //        // make sure we are within time limits of the satellite!!
 //        while( !( lat0>=0 && lat1<0 ) )
@@ -554,59 +554,59 @@ public class CustomSatellite  extends AbstractSatellite
 //            // move back a step
 //            lastAscendingNodeTime = newGuess1;
 //            lat0 = lat1;
-//            
+//
 //            // next guess
 //            newGuess1 = lastAscendingNodeTime - timeStep;
-//            
+//
 //            // calculate latitudes of the new value
 //            lat1 = (calculateLatLongAltXyz(newGuess1))[0];
 //        } // while searching for ascending node
-//        
-//              
+//
+//
 //        // secand method -- determine within a second!
 //        // ONLY USE THIS IF a 0 is BRACKETED!! else just go to max
 //        double outJul = secantMethod(lastAscendingNodeTime-timeStep, lastAscendingNodeTime, 1.0/(60.0*60.0*24.0), 20);
-        
+
         //System.out.println("Guess 1:" + (lastAscendingNodeTime-timeStep) );
         //System.out.println("Guess 2:" + (lastAscendingNodeTime));
         //System.out.println("Answer: " + outJul);
-        
+
         // update times: Trust Period Calculations for how far in the future and past to calculate out to
         // WARNING: period calculation is based on osculating elements may not be 100% accurate
         //          as this is just for graphical updates should be okay (no mid-course corrections assumed)
-        
+
         //lastAscendingNodeTime = outJul;
         // assume last ascending node is now
         lastAscendingNodeTime = currentJulianDate;
-        
+
         double leadEndTime = lastAscendingNodeTime + groundTrackLeadPeriodMultiplier*periodMin/(60.0*24); // Julian Date for last lead point (furthest in future)
         double lagEndTime = lastAscendingNodeTime - groundTrackLagPeriodMultiplier*periodMin/(60.0*24); // Julian Date for the last lag point (furthest in past)
-        
+
         // fill in lead/lag arrays
         fillGroundTrack(lastAscendingNodeTime,leadEndTime,lagEndTime);
-        
+
         groundTrackIni = true;
         return;
-        
+
     } // initializeGroundTrack
-    
-    
+
+
     // END -- functions to be fixed ===================
-    
-    // fill in the Ground Track given Jul Dates for 
-    // 
+
+    // fill in the Ground Track given Jul Dates for
+    //
     private void fillGroundTrack(double lastAscendingNodeTime, double leadEndTime, double lagEndTime)
     {
         // points in the lead direction
         int ptsLead = (int)Math.ceil(grnTrkPointsPerPeriod*groundTrackLeadPeriodMultiplier);
-        latLongLead = new double[ptsLead][3];        
+        latLongLead = new double[ptsLead][3];
         temePosLead =  new double[ptsLead][3];
         timeLead = new double[ptsLead];
-                
+
         for(int i=0;i<ptsLead;i++)
         {
             double ptTime = lastAscendingNodeTime + i*(leadEndTime-lastAscendingNodeTime)/(ptsLead-1);
-            
+
             // make sure the time is in ephemeris -- TIMES IN ARE UTC epeheris time is TT
             // make that time correction
             double deltaTT2UTC = Time.deltaT(ptTime - AstroConst.JDminusMJD); // = TT - UTC
@@ -633,17 +633,17 @@ public class CustomSatellite  extends AbstractSatellite
                 temePosLead[i][1] = Double.NaN; // y
                 temePosLead[i][2] = Double.NaN; // z
             }
-            
+
             timeLead[i] = ptTime; // save time
-            
+
         } // for each lead point
-        
+
         // points in the lag direction
         int ptsLag = (int)Math.ceil(grnTrkPointsPerPeriod*groundTrackLagPeriodMultiplier);
         latLongLag = new double[ptsLag][3];
         temePosLag = new double[ptsLag][3];
         timeLag = new double[ptsLag];
-        
+
         for(int i=0;i<ptsLag;i++)
         {
             double ptTime = lastAscendingNodeTime + i * (lagEndTime - lastAscendingNodeTime) / (ptsLag - 1);
@@ -674,36 +674,36 @@ public class CustomSatellite  extends AbstractSatellite
                 temePosLag[i][1] = Double.NaN; // y
                 temePosLag[i][2] = Double.NaN; // z
             }
-            
+
             timeLag[i] = ptTime;
-            
+
         } // for each lag point
     } // fillGroundTrack
-    
+
     // takes in JulDate
     private double[] calculateLatLongAltXyz(double julDate)
     {
-                
+
         double[] ptPos = calculateTemePositionFromUT(julDate);
-  
+
         // get lat and long
         double[] ptLla = GeoFunctions.GeodeticLLA(ptPos,julDate-AstroConst.JDminusMJD);
-        
+
         double[] ptLlaXyz = new double[] {ptLla[0],ptLla[1],ptLla[2],ptPos[0],ptPos[1],ptPos[2]};
-        
+
         return ptLlaXyz;
     } // calculateLatLongAlt
-    
-    
+
+
     // ==== empty functions to fulfill AbstractSatellite req ===========
     @Override
     public void updateTleData(TLE newTLE){}
-    
+
     //==================================================================
-    
-    
+
+
     // other functions ================
-    
+
     // returns satellite's current perdiod based on current pos/vel in Minutes
     public double getPeriod()
     {
@@ -716,22 +716,22 @@ public class CustomSatellite  extends AbstractSatellite
             return 0;
         }
     }
-    
+
     public double[] getKeplarianElements()
     {
-        return Kepler.SingularOsculatingElements( AstroConst.GM_Earth, j2kPos, j2kVel ); 
+        return Kepler.SingularOsculatingElements( AstroConst.GM_Earth, j2kPos, j2kVel );
     }
-    
-    
+
+
     // GET SET methods =================
-    
+
      public void setShowGroundTrack(boolean showGrndTrk)
     {
         showGroundTrack = showGrndTrk;
-        
+
         if(showGrndTrk == false)
         {
-            groundTrackIni = false; 
+            groundTrackIni = false;
             latLongLead = new double[][] {{}}; // save some space
             latLongLag = new double[][] {{}}; // sace some space
             temePosLag = new double[][] {{}};
@@ -745,12 +745,12 @@ public class CustomSatellite  extends AbstractSatellite
             initializeGroundTrack();
         }
     }
-    
+
     public boolean getShowGroundTrack()
     {
         return showGroundTrack;
     }
-    
+
     public double getLatitude()
     {
         if(lla != null)
@@ -758,7 +758,7 @@ public class CustomSatellite  extends AbstractSatellite
         else
             return 180; // not possible latitide
     }
-    
+
     public double getLongitude()
     {
         if(lla != null)
@@ -766,7 +766,7 @@ public class CustomSatellite  extends AbstractSatellite
         else
             return 270; // not possible long
     }
-    
+
     public double getAltitude()
     {
         if(lla != null)
@@ -774,7 +774,7 @@ public class CustomSatellite  extends AbstractSatellite
         else
             return 0;
     }
-    
+
     public double[] getLLA()
     {
         if(lla == null)
@@ -784,12 +784,12 @@ public class CustomSatellite  extends AbstractSatellite
 
         return lla.clone();
     }
-    
+
     public double getCurrentJulDate()
     {
         return currentJulianDate;
     }
-    
+
     public double[] getJ2000Position()
     {
         if(j2kPos == null)
@@ -798,7 +798,7 @@ public class CustomSatellite  extends AbstractSatellite
         }
         return j2kPos.clone();
     }
-    
+
     public double[] getJ2000Velocity()
     {
         if(j2kVel == null)
@@ -807,33 +807,33 @@ public class CustomSatellite  extends AbstractSatellite
         }
         return j2kVel.clone();
     }
-    
+
     public boolean getPlot2D()
     {
         return plot2d;
     }
-    
+
     public Color getSatColor()
-    { 
+    {
         return satColor;
     }
-    
+
     public boolean getPlot2DFootPrint()
     {
         return plot2DFootPrint;
     }
-    
+
     public boolean getGroundTrackIni()
     {
         return groundTrackIni;
     }
-    
+
     public void setGroundTrackIni2False()
     {
         // forces repaint of ground track next update
         groundTrackIni = false;
     }
-    
+
     public int getNumGroundTrackLeadPts()
     {
         if(latLongLead != null)
@@ -841,7 +841,7 @@ public class CustomSatellite  extends AbstractSatellite
         else
             return 0;
     }
-        
+
     public int getNumGroundTrackLagPts()
     {
         if(latLongLag != null)
@@ -849,37 +849,37 @@ public class CustomSatellite  extends AbstractSatellite
         else
             return 0;
     }
-        
+
     public double[] getGroundTrackLlaLeadPt(int index)
     {
         return new double[] {latLongLead[index][0],latLongLead[index][1],latLongLead[index][2]};
     }
-    
+
     public double[] getGroundTrackLlaLagPt(int index)
     {
         return new double[] {latLongLag[index][0],latLongLag[index][1],latLongLag[index][2]};
     }
-    
+
     public double[] getGroundTrackXyzLeadPt(int index)
     {
         return new double[] {getTemePosLead()[index][0],getTemePosLead()[index][1],getTemePosLead()[index][2]};
     }
-    
+
     public double[] getGroundTrackXyzLagPt(int index)
     {
         return new double[] {getTemePosLag()[index][0],getTemePosLag()[index][1],getTemePosLag()[index][2]};
     }
-        
+
     public String getName()
     {
         return name;
     }
-    
+
     public double getTleEpochJD()
     {
         return tleEpochJD; // returns -1 since there is no TLE
     }
-    
+
     public double getTleAgeDays()
     {
         return 0;//currentJulianDate - tleEpochJD; // SEG returns 0 since really there is not TLE!!
@@ -966,7 +966,7 @@ public class CustomSatellite  extends AbstractSatellite
         {
             return null;
         }
-        
+
         return posTEME.clone();
     }
 
@@ -1066,35 +1066,35 @@ public class CustomSatellite  extends AbstractSatellite
     {
         return ephemeris;
     }
-    
+
     // set ephemeris
     public void setEphemeris(Vector<StateVector> e)
     {
         this.ephemeris = e;
-        
+
 //        // fill out all needed arrays (such as lead or lag etc) in MOD coordinates as needed
 //        // latLongLead // lla
 //        // modPosLead  // x/y/z
 //        // timeLead; // array for holding times associated with lead coordinates (Jul Date) - UTC?
-//        
+//
 //        int ephemerisSize = ephemeris.size();
-//        
+//
 //        // create Lead (only for now -- all of ephemeris)
 //        latLongLead = new double[ephemerisSize][3];
 //        modPosLead = new double[ephemerisSize][3];
 //        timeLead = new double[ephemerisSize];
-//        
+//
 //        double[] currentJ2kPos = new double[3];
-//        
+//
 //        for(int i=0;i<ephemerisSize;i++)
 //        {
 //            StateVector sv = ephemeris.elementAt(i);
-//            
+//
 //            // get current j2k pos
 //            currentJ2kPos[0] = sv.state[1];
 //            currentJ2kPos[1] = sv.state[2];
 //            currentJ2kPos[2] = sv.state[3];
-//            
+//
 //            // save time
 //            timeLead[i] = sv.state[0];
 //            // mod pos
@@ -1102,13 +1102,13 @@ public class CustomSatellite  extends AbstractSatellite
 //            // lla  (submit time in UTC)
 //            double deltaTT2UTC = Time.deltaT(sv.state[0] - AstroConst.JDminusMJD); // = TT - UTC
 //            latLongLead[i] = GeoFunctions.GeodeticLLA(modPosLead[i], sv.state[0] - AstroConst.JDminusMJD - deltaTT2UTC); // tt-UTC = deltaTT2UTC
-//            
+//
 //        }
-//        
-//        groundTrackIni = true; // okay ground track has been ini01  
-        
-        
-        
+//
+//        groundTrackIni = true; // okay ground track has been ini01
+
+
+
     } // set ephemeris
 
     public boolean isShowConsoleOnPropogate()
@@ -1120,9 +1120,9 @@ public class CustomSatellite  extends AbstractSatellite
     {
         this.showConsoleOnPropogate = showConsoleOnPropogate;
     }
-    
-    
-    
+
+
+
      //---------------------------------------
     //  SECANT Routines to find Crossings of the Equator (hopefully Ascending Nodes)
     // xn_1 = date guess 1
@@ -1130,15 +1130,16 @@ public class CustomSatellite  extends AbstractSatellite
     // tol = convergence tolerance
     // maxIter = maximum iterations allowed
     // RETURNS: double = julian date of crossing
+    @SuppressWarnings("unused")
     private double secantMethod(double xn_1, double xn, double tol, int maxIter)
     {
 
         double d;
-        
+
         // calculate functional values at guesses
         double fn_1 = this.calculateLatLongAltXyz(xn_1)[0];
         double fn = this.calculateLatLongAltXyz(xn)[0];
-        
+
         for (int n = 1; n <= maxIter; n++)
         {
             d = (xn - xn_1) / (fn - fn_1) * fn;
@@ -1147,47 +1148,47 @@ public class CustomSatellite  extends AbstractSatellite
                 //System.out.println("Iters:"+n);
                 return xn;
             }
-            
+
             // save past point
             xn_1 = xn;
             fn_1 = fn;
-            
+
             // new point
             xn = xn - d;
             fn = this.calculateLatLongAltXyz(xn)[0];
         }
-        
+
         System.out.println("Warning: Secant Method - Max Iteration limit reached finding Asending Node.");
-        
+
         return xn;
     } // secantMethod
-    
+
     // 3D model -------------------------
     public boolean isUse3dModel()
     {
-        return use3dModel; 
+        return use3dModel;
     }
-    
+
     public void setUse3dModel(boolean use3dModel)
     {
         this.use3dModel = use3dModel;
-        
+
         if(use3dModel && threeDModelPath.length() > 0)
         {
             // check that file exsists? - auto done in loader
-            
+
             //String path = "data/models/globalstar/Globalstar.3ds";
             //String path = "data/models/isscomplete/iss_complete.3ds";
-            
+
             loadNewModel(threeDModelPath);
         }
     }
-    
+
     public String getThreeDModelPath()
     {
         return threeDModelPath;
     }
-    
+
     /**
      * Relative path to the model -- relative from "user.dir"/data/models/
      * @param path
@@ -1199,14 +1200,14 @@ public class CustomSatellite  extends AbstractSatellite
             // need to load the model
             loadNewModel(path);//"test/data/globalstar/Globalstar.3ds");
         }
-        
+
         this.threeDModelPath = path; // save path no matter
     }
-    
+
     private void loadNewModel(String path)
     {
         String localPath = "data/models/"; // path to models root from user.dir
-        
+
         try
             {
                 net.java.joglutils.model.geometry.Model model3DS = ModelFactory.createModel(localPath + path);
@@ -1219,20 +1220,20 @@ public class CustomSatellite  extends AbstractSatellite
 
                 threeDModel.setMaitainConstantSize(true);
                 threeDModel.setSize(threeDModelSizeFactor); // this needs to be a property!
-                
+
                 threeDModel.updateAttitude(this); // fixes attitude intitially
-                
+
             }catch(Exception e)
             {
                 System.out.println("ERROR LOADING 3D MODEL");
             }
     }
-    
+
     public WWModel3D_new getThreeDModel()
     {
         return threeDModel;
-    }    
-    
+    }
+
     public  double[] getTEMEVelocity()
     {
         if(velTEME == null)
@@ -1258,10 +1259,10 @@ public class CustomSatellite  extends AbstractSatellite
                 threeDModel.setSize(modelSizeFactor);
             }
         }
-        
+
         this.threeDModelSizeFactor = modelSizeFactor;
     }
-    
+
     @Override
     public String toString()
     {
