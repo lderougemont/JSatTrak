@@ -3,13 +3,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,8 +34,8 @@ import org.pushingpixels.substance.api.renderers.SubstanceDefaultTreeCellRendere
  */
 public class IconTreeTableNodeRenderer extends SubstanceDefaultTreeCellRenderer //DefaultTreeCellRenderer // to work with Substance LAF
 {
-    
-    
+
+    @SuppressWarnings("unchecked")
     public Component getTreeCellRendererComponent(JTree tree, Object value,
             boolean sel, boolean expanded, boolean leaf, int row,
             boolean hasFocus)
@@ -48,7 +48,7 @@ public class IconTreeTableNodeRenderer extends SubstanceDefaultTreeCellRenderer 
 
         if (icon == null)
         {
-            Hashtable icons = (Hashtable) tree.getClientProperty("JTree.icons");
+            Hashtable<String,?> icons = (Hashtable<String,?>) tree.getClientProperty("JTree.icons");
             String name = ((CustomTreeTableNode) value).getIconName();
             if ((icons != null) && (name != null))
             {
@@ -58,7 +58,7 @@ public class IconTreeTableNodeRenderer extends SubstanceDefaultTreeCellRenderer 
                     setIcon(icon);
                 }
             }
-            
+
             // also set text of the first column correctly
             setText(((CustomTreeTableNode) value).getValueAt(0).toString());
         }

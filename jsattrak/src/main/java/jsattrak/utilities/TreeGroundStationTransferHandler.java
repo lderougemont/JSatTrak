@@ -29,7 +29,8 @@ import javax.swing.tree.TreePath;
  *
  * @author sgano
  */
-public class TreeGroundStationTransferHandler  extends StringTransferHandler implements java.io.Serializable
+@SuppressWarnings("unused")
+public class TreeGroundStationTransferHandler  extends StringTransferHandler
 {
      private int[] indices = null;
     private int addIndex = -1; //Location where items were added

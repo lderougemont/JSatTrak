@@ -3,13 +3,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -78,7 +78,7 @@ public class BasicModelView3 extends AbstractView implements OrbitView
     private static final double MINIMUM_FAR_DISTANCE = 100;
     private static final double COLLISION_THRESHOLD = 10;
     private static final int COLLISION_NUM_ITERATIONS = 4;
-    
+
     // ofsets
     private double xOffset = 0;
     private double yOffset = 0;
@@ -95,7 +95,7 @@ public class BasicModelView3 extends AbstractView implements OrbitView
     {
         this(new BasicOrbitViewModel());
     }
-    
+
     // --- constructor
     public BasicModelView3(AbstractSatellite sat)
     {
@@ -117,12 +117,12 @@ public class BasicModelView3 extends AbstractView implements OrbitView
         this.collisionSupport.setNumIterations(COLLISION_NUM_ITERATIONS);
         loadConfigurationValues();
     }
-    
+
     // last constructor
     public BasicModelView3(OrbitViewModel orbitViewModel, AbstractSatellite sat)
     {
         this.sat = sat;
-        
+
         if (orbitViewModel == null)
         {
             String message = Logging.getMessage("nullValue.OrbitViewModelIsNull");
@@ -133,7 +133,7 @@ public class BasicModelView3 extends AbstractView implements OrbitView
         this.orbitViewModel = orbitViewModel;
         this.collisionSupport.setCollisionThreshold(COLLISION_THRESHOLD);
         this.collisionSupport.setNumIterations(COLLISION_NUM_ITERATIONS);
-        loadConfigurationValues();        
+        loadConfigurationValues();
     }
 
     private void loadConfigurationValues()
@@ -223,7 +223,7 @@ public class BasicModelView3 extends AbstractView implements OrbitView
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        
+
         // SEG - no limits on pitch (used to limit 90 and 0)
         if (pitch.degrees > 180 || pitch.degrees < 0)
         {
@@ -624,10 +624,10 @@ public class BasicModelView3 extends AbstractView implements OrbitView
         {
             far = computeHorizonDistance(eyePosition);
         }
-        
+
         return far < MINIMUM_FAR_DISTANCE ? MINIMUM_FAR_DISTANCE : far;
     }
-    
+
     public java.awt.Rectangle getViewport()
     {
         // java.awt.Rectangle is mutable, so we defensively copy the viewport.
@@ -681,7 +681,7 @@ public class BasicModelView3 extends AbstractView implements OrbitView
         // Update DrawContext and Globe references.
         this.dc = dc;
         this.globe = this.dc.getGlobe();
-        
+
         // ALWAYS SET CENTER -- SEG
         if(sat == null)
         {
@@ -692,18 +692,18 @@ public class BasicModelView3 extends AbstractView implements OrbitView
             //setCenterPosition(p);
         }
         else // sat exisits
-        {   
+        {
             //Vec4 v = globe.computePointFromPosition(Angle.fromRadians(sat.getLatitude()), Angle.fromRadians(sat.getLongitude()), sat.getAltitude());
             ////Vec4 v = new Vec4(-sat.getPosMOD()[0]+getXOffset(),sat.getPosMOD()[2]+getZOffset(),sat.getPosMOD()[1]+getYOffset());
             //Vec4 v2 = v.add3(new Vec4(xOffset,yOffset,zOffset));
- 
+
             Vec4 v = globe.computePointFromPosition(Angle.fromRadians(sat.getLatitude()+xOffset), Angle.fromRadians(sat.getLongitude()+yOffset), sat.getAltitude()+zOffset);
-            
+
             Position p = globe.computePositionFromPoint(v); //v2
             //setCenterPosition(Position.fromDegrees(sat.getLatitude()*180.0/Math.PI, sat.getLongitude()*180.0/Math.PI, sat.getAltitude()));
             setCenterPosition(p);
         }
-        
+
         //========== modelview matrix state ==========//
         // Compute the current modelview matrix.
         this.modelview = this.orbitViewModel.computeTransformMatrix(this.globe, this.center,
@@ -989,24 +989,24 @@ public class BasicModelView3 extends AbstractView implements OrbitView
     {
         this.zOffset = zOffset;
     }
-    
+
     public void resetOffsets()
     {
         setZOffset(0);
         setYOffset(0);
         setXOffset(0);
     }
-    
+
     public void incrementXOffset(double multiplierPosNeg)
     {
         xOffset += XYOffsetMultiplier*multiplierPosNeg;
     }
-    
+
     public void incrementYOffset(double multiplierPosNeg)
     {
         yOffset += XYOffsetMultiplier*multiplierPosNeg;
     }
-    
+
     public void incrementZOffset(double multiplierPosNeg)
     {
         zOffset += ZOffsetMultiplier*multiplierPosNeg;

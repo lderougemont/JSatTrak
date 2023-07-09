@@ -730,6 +730,7 @@ public class SGP4unit
     ----------------------------------------------------------------------------*/
 // returns array containing:
 // [ em, argpm, inclm, mm, nm, nodem, dndt]
+    @SuppressWarnings("unused")
     private static double[] dsinit(
             Gravconsttype whichconst,
             double cosim, double emsq, double argpo, double s1, double s2,
@@ -1071,6 +1072,7 @@ public class SGP4unit
 // nm - also added as an input since it may not be changed and it needs to retain its old value
 // returns array with these values:
 // [em, argpm, inclm, mm,nodem, dndt, nm]
+    @SuppressWarnings("unused")
     private static double[] dspace(
             int irez,
             double d2201, double d2211, double d3210, double d3222, double d4410,

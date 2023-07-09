@@ -27,9 +27,12 @@ package jsattrak.utilities;
 import jsattrak.gui.JSatTrak;
 import jsattrak.objects.SatelliteTleSGP4;
 import java.util.Hashtable;
+import java.util.List;
+
 import javax.swing.*;
 
-public class ListTransferHandler extends StringTransferHandler  implements java.io.Serializable
+@SuppressWarnings("unused")
+public class ListTransferHandler extends StringTransferHandler
 {
     private int[] indices = null;
     private int addIndex = -1; //Location where items were added
@@ -50,21 +53,22 @@ public class ListTransferHandler extends StringTransferHandler  implements java.
 
     //Bundle up the selected items in the list
     //as a single string, for export.
+    @SuppressWarnings("unchecked")
     protected String exportString(JComponent c)
     {
         //System.out.println("HERE");
 
-        JList<String> list = (JList)c;
+        JList<String> list = (JList<String>)c;
         indices = list.getSelectedIndices();
-        Object[] values = list.getSelectedValues();
+        List<String> values = list.getSelectedValuesList();
 
         StringBuffer buff = new StringBuffer();
 
-        for (int i = 0; i < values.length; i++)
+        for (int i = 0; i < values.size(); i++)
         {
-            Object val = values[i];
+            String val = values.get(i);
             buff.append(val == null ? "" : val.toString());
-            if (i != values.length - 1) {
+            if (i != values.size() - 1) {
                 buff.append("\n");
             }
         }
@@ -74,11 +78,12 @@ public class ListTransferHandler extends StringTransferHandler  implements java.
 
     //Take the incoming string and wherever there is a
     //newline, break it into a separate item in the list.
+    @SuppressWarnings("unchecked")
     protected void importString(JComponent c, String str)
     {
-        JList<String> target = (JList)c;
+        JList<String> target = (JList<String>)c;
 
-        DefaultListModel listModel = (DefaultListModel)target.getModel();
+        DefaultListModel<String> listModel = (DefaultListModel<String>)target.getModel();
         //System.out.println("HERE4");
         int index = target.getSelectedIndex();
 

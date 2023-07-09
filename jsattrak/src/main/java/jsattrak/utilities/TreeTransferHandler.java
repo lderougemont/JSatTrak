@@ -26,7 +26,8 @@ import java.util.Hashtable;
 import javax.swing.*;
 import javax.swing.tree.TreePath;
 
-public class TreeTransferHandler extends StringTransferHandler implements java.io.Serializable
+@SuppressWarnings("unused")
+public class TreeTransferHandler extends StringTransferHandler
 {
     private int[] indices = null;
     private int addIndex = -1; //Location where items were added

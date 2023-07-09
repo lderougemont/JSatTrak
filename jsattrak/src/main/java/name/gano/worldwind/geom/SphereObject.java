@@ -5,13 +5,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,6 +32,8 @@ import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
 import java.awt.Color;
 
+import javax.media.opengl.GL;
+
 /**
  * Represents a sphere in three dimensional space.
  * <p/>
@@ -46,18 +48,18 @@ public final class SphereObject implements Extent, Renderable
 
     private Vec4 center;
     private  double radius;  // final  -- SEG
-    
+
     private boolean sphereFilled = false;
-    
+
     private Color sphereColor = Color.WHITE;
-    
+
     private int numDivisions = 8; // number of horizontal and verticle divisions in the sphere
 
     boolean plotFixedAxis = false;
-    
+
     // improve performance keep from creating a new one all the time
     javax.media.opengl.glu.GLUquadric quadric;
-    
+
     /**
      * Creates a sphere that completely contains a set of points.
      *
@@ -121,7 +123,7 @@ public final class SphereObject implements Extent, Renderable
         this.radius = radius;
         this.sphereFilled = isfilled;
     }
-    
+
 
     /**
      * Calculate the extrema of a given array of <code>Vec4</code>s. The resulting array is always of length 2, with the
@@ -199,8 +201,8 @@ public final class SphereObject implements Extent, Renderable
     {
         return this.radius;
     }
-    
-    
+
+
     /**
      * Sets the radius of the sphere - doesn't automatically repaint.
      * @param radius radius of the sphere
@@ -361,28 +363,28 @@ public final class SphereObject implements Extent, Renderable
         }
 
         javax.media.opengl.GL gl = dc.getGL();
-         
+
 
         gl.glPushAttrib(javax.media.opengl.GL.GL_TEXTURE_BIT | javax.media.opengl.GL.GL_ENABLE_BIT
             | javax.media.opengl.GL.GL_CURRENT_BIT);
         gl.glDisable(javax.media.opengl.GL.GL_TEXTURE_2D);
-        
-        gl.glColor3d( sphereColor.getRed()/255.0 , sphereColor.getGreen()/255.0 , sphereColor.getBlue()/255.0 ); // COLOR 
+
+        gl.glColor3d( sphereColor.getRed()/255.0 , sphereColor.getGreen()/255.0 , sphereColor.getBlue()/255.0 ); // COLOR
 
         gl.glMatrixMode(javax.media.opengl.GL.GL_MODELVIEW);
         gl.glPushMatrix();
         gl.glTranslated(this.center.x, this.center.y, this.center.z);
-        
+
         //javax.media.opengl.glu.GLUquadric quadric = dc.getGLU().gluNewQuadric();
         if(quadric == null)
         {
             quadric = dc.getGLU().gluNewQuadric();
         }
-             
+
         // fill in:
         //dc.getGLU().gluQuadricDrawStyle(quadric, javax.media.opengl.glu.GLU.GLU_FILL);
         // or just lines:// javax.media.opengl.glu.GLU.GLU_LINE
-        
+
         if(sphereFilled)
         {
             dc.getGLU().gluQuadricDrawStyle(quadric, javax.media.opengl.glu.GLU.GLU_FILL);
@@ -391,50 +393,50 @@ public final class SphereObject implements Extent, Renderable
         {
             dc.getGLU().gluQuadricDrawStyle(quadric, javax.media.opengl.glu.GLU.GLU_LINE);
         }
-        
+
         // this line is the PERFORMANCE HIT
         // http://www.gamedev.net/community/forums/topic.asp?topic_id=479204
         // http://lists.apple.com/archives/Mac-opengl/2003/Nov/msg00053.html
         // OR MAYBE don't use spheres... use "dots" or label markers in WWJ?? (clickable?)
         dc.getGLU().gluSphere(quadric, this.radius, numDivisions, numDivisions);
-        
+
         // Draw in axis
         if(plotFixedAxis)
         {
             gl.glLineWidth(3.0f);
-            gl.glColor3d(1, 0, 0); // COLOR 
-            gl.glBegin(gl.GL_LINES);
+            gl.glColor3d(1, 0, 0); // COLOR
+            gl.glBegin(GL.GL_LINES);
                 gl.glVertex3d(radius * 3, 0, 0);
                 gl.glVertex3d(0, 0, 0);
             gl.glEnd();
             // Draw in axis
-            gl.glColor3d(0, 1, 0); // COLOR 
-            gl.glBegin(gl.GL_LINES);
+            gl.glColor3d(0, 1, 0); // COLOR
+            gl.glBegin(GL.GL_LINES);
                 gl.glVertex3d(0, radius * 3, 0);
                 gl.glVertex3d(0, 0, 0);
             gl.glEnd();
             // Draw in axis
-            gl.glColor3d(0, 0, 1); // COLOR 
-            gl.glBegin(gl.GL_LINES);
+            gl.glColor3d(0, 0, 1); // COLOR
+            gl.glBegin(GL.GL_LINES);
                 gl.glVertex3d(0, 0, radius * 3);
                 gl.glVertex3d(0, 0, 0);
             gl.glEnd();
         }
-        
+
         gl.glPopMatrix();
         dc.getGLU().gluDeleteQuadric(quadric);
 
         gl.glPopAttrib();
     }
 
-    
-    // SEG 
+
+    // SEG
     public void bumpRadius()
     {
          this.radius =  this.radius *1.25;
     }
-    
-    
+
+
     @Override
     public String toString()
     {
@@ -527,7 +529,7 @@ public final class SphereObject implements Extent, Renderable
     {
         this.center = center;
     }
-    
+
     public void setCenter(double x, double y, double z)
     {
         this.center = new Vec4(x,y,z,0.0);

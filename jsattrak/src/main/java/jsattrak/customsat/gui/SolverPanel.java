@@ -81,7 +81,7 @@ public class SolverPanel extends javax.swing.JPanel
 
         // set number render options
         // SEG v4.1.6 - remove this - not needed and was causing exceptions
-        //DefaultTableRenderer  tcr = (DefaultTableRenderer )inputVarJXTable.getDefaultRenderer( (new Double(0)).getClass());
+        //DefaultTableRenderer  tcr = (DefaultTableRenderer )inputVarJXTable.getDefaultRenderer( (0)).getClass());
 
 
 

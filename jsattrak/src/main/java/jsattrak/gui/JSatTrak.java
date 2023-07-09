@@ -49,8 +49,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
+import java.util.ResourceBundle;
 import java.util.TimeZone;
 import java.util.Vector;
 import java.util.zip.ZipEntry;
@@ -66,11 +68,20 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JRootPane;
 import javax.swing.JSeparator;
+import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.UIDefaults;
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
+
+import org.pushingpixels.substance.api.SubstanceLookAndFeel;
+import org.pushingpixels.substance.api.SubstanceSkin;
+import org.pushingpixels.substance.api.skin.RavenSkin;
+import org.pushingpixels.substance.api.skin.SubstanceRavenLookAndFeel;
+
 import jguiserver.GuiServer;
 import jsattrak.coverage.CoverageAnalyzer;
 import jsattrak.coverage.JSatTrakTimeDependent;
@@ -202,6 +213,35 @@ public class JSatTrak extends javax.swing.JFrame implements InternalFrameListene
     {
         boolean usingNimbus = false; // flag for updating nimbus
 
+        class CustomRavenLookAndFeel extends SubstanceLookAndFeel {
+            protected CustomRavenLookAndFeel(SubstanceSkin skin) { super(skin); }
+
+            public void debug() {
+               System.out.println("DEBUG:");
+               System.out.println(this.skin);
+               System.out.println(getCurrentSkin());
+               System.out.println(SubstanceLookAndFeel.getLabelBundle().getBaseBundleName());
+			// file chooser strings go to the main UIManager table
+        for (ResourceBundle bundle : new ResourceBundle[] {
+            ResourceBundle.getBundle("com.sun.swing.internal.plaf.metal.resources.metal"),
+            SubstanceLookAndFeel.getLabelBundle()
+        }) {
+            Enumeration<String> keyEn = bundle.getKeys();
+            while (keyEn.hasMoreElements()) {
+                String key = keyEn.nextElement();
+                if (key.contains("FileChooser")) {
+                    String value = bundle.getString(key);
+                    UIManager.put(key, value);
+                }
+            }
+        }
+
+               System.out.println();
+               System.out.println(SubstanceLookAndFeel.setSkin(this.skin));
+               System.out.println(getCurrentSkin());
+            }
+        }
+
         // setup look and feel first
         // if User has java 6u10 or greater that means NimbusLookAndFeel is supported!
         try
@@ -209,8 +249,13 @@ public class JSatTrak extends javax.swing.JFrame implements InternalFrameListene
             // TEMP UNTIL NIMBUS WORKS WITH INTERNAL WINDOWS
             //String laf = "org.jvnet.substance.skin.Substance" + "Raven" + "LookAndFeel";
             // SEG v4.1.4 - update to newer version of substnace api
-            String laf = "org.pushingpixels.substance.api.skin.Substance" + "Raven" + "LookAndFeel";
-            LafChanger.changeLaf(this, laf);
+            // TODO Can be used on Java 8- because of "com.sun.swing.internal.plaf.metal.resources.metal", maybe try substance 8.0
+            RavenSkin s = new RavenSkin();
+            CustomRavenLookAndFeel raven = new CustomRavenLookAndFeel(s);
+            UIManager.setLookAndFeel(raven);
+            raven.debug();
+
+
 //            for (J2DEarthPanel w : twoDWindowVec) //strange hack to make the map repaint correctly with the LAF (needed if done at the end)
 //            {
 //                w.setSize(w.getWidth() + 1, w.getHeight());
@@ -219,12 +264,15 @@ public class JSatTrak extends javax.swing.JFrame implements InternalFrameListene
         }
         catch(Exception ex2)
         {
+            ex2.printStackTrace();
             try
             {
+                System.out.println("COOL");
                 UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"); //
                 usingNimbus = true;
             } catch (Exception ex1) // default using jgoodies looks plastic theme
             {
+                System.out.println("OUILLE");
                 PlasticLookAndFeel.setPlasticTheme(new ExperienceBlue());
                 PlasticLookAndFeel.setTabStyle("Metal"); // makes tabes look much better
 
@@ -233,6 +281,7 @@ public class JSatTrak extends javax.swing.JFrame implements InternalFrameListene
                     UIManager.setLookAndFeel(new PlasticLookAndFeel());
                 } catch (Exception ex)
                 {
+                    System.out.println("OULA");
                     ex.printStackTrace();
                 }
             }
@@ -3845,7 +3894,7 @@ private void lookFeelMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
      */
     public static void main(final String args[])
     {
-
+        System.out.println("ELLO");
         // no command line arguments
         if(args.length == 0)
         {

@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,33 +24,32 @@
 package jsattrak.gui;
 
 import jsattrak.objects.GroundStation;
-import java.util.Hashtable;
 
 /**
  *
  * @author  sgano
  */
-public class GroundStationInformationPanel extends javax.swing.JPanel  implements java.io.Serializable
+public class GroundStationInformationPanel extends javax.swing.JPanel
 {
-    
+
     GroundStation gs;
-    
+
     /** Creates new form GroundStationInforationPanel
      * @param gs Create and Information Panel for this Ground Station
      */
     public GroundStationInformationPanel(GroundStation gs)
     {
         this.gs = gs;
-        
+
         initComponents();
-        
+
         // fill in static info
         latTextField.setText(gs.getLatitude()+"");
         longTextField.setText(gs.getLongitude()+"");
         altTextField.setText(gs.getAltitude()+"");
         elvTextField.setText(gs.getElevationConst()+"");
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -176,12 +175,12 @@ public class GroundStationInformationPanel extends javax.swing.JPanel  implement
     {//GEN-HEADEREND:event_saveElevationButtonActionPerformed
         // get elevation constraint and save it to the Ground Station
         double newElevation = Double.parseDouble(elvTextField.getText());
-        
+
         gs.setElevationConst(newElevation);
-        
+
     }//GEN-LAST:event_saveElevationButtonActionPerformed
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField altTextField;
     private javax.swing.JTextField elvTextField;
@@ -197,5 +196,5 @@ public class GroundStationInformationPanel extends javax.swing.JPanel  implement
     private javax.swing.JTextField longTextField;
     private javax.swing.JButton saveElevationButton;
     // End of variables declaration//GEN-END:variables
-    
+
 }

@@ -1,17 +1,17 @@
 /*
  * BasicModelViewInputBroker3.java
- * 
+ *
  * =====================================================================
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,7 +34,7 @@ import gov.nasa.worldwind.geom.Intersection;
 import gov.nasa.worldwind.geom.Line;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.globes.Globe;
-import gov.nasa.worldwind.pick.PickedObject;
+// import gov.nasa.worldwind.pick.PickedObject;
 import gov.nasa.worldwind.pick.PickedObjectList;
 import gov.nasa.worldwind.view.OrbitView;
 import gov.nasa.worldwind.view.ScheduledOrbitViewStateIterator;
@@ -92,7 +92,7 @@ public class BasicModelViewInputBroker3
                 keyPolled((Integer) source, actionEvent.getModifiers());
             }
         });
-        
+
     public BasicModelViewInputBroker3()
     {
     }
@@ -205,6 +205,7 @@ public class BasicModelViewInputBroker3
         this.selectedPosition = null;
     }
 
+    @SuppressWarnings("unused")
     private Position computePositionAtPoint(double mouseX, double mouseY)
     {
         Position position = null;
@@ -282,7 +283,7 @@ public class BasicModelViewInputBroker3
 //                    return;
 //                }
 //            }
-//            
+//
 //        }
 
         double headingFactor = 0;
@@ -298,7 +299,7 @@ public class BasicModelViewInputBroker3
             {
                 pitchFactor = -1;
             }
-            
+
             // added here to remove need for holding shift
             if (keyCode == KeyEvent.VK_LEFT)
                 headingFactor = -1;
@@ -316,7 +317,7 @@ public class BasicModelViewInputBroker3
         }
         else if (areModifiersExactly(modifiers, InputEvent.SHIFT_DOWN_MASK | slowMask))
         // SEG - remove need to hold shift
-        //else if (areModifiersExactly(modifiers, slowMask))    
+        //else if (areModifiersExactly(modifiers, slowMask))
         // SHOULD MAKE THESE PAN in x/y/z axis! (shift center point)
         {
             if (keyCode == KeyEvent.VK_LEFT)
@@ -328,9 +329,9 @@ public class BasicModelViewInputBroker3
             else if (keyCode == KeyEvent.VK_DOWN)
                 pitchFactor = 1;
         }
-        
-        
-        
+
+
+
         // handle moves
         if (headingFactor != 0)
         {
@@ -537,7 +538,7 @@ public class BasicModelViewInputBroker3
                 curMousePoint.x - prevMousePoint.x,
                 curMousePoint.y - prevMousePoint.y);
         }
-        
+
         // Compute the current selected position if none exists.
         if (this.selectedPosition == null)
             this.updateSelectedPosition();
@@ -572,7 +573,7 @@ public class BasicModelViewInputBroker3
 //                                this.view.getCenterPosition().getLatitude().add(prevPosition.getLatitude()).subtract(curPosition.getLatitude()),
 //                                this.view.getCenterPosition().getLongitude().add(prevPosition.getLongitude()).subtract(curPosition.getLongitude()));
 //                        }
-//                        
+//
 //                    }
 //                }
 //                // Cursor is off the globe, simulate globe dragging.
@@ -644,7 +645,7 @@ public class BasicModelViewInputBroker3
         {
             // Stop ViewStateIterators, so we are the only one affecting the view.
             stopViewIterators();
-            
+
             // make updates
              if (mouseMove.x > 0)
              {
@@ -654,7 +655,7 @@ public class BasicModelViewInputBroker3
              {
                 ((BasicModelView3)view).incrementXOffset(1.0);
              }
-            
+
 //            // make updates
 //             if (mouseMove.y > 0)
 //             {
@@ -664,7 +665,7 @@ public class BasicModelViewInputBroker3
 //             {
 //                ((BasicModelView3)view).incrementZOffset(-1.0);
 //             }
-            
+
             // fire change view event
             fireViewChangedEvent();
         }
@@ -673,7 +674,7 @@ public class BasicModelViewInputBroker3
         {
             // Stop ViewStateIterators, so we are the only one affecting the view.
             stopViewIterators();
-            
+
             // make updates
              if (mouseMove.x > 0)
              {
@@ -683,7 +684,7 @@ public class BasicModelViewInputBroker3
              {
                 ((BasicModelView3)view).incrementYOffset(1.0);
              }
-            
+
 //            // make updates
 //             if (mouseMove.y > 0)
 //             {
@@ -693,17 +694,17 @@ public class BasicModelViewInputBroker3
 //             {
 //                ((BasicModelView3)view).incrementZOffset(-1.0);
 //             }
-            
+
             // fire change view event
             fireViewChangedEvent();
         }
-        // mouse drag + mouse button 2 + Control = reset of offsets to 0 
+        // mouse drag + mouse button 2 + Control = reset of offsets to 0
         else if( areModifiersExactly(mouseEvent, InputEvent.BUTTON2_DOWN_MASK | InputEvent.CTRL_DOWN_MASK) )
         {
             stopViewIterators();
-            
+
 //            ((BasicModelView3)view).resetOffsets();
-            
+
             // make updates
              if (mouseMove.y > 0)
              {
@@ -713,11 +714,11 @@ public class BasicModelViewInputBroker3
              {
                 ((BasicModelView3)view).incrementZOffset(-1.0);
              }
-            
+
             fireViewChangedEvent();
         }
-        
-        
+
+
     } // mouse dragged
 
     public void mouseMoved(MouseEvent mouseEvent)
@@ -836,6 +837,7 @@ public class BasicModelViewInputBroker3
         this.view.firePropertyChange(AVKey.VIEW, null, this.view);
     }
 
+    @SuppressWarnings("unused")
     private void setCenterLatLon(Angle latitude, Angle longitude)
     {
         if (this.view == null)
@@ -915,7 +917,7 @@ public class BasicModelViewInputBroker3
 
         // Stop ViewStateIterators, so we are the only one affecting the view.
         stopViewIterators();
-        
+
         //System.out.println("Pitch:" + newPitch.degrees);
 
         Angle prevTarget = this.modelViewInputSupport.getPitchTarget();
@@ -954,6 +956,7 @@ public class BasicModelViewInputBroker3
         fireViewChangedEvent();
     }
 
+    @SuppressWarnings("unused")
     private Angle computeLatOrLonChange(double amount, boolean slow)
     {
         if (this.wwd == null
@@ -1030,5 +1033,5 @@ public class BasicModelViewInputBroker3
         return Math.exp(lonPrevTarget + logNewTarget - logCurZoom);
     }
 
-    
+
 }

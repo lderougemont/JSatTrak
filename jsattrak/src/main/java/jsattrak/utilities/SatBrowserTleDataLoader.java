@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -56,11 +56,11 @@ public class SatBrowserTleDataLoader extends SwingWorker<Boolean,ProgressStatus>
 {
     //JProgressDialog jProgDialog = null; // SEG - 22 March 2009 is this needed?
     //boolean dialogCreated = false; // SEG - 22 March 2009 is this needed?
-    
+
     //JProgressDialog dialog;
-    
+
     boolean notDone = true; // not done yet
-    
+
     //
     DefaultMutableTreeNode topTreeNode;
     private Hashtable<String,TLE> tleHash;
@@ -81,14 +81,14 @@ public class SatBrowserTleDataLoader extends SwingWorker<Boolean,ProgressStatus>
     TLEDownloader tleDownloader;
     boolean userSelectedNoToDownload = false;
     int satCount = 0;
-    
-    
+
+
     /** Creates a new instance of ProgressBarWorker
      * @param parentComponent
      * @param topTreeNode
      * @param tleHash
      * @param tleOutputTextArea
-     * @param satTree 
+     * @param satTree
      */
     public SatBrowserTleDataLoader(JSatTrak parentComponent, DefaultMutableTreeNode topTreeNode, Hashtable<String,TLE> tleHash, JTextArea tleOutputTextArea, JTree satTree)
     {
@@ -142,13 +142,13 @@ public class SatBrowserTleDataLoader extends SwingWorker<Boolean,ProgressStatus>
             {
                 loadTLEfromWeb = true; // must load them (but user said no)
                 userSelectedNoToDownload = true;
-                //return new Boolean(result); // return as if nothing was wrong but no sat browswer will be shown
+                //return result); // return as if nothing was wrong but no sat browswer will be shown
             }
 
         } // TLE files exisit?
-        
+
     } // SatBrowserTleDataLoader
-    
+
 
     /**
      * Add all of the TLE data files to the satellite browser
@@ -158,44 +158,44 @@ public class SatBrowserTleDataLoader extends SwingWorker<Boolean,ProgressStatus>
     public Boolean doInBackground()
     {
         boolean result = true;
-        
+
         //dialogCreated = true; // SEG - 22 March 2009 is this needed?
-       
+
         //=================================================================================================
-        
-        
+
+
         //TLEDownloader tleDownloader = new TLEDownloader();
-        
+
         // create a hashmap of top level nodes
         mainNodesHash = new Hashtable<String,DefaultMutableTreeNode>();
         secondaryNodesHash = new Hashtable<String,DefaultMutableTreeNode>();
-    
+
         // iterate for each primary category, only create node when it is different than item before
-        
+
         // current main node we are working with
         DefaultMutableTreeNode currentMainNode = topTreeNode;
         DefaultMutableTreeNode currentSecondaryNode;
-        
+
         // current TLE
         TLE currentTLE = null;
-        
+
         satCount = 0;
-        
+
         /////////////////////////////////////////////////////////
         // if data file dir doesn't exist and the user said no to downloading them then exit
        if(loadTLEfromWeb && userSelectedNoToDownload )
        {
-                return new Boolean(result); // return as if nothing was wrong but no sat browswer will be shown
+                return result; // return as if nothing was wrong but no sat browswer will be shown
        }
         ///////////////////////////////////////////////
 
-        
 
-                
+
+
         // Assumes each satellite TLE has a unique name
         for(int i=0; i<tleDownloader.fileNames.length; i++)
         {
-            
+
             // see if the primary category exisits
             if(mainNodesHash.containsKey(tleDownloader.primCat[i]))
             {
@@ -210,19 +210,19 @@ public class SatBrowserTleDataLoader extends SwingWorker<Boolean,ProgressStatus>
                 // add node to the top node
                 topTreeNode.add(currentMainNode);
             }
-            
+
             // okay, now add a new secondary node to the main node (assume it is not already there, files are uniquly named)
             currentSecondaryNode = new DefaultMutableTreeNode(tleDownloader.secondCat[i]);
             currentMainNode.add(currentSecondaryNode);
             secondaryNodesHash.put(tleDownloader.secondCat[i],currentSecondaryNode); // save to keep track
-            
-                        
+
+
             // now parse through the textfile and create a TLE for each entry
             // add each TLE to the hashmap and to the JTree
             try
             {
                 BufferedReader tleReader = null; // initalization of reader (either local or web)
-                
+
                 if(!loadTLEfromWeb)
                 {
                     // read local file
@@ -236,40 +236,40 @@ public class SatBrowserTleDataLoader extends SwingWorker<Boolean,ProgressStatus>
                     if(!dialog.isVisible()) // if progress bar is close cancel this operation
                     {
                         result = false;
-                        return new Boolean(result);
+                        return result;
                     }
-                    
+
                     // read from web
                     URL url = new URL(tleDownloader.getTleWebPath(i));
                     URLConnection c = url.openConnection();
                     InputStreamReader isr = new InputStreamReader(c.getInputStream());
                     tleReader = new BufferedReader(isr); // from the web
-                    
+
                     // update progress?
                     publish( new ProgressStatus((int) Math.round( (i*100.0)/ tleDownloader.fileNames.length), tleDownloader.fileNames[i]) );
 //                    dialog.setProgress( (int) Math.round( (i*100.0)/ tleDownloader.fileNames.length) );
 //                    dialog.repaint();
 //                    dialog.setStatusText(tleDownloader.fileNames[i]);
                 }
-                
+
                 String nextLine = null;
-                
+
                 while( (nextLine = tleReader.readLine()) != null)
                 {
                     // needs three lines
                     currentTLE = new TLE(nextLine,tleReader.readLine(),tleReader.readLine());
-                    
+
                     // save TLE
                     tleHash.put(currentTLE.getSatName(),currentTLE);
-                    
+
                     // add to tree
                     currentSecondaryNode.add( new DefaultMutableTreeNode(currentTLE.getSatName()) );
-                    
+
                     satCount++;
                 }// while there are more lines to read
 
                 tleReader.close(); // close file
-                                
+
             }
             catch(Exception e)
             {
@@ -278,11 +278,11 @@ public class SatBrowserTleDataLoader extends SwingWorker<Boolean,ProgressStatus>
                 //e.printStackTrace();
                 // the next line cause the app to hang
                 //JOptionPane.showMessageDialog(parentComponent, "Error Loading Satellite TLE Data. Try updating data.\n"+e.toString(), "TLE LOADING ERROR", JOptionPane.ERROR_MESSAGE);
-                
+
                 result = false;
-                return new Boolean(result); // quit, so user doesn't get tons of error messages
+                return result; // quit, so user doesn't get tons of error messages
             }
-     
+
         } // for each primary category
 
         // Check for user supplied TLE data files
@@ -319,14 +319,14 @@ public class SatBrowserTleDataLoader extends SwingWorker<Boolean,ProgressStatus>
             System.out.println("Error loading user supplied TLE data files:" + e.toString());
         } // end of trying to load user supplied TLE files
 
-       
-        
+
+
         //=================================================================================================
-        
+
         //System.out.println("I am done");
-        
-        return new Boolean(result);
-        
+
+        return result;
+
     } // do in background
 
     // runs every once in a while to update GUI, use publish( int ) and the int will be added to the List
@@ -424,7 +424,7 @@ public class SatBrowserTleDataLoader extends SwingWorker<Boolean,ProgressStatus>
                 // change category names (will change object passed in too)
                 String pri = data1[1].split(",")[0].trim();
                 String sec = data1[2].trim();
-                
+
                 // make sure categories are defined, if they are flag and save them
                 if(pri != null && sec != null)
                 {
@@ -548,7 +548,7 @@ public class SatBrowserTleDataLoader extends SwingWorker<Boolean,ProgressStatus>
 
 
             result = false;
-            return new Boolean(result); // quit, so user doesn't get tons of error messages
+            return result; // quit, so user doesn't get tons of error messages
         }
 
 
@@ -573,8 +573,8 @@ public class SatBrowserTleDataLoader extends SwingWorker<Boolean,ProgressStatus>
 
         //satTree.repaint();
 
-        return new Boolean(result); // quit, so user doesn't get tons of error messages
-         
+        return result; // quit, so user doesn't get tons of error messages
+
     } // loadTLEDataFile
 
     // Returns a TreePath containing the specified node.
@@ -594,5 +594,5 @@ public class SatBrowserTleDataLoader extends SwingWorker<Boolean,ProgressStatus>
         return new TreePath(list.toArray());
     }
 
-    
+
 }

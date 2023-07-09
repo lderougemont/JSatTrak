@@ -1,17 +1,17 @@
 /*
  * RelativePath.java
- * 
+ *
  * =====================================================================
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,14 +29,14 @@ import java.util.*;
  * this class provides functions used to generate a relative path
  * from two absolute paths
  * http://www.devx.com/tips/Tip/13737
- * 
+ *
  * updated: Shawn E. Gano - 25 July 2008 - fixed path seperator to be /
- * 
+ *
  * @author David M. Howard, Shawn E. Gano
  */
 public class RelativePath
 {
-    
+
     static String pathSep = "/";//File.separator;  // made this cononical - SEG
     /**
      * break a path down into individual elements and add to a list.
@@ -45,9 +45,9 @@ public class RelativePath
      * @return a List collection with the individual elements of the path in
     reverse order
      */
-    private static List getPathList(File f)
+    private static List<String> getPathList(File f)
     {
-        List l = new ArrayList();
+        List<String> l = new ArrayList<>();
         File r;
         try
         {
@@ -72,7 +72,7 @@ public class RelativePath
      * @param r home path
      * @param f path of file
      */
-    private static String matchPathLists(List r, List f)
+    private static String matchPathLists(List<String> r, List<String> f)
     {
         int i;
         int j;
@@ -119,9 +119,8 @@ public class RelativePath
      */
     public static String getRelativePath(File home, File f)
     {
-        File r;
-        List homelist;
-        List filelist;
+        List<String> homelist;
+        List<String> filelist;
         String s;
 
         homelist = getPathList(home);
@@ -139,8 +138,8 @@ public class RelativePath
         //args = new String[] {"c:/test/","c:/test1/test.html"};
         //args = new String[] {"c:/test1","c:/test1/models/test.html"};
         args = new String[] {"C:\\Documents and Settings\\sgano\\Desktop\\JSatTrak\\JSatTrak\\data\\models\\","C:\\Documents and Settings\\sgano\\Desktop\\JSatTrak\\JSatTrak\\data\\models\\isscomplete\\iss_complete.3ds"};
-        
-        
+
+
         if(args.length != 2)
         {
             System.out.println("RelativePath <home> <file>");

@@ -5,13 +5,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,7 +23,7 @@
 package name.gano.worldwind.view;
 
 
-/* 
+/*
 Copyright (C) 2001, 2006 United States Government as represented by
 the Administrator of the National Aeronautics and Space Administration.
 All Rights Reserved.
@@ -41,16 +41,17 @@ import java.awt.event.*;
  * @author dcollins
  * @version $Id: OrbitViewInputBroker.java 3548 2007-11-16 06:27:16Z dcollins $
  */
+@SuppressWarnings("unused")
 public class BasicModelViewInputBroker
         implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener, FocusListener
 {
     private BasicModelView view;
     private WorldWindow wwd;
-    
+
     // sensitivity in moust movements
     float offsetMaxScale = 10000000.0f;
     float zoomScale = 30000000.0f;
-    
+
 
     // Current mouse state.
     private java.awt.Point mousePoint = null;
@@ -74,7 +75,7 @@ public class BasicModelViewInputBroker
 //                if (source == null || !(source instanceof Integer))
 //                    return;
 //
-//                keyPolled((Integer) source, actionEvent.getModifiers());
+//                keyPolled((Integer) source, actionEvent.getModifiersEx());
 //            }
 //        });
 
@@ -97,7 +98,7 @@ public class BasicModelViewInputBroker
             this.view = (BasicModelView) this.wwd.getView();
     }
 
-   
+
 
     private Point getMousePoint()
     {
@@ -247,7 +248,7 @@ public class BasicModelViewInputBroker
     }
 
     int mouseButton,mouseButtonMod;
-    
+
     public void mousePressed(MouseEvent mouseEvent)
     {
         if (this.wwd == null) // include this test to ensure any derived implementation performs it
@@ -261,8 +262,8 @@ public class BasicModelViewInputBroker
 
         mouseButton = mouseEvent.getButton();
         mouseButtonMod = mouseEvent.getModifiersEx();
-        
-        
+
+
         updateMousePoint(mouseEvent);
         updateSelectedPosition();
     }
@@ -319,27 +320,27 @@ public class BasicModelViewInputBroker
         java.awt.Point curMousePoint = getMousePoint();
         // Compute mouse movement.
         java.awt.Point mouseMove = null;
-        
+
         if (curMousePoint != null && prevMousePoint != null)
         {
             mouseMove = new java.awt.Point(
                 curMousePoint.x - prevMousePoint.x,
                 curMousePoint.y - prevMousePoint.y);
-            
+
             // CONTROLS FOR THIS MODEL VIEW TYPE
-            
+
             // button 1 - controls lat/long spin
             if (mouseButtonMod == MouseEvent.BUTTON1_DOWN_MASK)
             {
                 // change lat (theta1)  -- NOT QUITE RIGHT... but should move!!
                 float theta1f = 360.0f * (float) (curMousePoint.y - prevMousePoint.y) / (float) view.getViewport().height;
                 view.addToTheta1(theta1f);
-                
+
                 float theta3f = 360.0f * (float) (curMousePoint.x - prevMousePoint.x) / (float) view.getViewport().width;
                 view.addToTheta3(theta3f);
-                
+
             }
-            
+
             System.out.println("here:" + mouseEvent.getButton());
             if (mouseButtonMod == MouseEvent.BUTTON2_DOWN_MASK)
             {
@@ -349,35 +350,35 @@ public class BasicModelViewInputBroker
                 view.addToRadiusAboutCenter(meters);
                 //System.out.println("here:" + meters);
             }
-            
+
             if (mouseButtonMod == MouseEvent.BUTTON3_DOWN_MASK)
             {
                 //System.out.println("here:" + mouseEvent.getButton());
-                
+
                 float theta2f = -360.0f * (float) (curMousePoint.x - prevMousePoint.x) / (float) view.getViewport().width;
                 view.addToTheta2(theta2f);
-                
+
             }
-            
+
             if(mouseButtonMod == MouseEvent.CTRL_DOWN_MASK + MouseEvent.BUTTON1_DOWN_MASK)
             {
                 //System.out.println("YES:" + mouseButtonMod);
-                
+
                 float dx = -offsetMaxScale * (float) (curMousePoint.x - prevMousePoint.x) / (float) view.getViewport().width;
                 view.addToXOffsetAboutCenter(dx);
-                
+
                 float dy = offsetMaxScale * (float) (curMousePoint.y - prevMousePoint.y) / (float) view.getViewport().width;
                 view.addToZOffsetAboutCenter(dy);
             }
-            
+
             if(mouseButtonMod == MouseEvent.CTRL_DOWN_MASK + MouseEvent.BUTTON2_DOWN_MASK)
             {
                 //System.out.println("YES:" + mouseButtonMod);
-                
+
                 float dx = offsetMaxScale * (float) (curMousePoint.x - prevMousePoint.x) / (float) view.getViewport().width;
-                
+
                 float dy = offsetMaxScale * (float) (curMousePoint.y - prevMousePoint.y) / (float) view.getViewport().width;
-                
+
                 // use which ever has changed the most
                 if(Math.abs(dx) > Math.abs(dy))
                 {
@@ -387,19 +388,19 @@ public class BasicModelViewInputBroker
                 {
                     view.addToYOffsetAboutCenter(dy);
                 }
-                
-                
+
+
             }
-            
+
             if(mouseButtonMod == MouseEvent.CTRL_DOWN_MASK + MouseEvent.BUTTON3_DOWN_MASK)
             {
                // moved to button 1 up/down
                // float dx = offsetMaxScale * (float) (curMousePoint.x - prevMousePoint.x) / (float) view.getViewport().width;
                // view.addToZOffsetAboutCenter(dx);
             }
-              
+
         } // cursor not null
-        
+
     } // mouse dragged
 
     public void mouseMoved(MouseEvent mouseEvent)
@@ -457,7 +458,7 @@ public class BasicModelViewInputBroker
         //this.keyPollTimer.stop();
     }
 
-   
-   
+
+
 }
 

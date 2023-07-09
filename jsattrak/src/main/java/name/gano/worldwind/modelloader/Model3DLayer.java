@@ -3,13 +3,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,23 +35,24 @@ import net.java.joglutils.model.iModel3DRenderer;
  * @author RodgersGB
  */
 public class Model3DLayer extends AbstractLayer {
-    private Vector list;
+    private Vector<WWModel3D> list;
     private boolean maitainConstantSize = false;
     private double size = 1;
-    
+
     /** Creates a new instance of Model3DLayer */
     public Model3DLayer() {
-        list = new Vector();
+        list = new Vector<>();
     }
 
     public void addModel(WWModel3D model) {
         list.add(model);
     }
-    
+
     public void removeModel(WWModel3D model) {
         list.remove(model);
     }
-    
+
+    @SuppressWarnings("unused")
     protected void doRender(DrawContext dc) {
         try {
             beginDraw(dc);
@@ -75,11 +76,11 @@ public class Model3DLayer extends AbstractLayer {
             endDraw(dc);
         }
     }
-    
+
     // draw this layer
     protected void draw(DrawContext dc, WWModel3D model) {
         GL gl = dc.getGL();
-        
+
         Position pos = model.getPosition();
         if (model.getFollowTerrain())
         {
@@ -91,61 +92,61 @@ public class Model3DLayer extends AbstractLayer {
         	}
         	pos = new Position(pos.getLatLon(), elevation);
         }
-        	
+
         Vec4 loc = dc.getGlobe().computePointFromPosition(pos);
         double localSize = this.computeSize(dc, loc);
         localSize *= model.computeSizeScale(dc, loc);
-        
+
         if (dc.getView().getFrustumInModelCoordinates().contains(loc)) {
             dc.getView().pushReferenceCenter(dc, loc);
-            
+
             gl.glRotated(pos.getLongitude().degrees, 0,1,0);
             gl.glRotated(-pos.getLatitude().degrees, 1,0,0);
             gl.glScaled(localSize, localSize, localSize);
-            
+
             //System.out.println("lsize = " + localSize + ", radius = " + model.getModel().getBounds().getRadius());
-            
+
             gl.glRotated(model.getYaw(), 0,0,1);
             gl.glRotated(model.getPitch(), 1,0,0);
             gl.glRotated(model.getRoll(), 0,1,0);
-            
+
             // Get an instance of the display list renderer
             iModel3DRenderer renderer = DisplayListRenderer.getInstance();
             renderer.render(gl, model.getModel());
             dc.getView().popReferenceCenter(dc);
         }
     }
-    
+
     // puts opengl in the correct state for this layer
     protected void beginDraw(DrawContext dc) {
         GL gl = dc.getGL();
-        
+
         Vec4 cameraPosition = dc.getView().getEyePoint();
-        
+
         gl.glPushAttrib(
             GL.GL_TEXTURE_BIT |
             GL.GL_COLOR_BUFFER_BIT |
             GL.GL_DEPTH_BUFFER_BIT |
             GL.GL_HINT_BIT |
             GL.GL_POLYGON_BIT |
-            GL.GL_ENABLE_BIT | 
-            GL.GL_CURRENT_BIT | 
-            GL.GL_LIGHTING_BIT | 
+            GL.GL_ENABLE_BIT |
+            GL.GL_CURRENT_BIT |
+            GL.GL_LIGHTING_BIT |
             GL.GL_TRANSFORM_BIT);
 
         //float[] lightPosition = {0F, 100000000f, 0f, 0f};
         float[] lightPosition =
             {(float) (cameraPosition.x + 1000), (float) (cameraPosition.y + 1000), (float) (cameraPosition.z + 1000), 1.0f};
-        
+
         /** Ambient light array */
         float[] lightAmbient = {0.4f, 0.4f, 0.4f, 0.4f};
         /** Diffuse light array */
         float[] lightDiffuse = {1.0f, 1.0f, 1.0f, 1.0f};
         /** Specular light array */
         float[] lightSpecular = {1.0f, 1.0f, 1.0f, 1.0f};
-        
+
         float[] model_ambient = {0.5f, 0.5f, 0.5f, 1.0f};
-        
+
         gl.glLightModelfv(GL.GL_LIGHT_MODEL_AMBIENT, model_ambient, 0);
         gl.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, lightPosition, 0);
         gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuse, 0);
@@ -156,25 +157,25 @@ public class Model3DLayer extends AbstractLayer {
         gl.glEnable(GL.GL_LIGHT1);
         gl.glEnable(GL.GL_LIGHTING);
         gl.glEnable(GL.GL_NORMALIZE);
-        
+
         gl.glMatrixMode(GL.GL_MODELVIEW);
         gl.glPushMatrix();
     }
-    
+
     // resets opengl state
     protected void endDraw(DrawContext dc) {
         GL gl = dc.getGL();
-        
+
         gl.glMatrixMode(javax.media.opengl.GL.GL_MODELVIEW);
         gl.glPopMatrix();
-        
+
         gl.glPopAttrib();
     }
-    
+
     private double computeSize(DrawContext dc, Vec4 loc) {
         if (this.maitainConstantSize)
             return size;
-        
+
         if (loc == null) {
             System.err.println("Null location when computing size of model");
             return 1;
@@ -183,7 +184,7 @@ public class Model3DLayer extends AbstractLayer {
         double currentSize = 60 * dc.getView().computePixelSizeAtDistance(d);
         if (currentSize < 2)
             currentSize = 2;
-        
+
         return currentSize;
     }
 

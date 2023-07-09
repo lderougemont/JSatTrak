@@ -3,13 +3,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,14 +32,14 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Properties;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
+// import javax.swing.JLabel;
+// import javax.swing.JProgressBar;
 
 public class TLEDownloader implements java.io.Serializable
 {
 	// root URL for all TLEs
 	String rootWeb = "http://celestrak.com/NORAD/elements/";
-	
+
 	// names of all TLE files to update
 	public String[] fileNames = new String[] {
             // --- Special-Interest Satellites -----
@@ -94,9 +94,9 @@ public class TLEDownloader implements java.io.Serializable
 			"radar.txt",
 			"cubesat.txt",
 			"other.txt",
-			
+
 	};
-	
+
 	// primary category for each TLE
 	public String[] primCat = new String[] {
             //"Special-Interest",  //removed all : " Satellites" redundant //removed, no more Space Shuttle flights :( // SEG v4.2.1
@@ -149,9 +149,9 @@ public class TLEDownloader implements java.io.Serializable
 			"Miscellaneous",
 			"Miscellaneous",
 			"Miscellaneous",
-			"Miscellaneous"			
+			"Miscellaneous"
 	};
-	
+
 	// secondary category for each TLE
 	public String[] secondCat = new String[] {
             //"STS", //removed all : " Satellites" redundant //removed, no more Space Shuttle flights :( // SEG v4.2.1
@@ -204,9 +204,9 @@ public class TLEDownloader implements java.io.Serializable
 			"Miscellaneous Military",
 			"Radar Calibration",
 			"CubeSats",
-			"Other"			
+			"Other"
 	};
-	
+
 	// local path to save files
     private String localPath = "data/tle/";
 
@@ -249,7 +249,7 @@ public class TLEDownloader implements java.io.Serializable
     public boolean downloadAllTLEs()
     {
          boolean success = true; // flag to tell if everyting worked
-         
+
          // do download
          success = startTLEDownload();
 
@@ -262,7 +262,7 @@ public class TLEDownloader implements java.io.Serializable
                 success = this.downloadNextTLE();
              }
          }
-         
+
          //
          return success;
     } // downloadAllTLEs
@@ -380,7 +380,7 @@ public class TLEDownloader implements java.io.Serializable
             return false;
         }
 
-        
+
 
         // put for loop around this
         //for (int i = 0; i < fileNames.length; i++)
@@ -441,14 +441,14 @@ public class TLEDownloader implements java.io.Serializable
         return success;
 
     } // downloadNextTLE
-	
-	
+
+
 	public String getErrorText()
 	{
 		return errorText;
 	}
-	
-	
+
+
 	   // test driving main fuction
     public static void main(String[] args)
     {

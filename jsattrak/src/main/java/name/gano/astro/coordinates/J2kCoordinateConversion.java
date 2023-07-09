@@ -1,17 +1,17 @@
 /*
  * J2kCoordinateConversion.java
- * 
+ *
  * =====================================================================
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -234,6 +234,7 @@ public static double[][] teme_j2k
 * ----------------------------------------------------------------------------*/
 // NOTE:  returns rotation matrix needed to perform the transformation
 // nut terns used, popupular choices: 4, 40, 106 (106 is max!)
+@SuppressWarnings("unused")
 public static double[][] tod_j2000
      (
        //double rtod[3], double vtod[3], double atod[3],
@@ -245,12 +246,12 @@ public static double[][] tod_j2000
      {
        double[][] prec, nut, tempmat, nutp, precp;
        double psia, wa, epsa, chia;
-//       Double deltapsi= new Double(0), deltaeps= new Double(0),
-//               trueeps= new Double(0), meaneps= new Double(0), omega = new Double(0);
+//       Double deltapsi= 0), deltaeps= 0),
+//               trueeps= 0), meaneps= 0), omega = 0);
        //double[] omgxv[3], tempvec1[3], tempvec[3];
 
        prec = precess( ttt, Opt.e80); //,  psia,wa,epsa,chia,  prec );
-       
+
        nut = nutation( ttt,ddpsi,ddeps,'c',nutTerms);//,  deltapsi,deltaeps, trueeps,meaneps,omega); // iau80rec,
 
        if (direct == Direction.to)
@@ -313,6 +314,7 @@ public static double[][] tod_j2000
 *    vallado       2007, 228
 * --------------------------------------------------------------------------- */
 //returns the transformation matrix
+@SuppressWarnings("unused")
 public static double[][] mod_j2000
      (
        //double rmod[3], double vmod[3], double amod[3],
@@ -544,6 +546,7 @@ public static double[][] precess
 *    vallado       2007, 217, 228
 * --------------------------------------------------------------------------- */
 // returns the nut matrix
+@SuppressWarnings("unused")
 public static double[][] nutation
      (
        double ttt, double ddpsi, double ddeps,
@@ -563,10 +566,10 @@ public static double[][] nutation
 
        double deg2rad, cospsi, sinpsi, coseps, sineps, costrueeps, sintrueeps;
        // used as return values from fundarg
-       Double l=new Double(0), l1=new Double(0), f=new Double(0), d=new Double(0),
-               lonmer=new Double(0), lonven=new Double(0), lonear=new Double(0),
-               lonmar=new Double(0), lonjup=new Double(0), lonsat=new Double(0),
-               lonurn=new Double(0), lonnep=new Double(0), precrate=new Double(0);
+       double l=0, l1=0, f=0, d=0,
+               lonmer=0, lonven=0, lonear=0,
+               lonmar=0, lonjup=0, lonsat=0,
+               lonurn=0, lonnep=0, precrate=0;
 
 
        int  i;
@@ -903,7 +906,7 @@ public static double[][]    mattrans
 *  coupling      :
 *
 * --------------------------------------------------------------------------- */
-
+@SuppressWarnings("unused")
 public static double[] matvecmult
         (
           double[][] mat,

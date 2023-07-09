@@ -3,13 +3,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,7 @@
 /**     ----------------------------------------------------------------
  * Contains functions to read TLE data files and initalize the SGP4 propogator
  * as well as other routines from sgp4ext.cpp
- * 
+ *
  * <p>
  * sgp4ext.cpp header information:
  * <p>
@@ -71,7 +71,7 @@ public class SGP4utils
      * @param satName
      * @param line1  TLE line 1
      * @param line2  TLE line 2
-     * @param opsmode 
+     * @param opsmode
      * @param whichconst which constants to use in propogation
      * @param satrec  object to store the SGP4 data
      * @return if the sgp4 propogator was initialized properly
@@ -313,7 +313,7 @@ public class SGP4utils
      * Read float data from a string
      * @param inStr
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
     protected static double readFloatFromString(String inStr) throws Exception
     {
@@ -641,6 +641,7 @@ public class SGP4utils
      * @param mu
      * @return [p, a, ecc, incl, omega, argp, nu, m, arglat, truelon, lonper]
      */
+    @SuppressWarnings("unused")
     public static double[] rv2coe(
             double[] r, double[] v, double mu//,
             //       double& p, double& a, double& ecc, double& incl, double& omega, double& argp,

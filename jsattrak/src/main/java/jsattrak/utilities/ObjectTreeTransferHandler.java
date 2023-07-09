@@ -43,7 +43,8 @@ import jsattrak.objects.SatelliteTleSGP4;
  *
  * @author sgano
  */
-public class ObjectTreeTransferHandler extends StringTransferHandler implements java.io.Serializable
+@SuppressWarnings("unused")
+public class ObjectTreeTransferHandler extends StringTransferHandler
 {
     private int[] indices = null;
     private int addIndex = -1; //Location where items were added

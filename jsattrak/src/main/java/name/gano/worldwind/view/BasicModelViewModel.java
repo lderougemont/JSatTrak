@@ -5,13 +5,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,18 +29,19 @@ import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.Logging;
 
 /**
- * 
+ *
  * Striped down and modified verstion of:
  * OrbitViewModel.java 3570 2007-11-18 19:56:49Z dcollins $
  */
+@SuppressWarnings("unused")
 class BasicModelViewModel
 {
     private Matrix transformMatrix = null;
-    
+
     // pivot point at look at point (are these used here?)
     private Vec4 currentLookAtPoint = null;
     private Vec4 currentPivotPoint = null;
-    
+
     // model viewing parameters
     // center of viewing orbit
     private double[] centerPos = new double[] {0,0,7000000};//{0,0,6378100 + 10000000};
@@ -53,61 +54,61 @@ class BasicModelViewModel
     // viewing distance from center
     private double radiusAboutCenter = 1500000; // distance from model
 
-   
-    
+
+
     public BasicModelViewModel(DrawContext dc)
     {
-        
+
         updateViewTransform(dc);
     }
-    
+
 
     // ====================================================
-    
+
     public void addToTheta1(double addDeg)
     {
         theta1 = theta1.addDegrees(addDeg);
-        
+
         //System.out.println("here" + addDeg);
     }
-    
+
     public void addToTheta2(double addDeg)
     {
         theta2 = theta2.addDegrees(addDeg);
     }
-    
+
     public void addToTheta3(double addDeg)
     {
         theta3 = theta3.addDegrees(addDeg);
     }
-    
+
     public void addToRadiusAboutCenter(double m)
     {
         radiusAboutCenter += m;
-        
+
         if(radiusAboutCenter < 0)
         {
             radiusAboutCenter = 0;
         }
     }
-    
+
     public void addToXOffsetAboutCenter(double m)
     {
         offCenterDist[0] += m;
     }
-    
+
     public void addToYOffsetAboutCenter(double m)
     {
         offCenterDist[1] += m;
     }
-    
+
     public void addToZOffsetAboutCenter(double m)
     {
         offCenterDist[2] += m;
     }
-    
-    
-   
+
+
+
 
 
     // SEG ====================================
@@ -115,56 +116,56 @@ class BasicModelViewModel
     public void updateViewTransform(DrawContext dc)
     {
         Matrix initTransform = Matrix.IDENTITY;
-        
+
         Globe globe = dc.getGlobe();
-        
+
         // look at angles around point
 //        Angle lat = Angle.fromDegrees(0);
 //        Angle lon = Angle.fromDegrees(0);
-        
+
         // move out to earths surface
         initTransform = initTransform.multiply(Matrix.fromTranslation(
             0.0,
             0.0 ,
-             -radiusAboutCenter )); // -centerPos[2] 
-//        
+             -radiusAboutCenter )); // -centerPos[2]
+//
 //        initTransform = initTransform.multiply(Matrix.fromRotationX(Angle.fromDegrees(30).multiply(-1)));
-//        
+//
 //        initTransform = initTransform.multiply(Matrix.fromRotationZ(pitch));
-//        
+//
         // move out to altitude
 //        initTransform = initTransform.multiply(Matrix.fromTranslation(
 //            0.0,
 //            0.0,
 //            0.0 - 10000000));
-        
+
         // rotate around obj
         initTransform = initTransform.multiply(Matrix.fromRotationX(theta1));
-        // rotat around obj        
+        // rotat around obj
         initTransform = initTransform.multiply(Matrix.fromRotationY(theta2.multiply(-1)));
-        
+
         initTransform = initTransform.multiply(Matrix.fromRotationZ(theta3));
-        
+
         // move to center point
         initTransform = initTransform.multiply(Matrix.fromTranslation(
             -centerPos[0]-offCenterDist[0],
             -centerPos[1]-offCenterDist[1] ,
-            -centerPos[2]-offCenterDist[2] )); // -centerPos[2] 
-        
-        
+            -centerPos[2]-offCenterDist[2] )); // -centerPos[2]
+
+
         this.setTransform(dc, initTransform);
     }
 
     // ========================================
-    
-    
-    
+
+
+
     public Matrix getTransformMatrix()
     {
         return this.transformMatrix;
     }
 
-   
+
     private void setTransform(DrawContext dc, Matrix newTransformMatrix)
     {
         if (dc == null)

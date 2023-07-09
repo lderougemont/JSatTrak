@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,16 +22,15 @@
 package name.gano.astro.bodies;
 
 import name.gano.astro.AstroConst;
-import name.gano.astro.Kepler;
 import name.gano.astro.MathUtils;
 
 /**
  *
  * @author sgano
  */
-public class Moon 
+public class Moon
 {
-    
+
     /**
      * Computes the Moon's geocentric position using a low precision analytical series
      * @param Mjd_TT Terrestrial Time (Modified Julian Date)
@@ -58,7 +57,7 @@ public class Moon
         l = 2.0 * Math.PI * MathUtils.Frac(0.374897 + 1325.552410 * T);     // Moon's mean anomaly [rad]
         lp = 2.0 * Math.PI * MathUtils.Frac(0.993133 + 99.997361 * T);     // Sun's mean anomaly [rad]
         D = 2.0 * Math.PI * MathUtils.Frac(0.827361 + 1236.853086 * T);     // Diff. long. Moon-Sun [rad]
-        F = 2.0 * Math.PI * MathUtils.Frac(0.259086 + 1342.227825 * T);     // Argument of latitude 
+        F = 2.0 * Math.PI * MathUtils.Frac(0.259086 + 1342.227825 * T);     // Argument of latitude
 
 
         // Ecliptic longitude (w.r.t. equinox of J2000)
@@ -88,6 +87,6 @@ public class Moon
         return r_Moon;
 
     } // MoonPosition
-    
-    
+
+
 }

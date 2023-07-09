@@ -3,13 +3,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,27 +36,27 @@ import org.jdesktop.swingx.treetable.DefaultMutableTreeTableNode;
 public class CustomTreeTableNode extends DefaultMutableTreeTableNode implements Serializable
 {
     private String nodeType = "default";
-    
+
     protected Icon icon;
     protected String iconName;
-    
+
     Object[] userObject;
-        
+
     private double startTTjulDate = -1; // save julian date when this node starts (-1) if not set yet.
-    
-    
-    public CustomTreeTableNode(Object[] userObject) 
+
+
+    public CustomTreeTableNode(Object[] userObject)
     {
         super(userObject);
-        
+
         this.userObject = userObject;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setValueAt(Object aValue, int column) 
+    public void setValueAt(Object aValue, int column)
     {
         if( column > (getColumnCount()-1) )
         {
@@ -67,22 +67,22 @@ public class CustomTreeTableNode extends DefaultMutableTreeTableNode implements 
             //((Object[])getUserObject())[column] = aValue;
             userObject[column] = aValue;
         }
-        
+
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    public int getColumnCount() 
-    {      
+    public int getColumnCount()
+    {
         //return  ((Object[])getUserObject()).length;
         return  userObject.length;
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    public Object getValueAt(int column) 
+    public Object getValueAt(int column)
     {
         if( column > (getColumnCount()-1) )
         {
@@ -94,7 +94,7 @@ public class CustomTreeTableNode extends DefaultMutableTreeTableNode implements 
             return userObject[column];
         }
     }
-    
+
     // newNode.setIcon( new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/toolbarButtonGraphics/treeicons/Satellite_TLE.png")) ) );
     public void setIcon(Icon icon)
     {
@@ -141,7 +141,7 @@ public class CustomTreeTableNode extends DefaultMutableTreeTableNode implements 
     {
         this.nodeType = nodeType;
     }
-    
+
     // meant to be overridden by implementing classes
     // passes in main app to add the internal frame to
     public void displaySettings(JSatTrak app)
@@ -149,16 +149,16 @@ public class CustomTreeTableNode extends DefaultMutableTreeTableNode implements 
         // dummy should open a window for node settings
         //System.out.println("Should open settings for : " + getValueAt(0) );
     }
-    
+
     // meant to be overridden by implementing classes
     public void execute(Vector<StateVector> ephemeris)
     {
          // dummy but should do something based on input ephemeris
         //System.out.println("Executing : " + getValueAt(0) );
-        
+
         // save initial time of the node ( TT)
         this.setStartTTjulDate(ephemeris.lastElement().state[0]);
-        
+
     }// execute
 
     // meant to be over ridden if there are any input vars
@@ -177,12 +177,12 @@ public class CustomTreeTableNode extends DefaultMutableTreeTableNode implements 
     {
         return new Vector<InputVariable>(1);
     }
-    
-    
+
+
     // meant to be over ridden if there are any input vars
     public Double getGoal(int goalInt)
     {
-        return new Double(0);
+        return 0.;
     }
 
     // meant to be over ridden if there are any input vars
@@ -200,5 +200,5 @@ public class CustomTreeTableNode extends DefaultMutableTreeTableNode implements 
     {
         this.startTTjulDate = startTTjulDate;
     }
-    
+
 }

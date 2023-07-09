@@ -43,7 +43,7 @@ import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Vec4;
 import gov.nasa.worldwind.layers.CompassLayer;
 import gov.nasa.worldwind.layers.Earth.CountryBoundariesLayer;
-import gov.nasa.worldwind.layers.Earth.LandsatI3;
+import gov.nasa.worldwind.layers.Earth.LandsatI3WMSLayer;
 import gov.nasa.worldwind.layers.Earth.USGSTopographicMaps;
 import gov.nasa.worldwind.layers.Earth.USGSUrbanAreaOrtho;
 import gov.nasa.worldwind.layers.Layer;
@@ -266,7 +266,7 @@ public class J3DEarthInternalPanel extends javax.swing.JPanel implements J3DEart
             {
                 ((TiledImageLayer) layer).setShowImageTileOutlines(false);
             }
-            if (layer instanceof LandsatI3)
+            if (layer instanceof LandsatI3WMSLayer)
             {
                 ((TiledImageLayer) layer).setDrawBoundingVolumes(false);
                 ((TiledImageLayer) layer).setEnabled(false);

@@ -3,13 +3,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -64,6 +64,7 @@ import java.text.*;
  * @author Vern Raben (mailto:vern@raben.com), Shawn E. Gano
  * @version $Revision: 1.16 $ $Date: 2002/07/22 14:24:17 $
  */
+@SuppressWarnings("unused")
 public final class JulianDay implements java.io.Serializable, Cloneable {
     public final static int JD=100;
     public final static int MJD=101;
@@ -94,12 +95,12 @@ public final class JulianDay implements java.io.Serializable, Cloneable {
     public final static double EPOCH_1970=2440587.5;
     public final static String SQL_DATE_FORMAT="yyyy-MM-dd HH:mm:ss";
     private DateFormat dateFormat=null;
-    private Integer year=new Integer(0);
-    private Integer month=new Integer(0);
-    private Integer date=new Integer(0);
-    private Integer hour=new Integer(0);
-    private Integer minute=new Integer(0);
-    private Integer second=new Integer(0);
+    private Integer year=0;
+    private Integer month=0;
+    private Integer date=0;
+    private Integer hour=0;
+    private Integer minute=0;
+    private Integer second=0;
     private Double jd;
     private Double mjd;
     private Integer dayOfWeek;
@@ -322,13 +323,13 @@ public final class JulianDay implements java.io.Serializable, Cloneable {
         switch(unit) {
             case YEAR:
                 // issue - what this means if its not whole year
-                int yr=year.intValue()+(int)val;
+                int yr=year+(int)val;
                 set(YEAR,yr);
                 da=(val-(int)val)*365.0;
                 set(DATE,da);
                 break;
             case MONTH:
-                int mo=month.intValue()+(int)val;
+                int mo=month+(int)val;
                 set(MONTH,mo);
                 da=(val-(int)val)*30.0;
                 set(DATE,da);
@@ -342,11 +343,11 @@ public final class JulianDay implements java.io.Serializable, Cloneable {
                     set(JD,getJDN()+(double)val/24.0);
                     break;
                 case MINUTE:
-                    double min=minute.doubleValue()+val;
+                    // double min=minute.doubleValue()+val;
                     set(JD,getJDN()+(double)val/1440.0);
                     break;
                 case SECOND:
-                    double sec=second.doubleValue()+val;
+                    // double sec=second.doubleValue()+val;
                     set(JD,getJDN()+(double)val/86400.0);
                     break;
                 default:
@@ -378,21 +379,21 @@ public final class JulianDay implements java.io.Serializable, Cloneable {
         int mo;
         switch(unit) {
             case YEAR:
-                yr=year.intValue()+val;
+                yr=year+val;
                 set(YEAR,yr);
                 break;
             case MONTH:
-                mo=month.intValue()+val;
+                mo=month+val;
 
                 while (mo>=12) {
                     mo-=12;
-                    yr=year.intValue()+1;
+                    yr=year+1;
                     set(YEAR,yr);
                 }
 
                 while (mo<0) {
                     mo+=12;
-                    yr=year.intValue()-1;
+                    yr=year-1;
                     set(YEAR,yr);
                 }
 
@@ -429,16 +430,16 @@ public final class JulianDay implements java.io.Serializable, Cloneable {
       */
     private void calcCalDate() {
 
-        Double jd2=new Double(jd.doubleValue()+0.5);
+        Double jd2=jd.doubleValue()+0.5;
 	long I=jd2.longValue();
 	double F=jd2.doubleValue()-(double)I;
 	long A=0;
 	long B=0;
 
         if (I>2299160) {
-            Double a1=new Double(((double)I-1867216.25)/36524.25);
+            Double a1=((double)I-1867216.25)/36524.25;
             A=a1.longValue();
-            Double a3=new Double((double)A/4.0);
+            Double a3=(double)A/4.0;
             B=I+1+A-a3.longValue();
         }
         else {
@@ -446,37 +447,37 @@ public final class JulianDay implements java.io.Serializable, Cloneable {
         }
 
         double C=(double)B+1524;
-        Double d1=new Double((C-122.1)/365.25);
+        Double d1=(C-122.1)/365.25;
         long D=d1.longValue();
-        Double e1=new Double(365.25*(double)D);
+        Double e1=365.25*(double)D;
         long E=e1.longValue();
-        Double g1=new Double((double)(C-E)/30.6001);
+        Double g1=(double)(C-E)/30.6001;
         long G=g1.longValue();
-        Double h=new Double((double)G*30.6001);
+        Double h=(double)G*30.6001;
         long da=(long)C-E-h.longValue();
-        date=new Integer((int)da);
+        date=(int)da;
 
         if (G<14L) {
-            month=new Integer((int)(G-2L));
+            month=(int)(G-2L);
         }
         else {
-            month=new Integer((int)(G-14L));
+            month=(int)(G-14L);
         }
 
-        if (month.intValue()>1) {
-            year=new Integer((int)(D-4716L));
+        if (month>1) {
+            year=(int)(D-4716L);
         }
         else {
-            year=new Integer((int)(D-4715L));
+            year=(int)(D-4715L);
         }
 
         // Calculate fractional part as hours, minutes, and seconds
-        Double dhr=new Double(24.0*F);
-        hour=new Integer(dhr.intValue());
-        Double dmin=new Double((dhr.doubleValue()-(double)dhr.longValue())*60.0);
-        minute=new Integer(dmin.intValue());
-        Double dsec=new Double((dmin.doubleValue()-(double)dmin.longValue())*60.0);
-        second=new Integer(dsec.intValue());
+        Double dhr=24.0*F;
+        hour=dhr.intValue();
+        Double dmin=(dhr.doubleValue()-(double)dhr.longValue())*60.0;
+        minute=dmin.intValue();
+        Double dsec=(dmin.doubleValue()-(double)dmin.longValue())*60.0;
+        second=dsec.intValue();
 
     }
 
@@ -488,26 +489,26 @@ private void calcDayOfWeek() {
 	nJd.setStartOfDay();
 	double nJdn=nJd.getJDN()+1.5;
 	int dow=(int)(nJdn%7);
-	dayOfWeek=new Integer(dow);
+	dayOfWeek=dow;
  }
   /**
    * Calculate day of year for jd (jd is a class attribute)
    */
   private void calcDayOfYear() {
 	  JulianDay julCal=new JulianDay();
-	  julCal.set(year.intValue(),0,1);
+	  julCal.set(year,0,1);
 	  double doy=jd.doubleValue()-julCal.getJDN();
 	  int idoy=(int)doy;
-	  dayOfYear=new Integer(idoy);
+	  dayOfYear=idoy;
   }
   /**
    * Calculate Julian Date class attribute for class attributes year, month,
    * date, hour, minute, and second
    */
 private void calcJD() {
-	int mo=month.intValue()+1;
-	int da=date.intValue();
-	int yr=year.intValue();
+	int mo=month+1;
+	int da=date;
+	int yr=year;
 	int A=0;
 	int B=0;
 	int C=0;
@@ -518,32 +519,32 @@ private void calcJD() {
 		mo+=12;
 	}
 	else {
-		mo=month.intValue()+1;
+		mo=month+1;
 	}
 
-	if ((year.intValue()>1582)||((year.intValue()==1582)&&(month.intValue()>=10)&&(date.intValue()>=15))) {
-	  Double a1=new Double((double)yr/100.0);
+	if ((year>1582)||((year==1582)&&(month>=10)&&(date>=15))) {
+	  Double a1=(double)yr/100.0;
 	  A=a1.intValue();
-	  Double b1=new Double((double)A/4.0);
-	  B=2-A+b1.intValue();
+	  Double b1=(double)A/4.0;
+	  B=(int)(2-A+b1);
 	}
 	else {
 		B=0;
 	}
 
-	Double c1=new Double(365.25*(double)yr);
+	Double c1=365.25*(double)yr;
 	if (yr<0) {
-		c1=new Double(365.25*(double)yr-0.75);
+		c1=365.25*(double)yr-0.75;
 	}
 
 	C=c1.intValue();
-	Double d1=new Double(30.6001*(mo+1));
+	Double d1=30.6001*(mo+1);
 	D=d1.intValue();
 
 	double jdd=B+C+D+da + (hour.doubleValue()/24.0)+
 	  (minute.doubleValue()/1440.0)+(second.doubleValue()/86400.0)+
 	    1720994.5;
-	jd=new Double(jdd);
+	jd=jdd;
 
 }
 /**
@@ -587,27 +588,27 @@ public final int get(int field) {
 
 	switch(field) {
 	case YEAR:
-			return year.intValue();
+			return year;
 	case MONTH:
-			return month.intValue();
+			return month;
 	case DAY_OF_MONTH:
-			return date.intValue();
+			return date;
 	case HOUR:
-			int hr=hour.intValue();
+			int hr=hour;
 			hr=hr > 12 ? hr-=12:hr;
 			return hr;
 	case HOUR_OF_DAY:
-		return hour.intValue();
+		return hour;
 	case MINUTE:
-		return minute.intValue();
+		return minute;
 	case SECOND:
-		return second.intValue();
+		return second;
 	case DAY_OF_WEEK:
 		calcDayOfWeek();
-		return dayOfWeek.intValue();
+		return dayOfWeek;
 	case DAY_OF_YEAR:
 		calcDayOfYear();
-		return dayOfYear.intValue();
+		return dayOfYear;
 	default:
 		return -1; // ISSUE - should throw exception? - what does Calendar do?
 	}
@@ -622,7 +623,7 @@ public final int get(int field) {
 public String getDateTimeStr() {
     String retStr="";
 
-    if ((dateFormat!=null)&&(getJDN()>=EPOCH_1970)) 
+    if ((dateFormat!=null)&&(getJDN()>=EPOCH_1970))
     {
         dateFormat.setTimeZone(tzStringFormat);
         retStr=dateFormat.format(getTime());
@@ -654,7 +655,7 @@ public String getDateTimeStr() {
 	   }
 
 		calcJD();
-  
+
 	   return jd.doubleValue();
    }
 /**
@@ -759,59 +760,59 @@ public void set(int field,double value) {
 	switch(field) {
 
 		case JD:
-			jd=new Double(value);
+			jd=value;
 			calcCalDate();
 			break;
 
 		case MJD:
-			jd=new Double(value+2400000.5);
+			jd=value+2400000.5;
 			calcCalDate();
 			break;
 
 		case YEAR:
-			year=new Integer(ivalue);
+			year=ivalue;
 			calcJD();
 			break;
 
 		case MONTH:
 			if (ivalue>11) {
-				int yr=year.intValue()+1;
-				set(YEAR,ivalue);
+				int yr=year+1;
+				set(YEAR,yr);
 				ivalue-=11;
 			}
-			month=new Integer(ivalue);
+			month=ivalue;
 			calcJD();
 			break;
 
 		case DATE:
-				date=new Integer(ivalue);
+				date=ivalue;
 				calcJD();
 				break;
 
 		case HOUR_OF_DAY:
 		case HOUR:
-			  hour=new Integer(ivalue);
-			  while (hour.intValue()>=24) {
+			  hour=ivalue;
+			  while (hour>=24) {
 				  add(DATE,1);
-				  hour=new Integer(hour.intValue()-24);
+				  hour=hour-24;
 			  }
 			  calcJD();
 			  break;
 
 		case MINUTE:
-			  minute=new Integer(ivalue);
-			  while (minute.intValue()>=60) {
+			  minute=ivalue;
+			  while (minute>=60) {
 				  add(HOUR,1);
-				  minute=new Integer(minute.intValue()-60);
+				  minute=minute-60;
 			  }
 			  calcJD();
 			  break;
 
 		case SECOND:
-			  second=new Integer(ivalue);
-			  while (second.intValue()>=60) {
+			  second=ivalue;
+			  while (second>=60) {
 				  add(MINUTE,1);
-				  second=new Integer(second.intValue()-60);
+				  second=second-60;
 			  }
 			  calcJD();
 			  break;
@@ -831,28 +832,28 @@ public void set(int field,double value) {
 
 	  switch (field) {
 		  case YEAR:
-			  year=new Integer(value);
+			  year=value;
 			  break;
 
 		  case MONTH:
-			  month=new Integer(value);
+			  month=value;
 			  break;
 
 		  case DATE:
-			  date=new Integer(value);
+			  date=value;
 			  break;
 
 		  case HOUR_OF_DAY:
 		  case HOUR:
-			  hour=new Integer(value);
+			  hour=value;
 			  break;
 
 		  case MINUTE:
-			  minute=new Integer(value);
+			  minute=value;
 			  break;
 
 		  case SECOND:
-			  second=new Integer(value);
+			  second=value;
 			  break;
 	  }
 	  calcJD();
@@ -865,12 +866,12 @@ public void set(int field,double value) {
  * @param date int
  */
 public final void set(int year,int month,int date) {
-	this.year=new Integer(year);
-	this.month=new Integer(month);
-	this.date=new Integer(date);
-	this.hour=new Integer(0);
-	this.minute=new Integer(0);
-	this.second=new Integer(0);
+	this.year=year;
+	this.month=month;
+	this.date=date;
+	this.hour=0;
+	this.minute=0;
+	this.second=0;
 	calcJD();
 }
 /**
@@ -882,12 +883,12 @@ public final void set(int year,int month,int date) {
  * @param minute int
  */
 public final void set(int year,int month,int date,int hour,int minute) {
-	this.year=new Integer(year);
-	this.month=new Integer(month);
-	this.date=new Integer(date);
-	this.hour=new Integer(hour);
-	this.minute=new Integer(minute);
-	this.second=new Integer(0);
+	this.year=year;
+	this.month=month;
+	this.date=date;
+	this.hour=hour;
+	this.minute=minute;
+	this.second=0;
 	calcJD();
 }
 /**
@@ -900,12 +901,12 @@ public final void set(int year,int month,int date,int hour,int minute) {
  * @param second int
  */
 public final void set(int year,int month,int date,int hour,int minute, int second) {
-	this.year=new Integer(year);
-	this.month=new Integer(month);
-	this.date=new Integer(date);
-	this.hour=new Integer(hour);
-	this.minute=new Integer(minute);
-	this.second=new Integer(second);
+	this.year=year;
+	this.month=month;
+	this.date=date;
+	this.hour=hour;
+	this.minute=minute;
+	this.second=second;
 	calcJD();
 }
 /**
@@ -972,12 +973,12 @@ public void setStartOfDay() {
 public final void setTime(Date dat) {
 	Calendar cal=new GregorianCalendar(tz);
 	cal.setTime(dat);
-	year=new Integer(cal.get(Calendar.YEAR));
-	month=new Integer(cal.get(Calendar.MONTH));
-	date=new Integer(cal.get(Calendar.DATE));
-	hour=new Integer(cal.get(Calendar.HOUR_OF_DAY));
-	minute=new Integer(cal.get(Calendar.MINUTE));
-	second=new Integer(cal.get(Calendar.SECOND));
+	year=cal.get(Calendar.YEAR);
+	month=cal.get(Calendar.MONTH);
+	date=cal.get(Calendar.DATE);
+	hour=cal.get(Calendar.HOUR_OF_DAY);
+	minute=cal.get(Calendar.MINUTE);
+	second=cal.get(Calendar.SECOND);
 	//System.out.println("JulianCalendar.setTime: year="+year+" month="+month+" date="+date+" hour="+hour+" minute="+minute+" second="+second);
 	calcJD();
 	//System.out.println("jd="+jd);

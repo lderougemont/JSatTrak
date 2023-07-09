@@ -66,8 +66,6 @@ public class CoverageDataGeom implements Renderable
 
         Color satColor;
 
-        Double nanDbl = Double.NaN;
-
         double alt = 100000;
 
         if(ca != null)

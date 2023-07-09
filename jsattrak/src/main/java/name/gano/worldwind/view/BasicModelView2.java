@@ -3,13 +3,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,7 +25,7 @@ package name.gano.worldwind.view;
 
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.Frustum;
-import gov.nasa.worldwind.geom.Line;
+// import gov.nasa.worldwind.geom.Line;
 import gov.nasa.worldwind.geom.Matrix;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Vec4;
@@ -47,14 +47,14 @@ public class BasicModelView2 extends BasicOrbitView //implements OrbitView
     // View attributes.
     private BasicModelViewModel basicModelViewModel;
     private Frustum frustum = new Frustum();//null;
-    
+
      private Globe globe;
-     
+
      private Position iniPosition;
-     
+
      double minClipDist = 100; // 900000
-     
-     // new 
+
+     // new
      private double nearClipDistance = -1; // Default to auto-configure.
     private double farClipDistance = -1;  // Default to auto-configure.
     private java.awt.Rectangle viewport = new java.awt.Rectangle();
@@ -70,14 +70,14 @@ public class BasicModelView2 extends BasicOrbitView //implements OrbitView
     public BasicModelView2(Position centerPosition, Globe globe)
     {
         super();
-        
+
         //doInitialize()
-        
+
         this.globe = globe;
-        
-        iniPosition = centerPosition; // save for inialization  
+
+        iniPosition = centerPosition; // save for inialization
     }
-    
+
      public void setCenterPosition(Position centerPosition)
     {
          if(globe == null)
@@ -85,71 +85,71 @@ public class BasicModelView2 extends BasicOrbitView //implements OrbitView
             // basicModelViewModel.setCenterPos(new double[] {0,0,5000000});
              return; // DO NOTHING< WHAT ABOUT INI>???
          }
-                
-         
+
+
         Vec4 v4 = globe.computePointFromPosition(centerPosition);
-        
+
         double[] centerPos = new double[3];
         centerPos[0] = v4.getX();
         centerPos[1] = v4.getY();
         centerPos[2] = v4.getZ();
-        
+
         basicModelViewModel.setCenterPos(centerPos);
     }
-    
-    
-    // ============== Viewing State ======================= 
+
+
+    // ============== Viewing State =======================
     // updated in input broker
-    
+
     public void addToTheta1(float Dtheta1)
     {
         basicModelViewModel.addToTheta1(Dtheta1);
     }
-    
+
     public void addToTheta2(float Dtheta2)
     {
         basicModelViewModel.addToTheta2(Dtheta2);
     }
-    
+
     public void addToTheta3(float Dtheta3)
-    {        
+    {
         basicModelViewModel.addToTheta3(Dtheta3);
     }
-    
+
     public void addToRadiusAboutCenter(float meters)
     {
         basicModelViewModel.addToRadiusAboutCenter(meters);
     }
-    
+
     public void addToXOffsetAboutCenter(float meters)
     {
         basicModelViewModel.addToXOffsetAboutCenter(meters);
     }
-    
+
     public void addToYOffsetAboutCenter(float meters)
     {
         basicModelViewModel.addToYOffsetAboutCenter(meters);
     }
-    
+
     public void addToZOffsetAboutCenter(float meters)
     {
         basicModelViewModel.addToZOffsetAboutCenter(meters);
     }
-    
+
     //================================================
-    
+
     protected void doApply(DrawContext dc)
     {
         if (this.basicModelViewModel == null)
         {
             this.dc = dc;
              this.globe = this.dc.getGlobe();
-             
+
             doInitialize(dc);
-             
+
             //return;
         }
-            
+
 
         Vec4 eyeVec = this.basicModelViewModel.getEyeVector();
         if (eyeVec == null)
@@ -158,25 +158,25 @@ public class BasicModelView2 extends BasicOrbitView //implements OrbitView
         // Update DrawContext and Globe references.
         this.dc = dc;
         this.globe = this.dc.getGlobe();
-        
+
         // Get the current OpenGL viewport state.
         int[] viewportArray = new int[4];
         dc.getGL().glGetIntegerv(GL.GL_VIEWPORT, viewportArray, 0);
         this.viewport = new java.awt.Rectangle(viewportArray[0], viewportArray[1], viewportArray[2], viewportArray[3]);
-        
+
         // Compute current viewing attributes.
         double nearDistance = this.nearClipDistance > 0 ? this.nearClipDistance : getAutoNearClipDistance();
         double farDistance = this.farClipDistance > 0 ? this.farClipDistance : getAutoFarClipDistance();
-        
+
         this.frustum = this.createFrustum(nearDistance, farDistance);
 
         // SEG  -- creakte ransformation matrix given current viewint properties
         basicModelViewModel.updateViewTransform(dc); // update view angles etc.
-        
+
         // Set current GL viewing state.
         Matrix modelViewMatrix =  this.createModelViewMatrix(this.basicModelViewModel);
         Matrix projectionMatrix = this.createProjectionMatrix(nearDistance, farDistance);
-        
+
         //this.loadModelViewProjection(dc, modelViewMatrix, projectionMatrix);
         viewSupport.loadGLViewState(dc, modelViewMatrix, projectionMatrix);
     }
@@ -190,7 +190,7 @@ public class BasicModelView2 extends BasicOrbitView //implements OrbitView
     {
         if (orbitViewModel == null)
             return null;
-        
+
         return orbitViewModel.getTransformMatrix();
     }
 
@@ -220,7 +220,7 @@ public class BasicModelView2 extends BasicOrbitView //implements OrbitView
         java.awt.Rectangle viewport = this.getViewport();
 //        if (viewport == null)
 //            return null;
-        
+
         // Create a standard perspective frustum.
         return Frustum.fromPerspective(
             fov, viewport.width, viewport.height,
@@ -231,12 +231,12 @@ public class BasicModelView2 extends BasicOrbitView //implements OrbitView
 
     protected void doInitialize(DrawContext dc)
     {
-        this.basicModelViewModel = new BasicModelViewModel(dc); 
-        
-        setCenterPosition(iniPosition); 
+        this.basicModelViewModel = new BasicModelViewModel(dc);
+
+        setCenterPosition(iniPosition);
     }
-    
-    
+
+
     // get / set  -- and other needed functions
     public Angle getFieldOfView()
     {
@@ -286,13 +286,13 @@ public class BasicModelView2 extends BasicOrbitView //implements OrbitView
         Position eyePos = getCurrentEyePosition();
         return computeFarDistance(eyePos);
     }
-    
+
     public java.awt.Rectangle getViewport()
     {
         // java.awt.Rectangle is mutable, so we defensively copy the viewport.
         return new java.awt.Rectangle(this.viewport);
     }
-    
+
     public Position getCurrentEyePosition()
     {
         if (this.globe != null)
@@ -308,13 +308,13 @@ public class BasicModelView2 extends BasicOrbitView //implements OrbitView
 //                    return this.globe.computePositionFromPoint(eyePoint);
 //                }
 //            }
-            
+
             return basicModelViewModel.getEyePosition(dc);
         }
 
         return Position.ZERO;
     }
-    
+
      protected double computeNearDistance(Position eyePosition)
     {
         double near = 0;
@@ -334,10 +334,10 @@ public class BasicModelView2 extends BasicOrbitView //implements OrbitView
         {
             far = computeHorizonDistance(eyePosition);
         }
-        
+
         return far < MINIMUM_FAR_DISTANCE ? MINIMUM_FAR_DISTANCE : far;
     }
-    
+
     protected double computeHorizonDistance(Position eyePosition)
     {
         if (this.globe != null && eyePosition != null)
@@ -349,7 +349,7 @@ public class BasicModelView2 extends BasicOrbitView //implements OrbitView
 
         return 0;
     }
-    
+
     public double computeHorizonDistance()
     {
         double horizon = 0;
@@ -361,7 +361,7 @@ public class BasicModelView2 extends BasicOrbitView //implements OrbitView
 
         return horizon;
     }
-    
+
     protected Position computeEyePositionFromModelview()
     {
 //        if (this.globe != null)
@@ -372,7 +372,7 @@ public class BasicModelView2 extends BasicOrbitView //implements OrbitView
 
         return Position.ZERO;
     }
-    
+
 }
 
-  
+

@@ -4,20 +4,20 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  * =====================================================================
- * 
+ *
  */
 
 package jsattrak.customsat;
@@ -42,22 +42,22 @@ import name.gano.swingx.treetable.CustomTreeTableNode;
  * @author sgano
  */
 public class ManeuverNode  extends CustomTreeTableNode
-{  
-        
+{
+
     private double[] vncThrustVector = new double[3];
-    
+
     public static final int VTHRUST = 0;
     public static final int NTHRUST = 0;
     public static final int CTHRUST = 0;
-    
+
     // variables that can be set data ----------
     String[] varNames = new String[] {"V-Thrust [m/s]","N-Thrust [m/s]","C-Thrust [m/s]"};
-    
+
     // -----------------------------------------
-    
+
      // USED FOR GOAL CALCULATIONS
     StateVector lastStateVector = null; // last state -- to calculate goal properties
-    
+
      // parameters that can be used as GOALS ---
     String[] goalNames = new String[]
     {
@@ -80,7 +80,7 @@ public class ManeuverNode  extends CustomTreeTableNode
         "Altitude [m]",  // element 16
     };
     // ========================================
-    
+
     public ManeuverNode(CustomTreeTableNode parentNode)
     {
         super(new String[] {"Burn","",""}); // initialize node, default values
@@ -88,47 +88,47 @@ public class ManeuverNode  extends CustomTreeTableNode
         setIcon( new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/customSatIcons/burn.png")) ) );
         //set Node Type
         setNodeType("Maneuver");
-        
+
         // add this node to parent - last thing
         if( parentNode != null)
             parentNode.add(this);
     }
-    
-    
+
+
      // meant to be overridden by implementing classes
     @Override
     public void execute(Vector<StateVector> ephemeris)
     {
          // dummy but should do something based on input ephemeris
         //System.out.println("Executing : " + getValueAt(0) );
-        
+
         // get last stat vector (we are going to change it - impulse burn)
         StateVector lastState = ephemeris.lastElement();
-        
+
         // for VNC system see: http://www.stk.com/resources/help/stk613/helpSystem/extfile/gator/eq-coordsys.htm
-        
+
         // set inial time of the node ( TT)
         this.setStartTTjulDate(lastState.state[0]);
-        
+
         // get r and v vectors
         double[] r = new double[] {lastState.state[1],lastState.state[2],lastState.state[3]};
         double[] v = new double[] {lastState.state[4],lastState.state[5],lastState.state[6]};
-        
+
         // calculate unit vector in V direction (in J2K coordinate frame)
         double normV = MathUtils.norm(v);
         double[] unitV = new double[] {v[0]/normV,v[1]/normV,v[2]/normV};
-        
+
         // calculate unit vector in N direction
         double[] unitNorm = MathUtils.cross(r, v);
         double normNorm = MathUtils.norm(unitNorm);
         unitNorm[0] = unitNorm[0]/normNorm;
         unitNorm[1] = unitNorm[1]/normNorm;
         unitNorm[2] = unitNorm[2]/normNorm;
-        
+
         // calculate unit vector in the Co-Normal direction
         double[] unitCoNorm = MathUtils.cross(unitV, unitNorm);
-        
-        // calculate Thrust Vector in J2000.0 
+
+        // calculate Thrust Vector in J2000.0
         double[] thrustj2K = new double[] {0.0,0.0,0.0};
         // add V component
         thrustj2K = MathUtils.add(thrustj2K,  MathUtils.scale(unitV,vncThrustVector[0] )  );
@@ -136,35 +136,35 @@ public class ManeuverNode  extends CustomTreeTableNode
         thrustj2K = MathUtils.add(thrustj2K,  MathUtils.scale(unitNorm,vncThrustVector[1] )  );
         // add C component
         thrustj2K = MathUtils.add(thrustj2K,  MathUtils.scale(unitCoNorm,vncThrustVector[2] )  );
-        
+
         // add the trustj2k as a delta V to the last state
         lastState.state[4] += thrustj2K[0];
         lastState.state[5] += thrustj2K[1];
         lastState.state[6] += thrustj2K[2];
-        
+
         // copy final ephemeris state: - for goal calculations
         lastStateVector = ephemeris.lastElement();
 
     }// execute
-    
-    
+
+
     // passes in main app to add the internal frame to
     public void displaySettings(JSatTrak app)
     {
-        
+
         String windowName = "" + getValueAt(0);
         JInternalFrame iframe = new JInternalFrame(windowName,true,true,true,true);
-        
+
         // show satellite browser window
         ManeuverPanel panel = new ManeuverPanel(this,iframe); // non-modal version
-        panel.setIframe(iframe);        
-        
+        panel.setIframe(iframe);
+
         iframe.setContentPane( panel );
         iframe.setSize(300,200+25); // w,h
         iframe.setLocation(5,5);
-        
+
         app.addInternalFrame(iframe);
-        
+
     }
 
     public
@@ -178,22 +178,22 @@ public class ManeuverNode  extends CustomTreeTableNode
     {
         this.vncThrustVector = vncThrustVector;
     }
-    
-    
+
+
     // method to get variable by its integer
     public double getVar(int varInt)
     {
         double val = 0;
-        
+
         // don't need switch case here since this one is easy
         if(varInt >= 0 && varInt <= 2)
         {
             val = vncThrustVector[varInt];
         }
-        
+
         return val;
     } // getVar
-    
+
     // method to set variable by its integer
     public void setVar(int varInt, double val)
     {
@@ -203,33 +203,33 @@ public class ManeuverNode  extends CustomTreeTableNode
             vncThrustVector[varInt] = val;
         }
     } // setVar
-    
+
     // returns the Vector list of all the Variables in this Node
     public Vector<InputVariable> getInputVarVector()
     {
         Vector<InputVariable> varVec = new Vector<InputVariable>(3);
-        
+
         // create list
         for(int i=0; i<3; i++)
         {
             InputVariable inVar = new InputVariable(this, i, varNames[i], vncThrustVector[i]);
             varVec.add(inVar);
         }
-        
+
         return varVec;
     } // getInputVarVector
-    
+
     // meant to be over ridden if there are any input vars
     public Vector<GoalParameter> getGoalParamVector()
     {
         Vector<GoalParameter> varVec = new Vector<GoalParameter>(17);
-        
+
         for (int i = 0; i < goalNames.length; i++)
         {
             GoalParameter inVar = new GoalParameter(this, i, goalNames[i], getGoal(i)); // hmm, need to put current value here if possible
             varVec.add(inVar);
         }
-        
+
         return varVec;
     }
 
@@ -237,7 +237,7 @@ public class ManeuverNode  extends CustomTreeTableNode
     public Double getGoal(int goalInt)
     {
         Double val = null;
-        
+
         if(lastStateVector != null)
         {
             // calculate goals value
@@ -287,7 +287,7 @@ public class ManeuverNode  extends CustomTreeTableNode
                     double[] R = new double[] {lastStateVector.state[1],lastStateVector.state[2],lastStateVector.state[3]};
                     double normR = MathUtils.norm(R);
                     R = MathUtils.scale(R, 1.0/normR); // unit vector
-                    
+
                     double[] v = new double[] {lastStateVector.state[4],lastStateVector.state[5],lastStateVector.state[6]};
                     double rDot = MathUtils.dot(v, R);
                     val = rDot;
@@ -330,13 +330,13 @@ public class ManeuverNode  extends CustomTreeTableNode
                     lla = GeoFunctions.GeodeticLLA(temePos, lastStateVector.state[0] - AstroConst.JDminusMJD - deltaTT2UTC); // tt-UTC = deltaTT2UTC
 
                     val = lla[2];
-                    break;   
-                    
-                
+                    break;
+
+
             } // switch
         } // last state not null
-        
+
         return val;
-    } // getGoal   
-    
+    } // getGoal
+
 }
