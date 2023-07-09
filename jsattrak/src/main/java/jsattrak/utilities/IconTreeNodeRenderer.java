@@ -24,11 +24,11 @@ import java.awt.Component;
 import java.util.Hashtable;
 import javax.swing.Icon;
 import javax.swing.JTree;
-//import org.jvnet.substance.api.renderers.SubstanceDefaultTreeCellRenderer;
+//import org.jvnet.radiance.api.renderers.RadianceDefaultTreeCellRenderer;
 // SEG v4.1.4 - update to newer version of substnace api
-import org.pushingpixels.substance.api.renderers.SubstanceDefaultTreeCellRenderer;
+import org.pushingpixels.radiance.theming.api.renderer.RadianceDefaultTreeCellRenderer;
 
-public class IconTreeNodeRenderer extends SubstanceDefaultTreeCellRenderer //DefaultTreeCellRenderer to work with Substance LAF
+public class IconTreeNodeRenderer extends RadianceDefaultTreeCellRenderer //DefaultTreeCellRenderer to work with Radiance LAF
 {
 
     @SuppressWarnings("unchecked")

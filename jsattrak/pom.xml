@@ -156,25 +156,20 @@
       <version>1.2007</version>
     </dependency>
     <dependency>
-      <groupId>com.github.insubstantial</groupId>
-      <artifactId>substance-swingx</artifactId>
-      <version>7.3</version>
+      <groupId>org.pushing-pixels</groupId>
+      <artifactId>radiance-common</artifactId>
+      <version>6.5.0</version>
     </dependency>
     <dependency>
-      <groupId>com.github.insubstantial</groupId>
-      <artifactId>laf-widget</artifactId>
-      <version>7.3</version>
+      <groupId>org.pushing-pixels</groupId>
+      <artifactId>radiance-theming</artifactId>
+      <version>6.5.0</version>
     </dependency>
-    <dependency>
-      <groupId>com.github.insubstantial</groupId>
-      <artifactId>laf-plugin</artifactId>
-      <version>7.3</version>
-    </dependency>
-    <dependency>
-      <groupId>com.github.insubstantial</groupId>
-      <artifactId>trident</artifactId>
-      <version>7.3</version>
-    </dependency>
+    <!-- <dependency>
+      <groupId>org.pushing-pixels</groupId>
+      <artifactId>radiance-</artifactId>
+      <version>6.5.0</version>
+    </dependency> -->
     <dependency>
       <groupId>org.swinglabs</groupId>
       <artifactId>swing-layout</artifactId>

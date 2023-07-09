@@ -1,7 +1,7 @@
 Created on July 23, 2007, 4:24 PM
 
 Version 1.1 (26 Aug 2007)
-- Added low precision position of sun (day/night) 
+- Added low precision position of sun (day/night)
 
 Version 1.2
 - bug fix, uses MOD positions for lat/long calculations instead of J2000 (for satellites and sun)
@@ -16,15 +16,15 @@ Version 2.1 (5 Jan 2008)
 - Added Ground stations and tracking tool, tracking polar plot, pass predictions
 - added visibility - Visible/Radar-Night/Sun  -- Elevation constraints working in tracking tool
 - connected dots in polar plot, go to pass in pass predictor, lat/long lines layer in 3D added
-- scenario epoch setting, 
+- scenario epoch setting,
 
 Version 3.0 (9 Feb 2008)
-- Custom Sats, Mission Designer, Solver Loops   
-- Popogator stopping conditions (apogee/perigee)  
-- XML saving, general bug fixes updates, export of custom sat  
+- Custom Sats, Mission Designer, Solver Loops
+- Popogator stopping conditions (apogee/perigee)
+- XML saving, general bug fixes updates, export of custom sat
 
 Version 3.0.1 (13 Feb 2008)
-- fixed decimal seperator issue, in SDP4  
+- fixed decimal seperator issue, in SDP4
 
 Version 3.0.2 (13 Feb 2008)
 - fixed problem when missing only some of TLE data files (program freezes)
@@ -57,8 +57,8 @@ Version 3.5.0 (7 August 2008)
 - double click on object opens properties, Custom Sat icons in new locations.
 - added nimbus look and feel choice, if java6u10 or greater! (updated" jgoodies, swingx, xstream)
 - Added ability to choose any 2D map image.
-- Added 2D Earth Lights night image effect  
-- Added FPS info (press f when a 2D window is active), added memory status bar (+plugin)  
+- Added 2D Earth Lights night image effect
+- Added FPS info (press f when a 2D window is active), added memory status bar (+plugin)
 - bug? 3d model only stays in full screen mode if two 3d windows are open before? - some quirks with the model view
 
 Version 3.5.1 (26 Sept 2008)
@@ -88,7 +88,7 @@ Version 3.7 (16 Jan 2009) (unreleased)
 Version 3.7.5 (23 Mar 2009)
 - Change 2D sun terminator resolution to 61 - 51 was reported by a user to cause some unwanted jumps as to which side was filled in, still has issues at times (even for higher res)
 - Integrated NASA World Wind Java V0.6 - plus a few new layers (like controls), redid some swing worker routines for thread safteyness
-- added substance look and feel (default Raven until Nimbus can work again),
+- added radiance look and feel (default Raven until Nimbus can work again),
 - fixed: saving of 2D coverage windows, 2D night light effects, and main app window location and size saved.
 - 3D external windows now decorated to match look and feel (if avaiblilble)
 - known issue: 3D internal window doesn't work with v0.6 (nimubs Look and feel only)
@@ -141,14 +141,14 @@ Version 4.1.4 (27 Feb 2013)
 - UPDATED TO Apache License, Version 2.0 (and started to manage src from GitHub)
 
 Version 4.1.5 (3 Sept 2013)
-- updated color chooser to work in Java 1.7.0_15 (cleaned up null pointer - substance.jar and substance-swingx.jar)
-  (Updated substance jars and trident jars to version 7.2.1:  see: http://insubstantial.posterous.com/)
+- updated color chooser to work in Java 1.7.0_15 (cleaned up null pointer - radiance.jar and radiance-swingx.jar)
+  (Updated radiance jars and trident jars to version 7.2.1:  see: http://insubstantial.posterous.com/)
 
 Version 4.1.6 (12 August 2014)
 - Fixed exception that prevented SolverPanel.java from showing up when customizing the solver node of a custom satellite.
 
 Version 4.1.7 (27 October 2014)
-- Fixed bug in coverage analysis (JCoverageDialog.java).  This bug caused the analysis to fail when custom satellites existed in the scenario. 
+- Fixed bug in coverage analysis (JCoverageDialog.java).  This bug caused the analysis to fail when custom satellites existed in the scenario.
 
 Version 4.1.8 (16 October 2015)
 - Fixed bug in java 1.7+ which caused "no-args constructor" error for swingx's org.jdesktop.swingx.tree.TreeModelSupport component.
@@ -156,13 +156,13 @@ This bug occurred when trying to open a saved file that contained a custom satel
 This was fixed by incorporating the latest swingx source (v1.6.4) directly into the project, then editing org.jdesktop.swingx.tree.TreeModelSupport to give it a no-arg empty constructor.  Should work with files saved in 4.1.7.
 - removed dependency on the swingx-0.9.4.jar (though left it in the git repository, along with the 1.6.4 compiled version)
 - Updated launcher app for OS X 10.11 (as the java 1.6 path changed)
-                       
+
 Version 4.1.9 (3 March 2016)
 - Added the TCCON network to the groundstations database
 
 Version 4.1.10 (18 April 2016)
 - Added a new plugin "Export_Ephemeris_1Day_All_SGP4_Sats.bsh" to export the ephemeris of the regular "SGP4" satellites.
-  
+
 Need to update to latest WWJ build - new view architecture
 
 Version 4.1.11  (21 Feb 2017)
@@ -175,14 +175,14 @@ Version 4.2.0  (16 Aug 2018)
      - Earth_bathymetry_4k.jpg (source: http://madriver.me/world-map-satellite.html/satellite-image-maps-and-posters-world-map)
      - Earth_no_clouds_8k.jpg  (source: http://www.shadedrelief.com/natural3/pages/textures.html )
      - Earth_with_clouds_4k.jpg  (source: http://www.shadedrelief.com/natural3/pages/textures.html )
-     - Earth_no_ice_or_clouds_4k.jpg  (source: http://www.shadedrelief.com/natural3/pages/textures.html ) 
+     - Earth_no_ice_or_clouds_4k.jpg  (source: http://www.shadedrelief.com/natural3/pages/textures.html )
 -- 2D Map: Change default 2D Earth image map to:  Earth_bathymetry_4k.jpg (source: http://madriver.me/world-map-satellite.html/satellite-image-maps-and-posters-world-map)
 -- 2D Map: Change default night fill color to full black
 -- 2D Map: Change default night fill alpha level to 0.6f
 -- 2D Map: change default background color to full black
 - (beta) add ability to go full screen exclusive mode for 2D map. Added option in the windows menu (for currently selected selected 2d window).  Known issues:  problems escaping from full screen.  Escape key listener/binding doesn't seem to be working.
 
-Version 4.2.1 (7 Nov 2018) 
+Version 4.2.1 (7 Nov 2018)
 - removed Shuttle from the TLE Downloader (merged from pull request from jester-xbmc).  File is no longer on the server.
 
 Version 4.2.2 (30 July 2019)

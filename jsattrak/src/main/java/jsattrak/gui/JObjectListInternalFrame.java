@@ -1,7 +1,7 @@
 /*
  * JObjectListInternalFrame.java
  *
- * NOTE: THIS WAS A TEST -- commented lines need to be removed!! -- trying to get Substance LAF to work. :(
+ * NOTE: THIS WAS A TEST -- commented lines need to be removed!! -- trying to get Radiance LAF to work. :(
  *
  * =====================================================================
  *   This file is part of JSatTrak.
