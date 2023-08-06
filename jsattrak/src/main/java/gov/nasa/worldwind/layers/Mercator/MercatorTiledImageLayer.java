@@ -7,7 +7,7 @@ All Rights Reserved.
 package gov.nasa.worldwind.layers.Mercator;
 
 
-import com.sun.opengl.util.j2d.TextRenderer;
+import com.jogamp.opengl.util.awt.TextRenderer;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
@@ -17,7 +17,9 @@ import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;
 
 import javax.imageio.ImageIO;
-import javax.media.opengl.GL;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
+
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
@@ -66,7 +68,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer
 	abstract protected void requestTexture(DrawContext dc,
 			MercatorTextureTile tile);
 
-	abstract protected void forceTextureLoad(MercatorTextureTile tile);
+	abstract protected void forceTextureLoad(DrawContext dc, MercatorTextureTile tile);
 
 	public MercatorTiledImageLayer(LevelSet levelSet)
 	{
@@ -248,7 +250,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer
 		for (MercatorTextureTile tile : this.topLevels)
 		{
 			if (!tile.isTextureInMemory(dc.getTextureCache()))
-				this.forceTextureLoad(tile);
+				this.forceTextureLoad(dc, tile);
 		}
 
 		this.levelZeroLoaded = true;
@@ -358,7 +360,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer
 		if (tile.getLevelNumber() == 0 && this.forceLevelZeroLoads
 				&& !tile.isTextureInMemory(dc.getTextureCache()))
 		{
-			this.forceTextureLoad(tile);
+			this.forceTextureLoad(dc, tile);
 			if (tile.isTextureInMemory(dc.getTextureCache()))
 			{
 				this.addTileToCurrent(tile);
@@ -383,7 +385,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer
 							.getTextureCache())
 					&& !this.currentResourceTile.isTextureInMemory(dc
 							.getTextureCache()))
-				this.forceTextureLoad(this.currentResourceTile);
+				this.forceTextureLoad(dc, this.currentResourceTile);
 
 			if (this.currentResourceTile
 					.isTextureInMemory(dc.getTextureCache()))
@@ -556,22 +558,22 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer
 			sortedTiles = this.currentTiles.toArray(sortedTiles);
 			Arrays.sort(sortedTiles, levelComparer);
 
-			GL gl = dc.getGL();
+			GL2 gl = dc.getGL().getGL2();
 
 			if (this.isUseTransparentTextures() || this.getOpacity() < 1)
 			{
-				gl.glPushAttrib(GL.GL_COLOR_BUFFER_BIT | GL.GL_POLYGON_BIT
-						| GL.GL_CURRENT_BIT);
+				gl.glPushAttrib(GL.GL_COLOR_BUFFER_BIT | GL2.GL_POLYGON_BIT
+						| GL2.GL_CURRENT_BIT);
 				gl.glColor4d(1d, 1d, 1d, this.getOpacity());
 				gl.glEnable(GL.GL_BLEND);
 				gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 			}
 			else
 			{
-				gl.glPushAttrib(GL.GL_COLOR_BUFFER_BIT | GL.GL_POLYGON_BIT);
+				gl.glPushAttrib(GL.GL_COLOR_BUFFER_BIT | GL2.GL_POLYGON_BIT);
 			}
 
-			gl.glPolygonMode(GL.GL_FRONT, GL.GL_FILL);
+			gl.glPolygonMode(GL.GL_FRONT, GL2.GL_FILL);
 			gl.glEnable(GL.GL_CULL_FACE);
 			gl.glCullFace(GL.GL_BACK);
 
@@ -709,20 +711,20 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer
 			ArrayList<MercatorTextureTile> tiles)
 	{
 		float[] previousColor = new float[4];
-		dc.getGL().glGetFloatv(GL.GL_CURRENT_COLOR, previousColor, 0);
-		dc.getGL().glColor3d(0, 1, 0);
+		dc.getGL().glGetFloatv(GL2.GL_CURRENT_COLOR, previousColor, 0);
+		dc.getGL().getGL2().glColor3d(0, 1, 0);
 
 		for (MercatorTextureTile tile : tiles)
 		{
 			((Cylinder) tile.getExtent(dc)).render(dc);
 		}
 
-		Cylinder c = dc.getGlobe().computeBoundingCylinder(
+		Cylinder c = Sector.computeBoundingCylinder(dc.getGlobe(),
 				dc.getVerticalExaggeration(), this.levels.getSector());
-		dc.getGL().glColor3d(1, 1, 0);
+		dc.getGL().getGL2().glColor3d(1, 1, 0);
 		c.render(dc);
 
-		dc.getGL().glColor4fv(previousColor, 0);
+		dc.getGL().getGL2().glColor4fv(previousColor, 0);
 	}
 
 	// ============== Image Composition ======================= //

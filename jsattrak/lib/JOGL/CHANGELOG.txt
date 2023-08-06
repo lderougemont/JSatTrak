@@ -65,7 +65,7 @@ Changes between JOGL 1.0.0 and 1.1.0:
  - A GLContext.copy() operation has been added based on community
    feedback.
 
- - Three helper classes have been added to the com.sun.opengl.util.j2d
+ - Three helper classes have been added to the com.jogamp.opengl.util.j2d
    package to improve interoperability between JOGL and Java 2D:
    TextureRenderer, Overlay and TextRenderer. The TextureRenderer
    supports drawing into an OpenGL texture using Java 2D. The Overlay

@@ -24,26 +24,25 @@
 
 package jsattrak.utilities;
 
+import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Vec4;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.AnnotationAttributes;
 import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.render.FrameFactory;
 import gov.nasa.worldwind.render.GlobeAnnotation;
-import gov.nasa.worldwind.render.MultiLineTextRenderer;
 import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.util.Logging;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Point;
 import java.util.Hashtable;
-import javax.media.opengl.GL;
+import com.jogamp.opengl.GL;
 import jsattrak.objects.AbstractSatellite;
 import name.gano.astro.MathUtils;
 import name.gano.worldwind.geom.Cone;
-import name.gano.worldwind.geom.SphereObject;
+import gov.nasa.worldwind.geom.Sphere;
 
 
 /**
@@ -57,7 +56,7 @@ public class OrbitModelRenderable implements Renderable
 
     // Sphere Object
     double sphereRadius = 100000;
-    SphereObject sphere = new SphereObject(new Vec4(0,0,0,0), sphereRadius, true);
+    Sphere sphere = new Sphere(new Vec4(0,0,0,0), sphereRadius);
     // lat long placement
     //SurfaceCircle surfCirc;
     Cone cone;
@@ -97,11 +96,11 @@ public class OrbitModelRenderable implements Renderable
             throw new IllegalArgumentException(msg);
         }
 
-        javax.media.opengl.GL gl = dc.getGL();
+        com.jogamp.opengl.GL2 gl = dc.getGL().getGL2();
 
 //        gl.glEnable(GL.GL_TEXTURE_2D); // removed - sun shading disabeled below
-        gl.glPushAttrib(javax.media.opengl.GL.GL_TEXTURE_BIT | javax.media.opengl.GL.GL_ENABLE_BIT | javax.media.opengl.GL.GL_CURRENT_BIT);
-        gl.glMatrixMode(javax.media.opengl.GL.GL_MODELVIEW);
+        gl.glPushAttrib(com.jogamp.opengl.GL2.GL_TEXTURE_BIT | com.jogamp.opengl.GL2.GL_ENABLE_BIT | com.jogamp.opengl.GL2.GL_CURRENT_BIT);
+        gl.glMatrixMode(com.jogamp.opengl.GL2.GL_MODELVIEW);
 
         // Added so that the colors wouldn't depend on sun shading
         gl.glDisable(GL.GL_TEXTURE_2D);
@@ -161,7 +160,7 @@ public class OrbitModelRenderable implements Renderable
                 else
                 {
                     // default "sphere" for model
-                    sphere.setCenter(-xyz[0], xyz[2], xyz[1]);
+                    this.sphere = new Sphere(new Vec4(-xyz[0], xyz[2], xyz[1]), this.sphereRadius);
                     sphere.render(dc);
                 }
             } // if pos is not null
@@ -214,12 +213,12 @@ public class OrbitModelRenderable implements Renderable
     private AnnotationAttributes createFontAttribs(Color textColor)
     {
         AnnotationAttributes geoAttr = new AnnotationAttributes();
-            geoAttr.setFrameShape(FrameFactory.SHAPE_NONE);  // No frame
+            geoAttr.setFrameShape(AVKey.SHAPE_NONE);  // No frame
             geoAttr.setFont(Font.decode("Arial-ITALIC-12"));
             geoAttr.setTextColor(textColor);
-            geoAttr.setTextAlign(MultiLineTextRenderer.ALIGN_CENTER);
+            geoAttr.setTextAlign(AVKey.CENTER);
             geoAttr.setDrawOffset(new Point(0, 5)); // centered just above
-            geoAttr.setEffect(MultiLineTextRenderer.EFFECT_OUTLINE);  // Black outline
+            geoAttr.setEffect(AVKey.TEXT_EFFECT_OUTLINE);  // Black outline
             geoAttr.setBackgroundColor(Color.BLACK);
 
             return geoAttr;

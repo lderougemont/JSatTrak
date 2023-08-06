@@ -3,13 +3,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,9 +22,9 @@ package name.gano.worldwind.geom;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.render.Renderable;
-import gov.nasa.worldwind.view.OrbitView;
+import gov.nasa.worldwind.view.orbit.OrbitView;
 import java.awt.Color;
-import javax.media.opengl.GL;
+import com.jogamp.opengl.GL;
 import name.gano.astro.AstroConst;
 
 /**
@@ -46,7 +46,7 @@ public class ECIRadialGrid implements Renderable
     private double blendExponent = 2;// needs to be greater than 0, the larger the faster the minor rings disappear
     // axis length
     private float axisLength = 10000000f;
-    
+
 
     public void render(DrawContext dc)
     {
@@ -55,15 +55,15 @@ public class ECIRadialGrid implements Renderable
             return;
         }
 
-        javax.media.opengl.GL gl = dc.getGL();
-        gl.glPushAttrib(javax.media.opengl.GL.GL_TEXTURE_BIT | javax.media.opengl.GL.GL_ENABLE_BIT | javax.media.opengl.GL.GL_CURRENT_BIT);
+        com.jogamp.opengl.GL2 gl = dc.getGL().getGL2();
+        gl.glPushAttrib(com.jogamp.opengl.GL2.GL_TEXTURE_BIT | com.jogamp.opengl.GL2.GL_ENABLE_BIT | com.jogamp.opengl.GL2.GL_CURRENT_BIT);
 
         // Added so that the colors wouldn't depend on sun shading
         gl.glDisable(GL.GL_TEXTURE_2D);
 
         gl.glEnable(GL.GL_BLEND);
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-        
+
         //calcs for determining grid sizes
         Position eyePos = ((OrbitView)dc.getView()).getCurrentEyePosition(); // all views used are based on orbitview so far
         double distEarthCenter = eyePos.elevation + AstroConst.R_Earth_mean;
@@ -103,7 +103,7 @@ public class ECIRadialGrid implements Renderable
         // draw radial lines
 
         float length = (float)Math.pow(10, minPowerRings)*numMajorSectionsDrawn;
-        
+
 
         gl.glColor4ub((byte) getColor().getRed(), (byte) getColor().getGreen(), (byte) getColor().getBlue(), (byte) getColor().getAlpha());
         gl.glBegin(GL.GL_LINES); //GL_LINE_STRIP
@@ -121,7 +121,7 @@ public class ECIRadialGrid implements Renderable
         gl.glEnd();
 
         // radial circles
-       
+
         //float radRadius = 6378137.0f * 1.2f;
         float radRadius = (float)(Math.pow(10, minPowerRings));
         float deltaR = radRadius;

@@ -4,13 +4,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,7 +25,7 @@ package jsattrak.utilities;
 
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.layers.Layer;
-import gov.nasa.worldwind.view.OrbitView;
+import gov.nasa.worldwind.view.orbit.OrbitView;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -79,7 +79,7 @@ public class J3DEarthlPanelSave implements Serializable
     private boolean showEciRadialGrid;
     private Color eciRadialGridColor;
 
-    
+
     /** Creates a new instance of J2DEarthPanelSave */
     public J3DEarthlPanelSave(J3DEarthComponent panel, int x, int y, Dimension d)
     {
@@ -106,7 +106,7 @@ public class J3DEarthlPanelSave implements Serializable
             layerEnabledHT.put(l.getName(), l.isEnabled());
         }
 
-        // 3D view camera location and 
+        // 3D view camera location and
         // UPDATE using v0.5
         viewStateInXml = ((OrbitView)panel.getWwd().getView()).getRestorableState();
 
@@ -132,14 +132,14 @@ public class J3DEarthlPanelSave implements Serializable
 
         // terminator
         showTermintorLine = panel.getEcefTimeDepRenderableLayer().isShowTerminatorLine();
-        terminatorColor = panel.getEcefTimeDepRenderableLayer().getTerminator().getColor();
+        terminatorColor = panel.getEcefTimeDepRenderableLayer().getTerminator().getColorPublic();
 
         // grid
         showEciRadialGrid = panel.getEciRadialGrid().isShowGrid();
         eciRadialGridColor = panel.getEciRadialGrid().getColor();
-        
+
     } // J2DEarthPanelSave constructor
-    
+
     // OUTPUT function, save data from this object back to a new j2dearthpanel and internal frame
     public void copySettings2PanelAndFrame(J3DEarthComponent newPanel, Container iframe)
     {
@@ -246,5 +246,5 @@ public class J3DEarthlPanelSave implements Serializable
         }
 
     } // copy settings
-    
+
 } //J3DEarthInternalPanelSave class

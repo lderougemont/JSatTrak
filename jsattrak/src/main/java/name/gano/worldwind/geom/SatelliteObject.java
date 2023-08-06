@@ -24,7 +24,7 @@
 
 package name.gano.worldwind.geom;
 
-import com.sun.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.Texture;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.LatLon;
@@ -35,7 +35,9 @@ import gov.nasa.worldwind.render.SurfaceCircle;
 import gov.nasa.worldwind.util.Logging;
 import java.awt.Color;
 import java.util.Vector;
-import javax.media.opengl.GL;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.util.PMVMatrix;
 import name.gano.worldwind.texture.TextureUtils;
 
 /**
@@ -124,22 +126,22 @@ public class SatelliteObject  implements Renderable
             throw new IllegalArgumentException(msg);
         }
 
+        com.jogamp.opengl.GL2 gl = dc.getGL().getGL2();
+
         if(foilTex == null)
         {
             // load textures
             System.out.println("loading Textures");
-            solarPanelTex = TextureUtils.loadTexture("textures/solarpanel.png");
-            foilTex = TextureUtils.loadTexture("textures/goldfoil.png");
+            solarPanelTex = TextureUtils.loadTexture("textures/solarpanel.png", gl);
+            foilTex = TextureUtils.loadTexture("textures/goldfoil.png", gl);
         }
-
-        javax.media.opengl.GL gl = dc.getGL();
 
         gl.glEnable(GL.GL_TEXTURE_2D);
 
-        gl.glPushAttrib(javax.media.opengl.GL.GL_TEXTURE_BIT | javax.media.opengl.GL.GL_ENABLE_BIT | javax.media.opengl.GL.GL_CURRENT_BIT);
+        gl.glEnable(GL.GL_TEXTURE);
 
-
-        gl.glMatrixMode(javax.media.opengl.GL.GL_MODELVIEW);
+        PMVMatrix matrix = new PMVMatrix();
+        matrix.glMatrixMode(PMVMatrix.GL_MODELVIEW);
 
 
 
@@ -200,7 +202,7 @@ public class SatelliteObject  implements Renderable
             }
         }
         gl.glEnd();
-         gl.glPopMatrix(); // pop matrix rotatex for ECI
+        gl.glPopMatrix(); // pop matrix rotatex for ECI
 
         //---------------------------------------------------------
         gl.glPushMatrix();
@@ -240,9 +242,9 @@ public class SatelliteObject  implements Renderable
         // color for solar arrays
      //   gl.glColor3d( solarArrayColor.getRed()/255.0 , solarArrayColor.getGreen()/255.0 , solarArrayColor.getBlue()/255.0 ); // COLOR
 
-        solarPanelTex.bind();
+        solarPanelTex.bind(gl);
 
-        gl.glBegin(GL.GL_QUADS);
+        gl.glBegin(GL2.GL_QUADS);
             gl.glNormal3f(0,0,1.0f);
             gl.glTexCoord2f(0f,0f);
             gl.glVertex3f(  (-0.4f*satSize),  (-3.5f*satSize), 0f );
@@ -269,11 +271,11 @@ public class SatelliteObject  implements Renderable
     } //render
 
 
-    private void drawCube(GL gl, float satSize)
+    private void drawCube(GL2 gl, float satSize)
     {
-        foilTex.bind();
+        foilTex.bind(gl);
 
-        gl.glBegin(GL.GL_QUADS);
+        gl.glBegin(GL2.GL_QUADS);
         // Front face
         gl.glNormal3f(0,0,1.0f);
         gl.glTexCoord2d(0,0);
@@ -319,7 +321,7 @@ public class SatelliteObject  implements Renderable
 //		gl.glEnd();
 //
 //
-//		gl.glBegin(GL.GL_QUADS);
+//		gl.glBegin(GL2.GL_QUADS);
         // Left face
         gl.glNormal3f(-1.0f, 0.0f,0.0f);
         gl.glTexCoord2d(0,0);

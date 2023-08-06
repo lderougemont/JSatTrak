@@ -1,19 +1,19 @@
 JSatTrak
 http://www.gano.name/shawn/JSatTrak
 Contact: shawn@gano.name
- 
+
 
  * =====================================================================
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -61,10 +61,10 @@ run driconf and set "Enable S3TC"
 =====================
 changes to WWJ to make internal windows work:
  http://forum.worldwindcentral.com/showthread.php?t=12360&highlight=WorldWindowGLJPanel
- in (WorldWindowGLAutoDrawable.initDrawable()) comment line: this.drawable.setAutoSwapBufferMode(fals e); 
+ in (WorldWindowGLAutoDrawable.initDrawable()) comment line: this.drawable.setAutoSwapBufferMode(fals e);
 TerrainProfileLayer:  -- works now my bug reports and fixes are in the release!
 - Fix clipping plane problem:
-in AbstractView.java (gov.nasa.worldwind.view)  --  change the code to this:
+in View.java (gov.nasa.worldwind.view)  --  change the code to this:
 private static final double MIN_FAR_CLIP_DISTANCE = 10000000000d;
 THIS SHOULD BE FIXED in WWJ >v0.4.1 (see: http://issues.worldwind.arc.nasa.gov/browse/WWJ-9)
 I STILL WANT LIGHTING ADDED TO WWJ - SO I CAN SIMULATE sun/dark side of earth!!

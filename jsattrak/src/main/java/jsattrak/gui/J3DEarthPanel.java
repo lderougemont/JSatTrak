@@ -32,11 +32,11 @@ import gov.nasa.worldwind.awt.AWTInputHandler;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.event.PositionEvent;
 import gov.nasa.worldwind.event.PositionListener;
-import gov.nasa.worldwind.examples.WMSLayersPanel;
-import gov.nasa.worldwind.examples.sunlight.AtmosphereLayer;
-import gov.nasa.worldwind.examples.sunlight.LensFlareLayer;
-import gov.nasa.worldwind.examples.sunlight.RectangularNormalTessellator;
-import gov.nasa.worldwind.examples.sunlight.SunPositionProvider;
+import gov.nasa.worldwindx.examples.WMSLayersPanel;
+import name.gano.worldwind.examples.sunlight.AtmosphereLayer;
+import name.gano.worldwind.examples.sunlight.LensFlareLayer;
+import name.gano.worldwind.examples.sunlight.RectangularNormalTessellator;
+import name.gano.worldwind.examples.sunlight.SunPositionProvider;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.geom.Position;
@@ -44,7 +44,7 @@ import gov.nasa.worldwind.geom.Vec4;
 import gov.nasa.worldwind.layers.CompassLayer;
 import gov.nasa.worldwind.layers.Earth.CountryBoundariesLayer;
 import gov.nasa.worldwind.layers.Earth.LandsatI3WMSLayer;
-import gov.nasa.worldwind.layers.Earth.USGSTopographicMaps;
+import name.gano.worldwind.layers.Earth.USGSTNMTopoLayer;
 import gov.nasa.worldwind.layers.Earth.USGSUrbanAreaOrtho;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.LayerList;
@@ -62,9 +62,10 @@ import gov.nasa.worldwind.layers.ViewControlsLayer;
 import gov.nasa.worldwind.layers.ViewControlsSelectListener;
 import gov.nasa.worldwind.layers.WorldMapLayer;
 import gov.nasa.worldwind.layers.placename.PlaceNameLayer;
-import gov.nasa.worldwind.render.Polyline;
+import gov.nasa.worldwind.render.Path;
+import gov.nasa.worldwind.render.Path.PositionColors;
 import gov.nasa.worldwind.util.StatusBar;
-import gov.nasa.worldwind.view.BasicOrbitView;
+import gov.nasa.worldwind.view.orbit.BasicOrbitView;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -111,9 +112,6 @@ import name.gano.worldwind.layers.Earth.ECEFRenderableLayer;
 import name.gano.worldwind.layers.Earth.ECIRenderableLayer;
 import name.gano.worldwind.layers.Earth.EcefTimeDepRenderableLayer;
 import name.gano.worldwind.sunshader.CustomSunPositionProvider;
-import name.gano.worldwind.view.AutoClipBasicOrbitView;
-import name.gano.worldwind.view.BasicModelView3;
-import name.gano.worldwind.view.BasicModelViewInputHandler3;
 
 /**
  *
@@ -145,10 +143,13 @@ public class J3DEarthPanel extends javax.swing.JPanel implements J3DEarthCompone
 
     // Web Map Servers
     private static final String[] servers = new String[]{
-            "http://neowms.sci.gsfc.nasa.gov/wms/wms",
-            "http://mapserver.flightgear.org/cgi-bin/landcover",
-            "http://wms.jpl.nasa.gov/wms.cgi",
-            "http://labs.metacarta.com/wms/vmap0",
+            // "http://neowms.sci.gsfc.nasa.gov/wms/wms",
+            // "http://mapserver.flightgear.org/cgi-bin/landcover",
+            // "http://wms.jpl.nasa.gov/wms.cgi",
+            // "http://labs.metacarta.com/wms/vmap0",
+            // TODO Servers
+            "https://neowms.sci.gsfc.nasa.gov/wms/wms",
+            "https://sedac.ciesin.columbia.edu/geoserver/wcs",
 
     };
 
@@ -270,7 +271,7 @@ public class J3DEarthPanel extends javax.swing.JPanel implements J3DEarthCompone
         {
             if (layer instanceof TiledImageLayer)
             {
-                ((TiledImageLayer) layer).setShowImageTileOutlines(false);
+                ((TiledImageLayer) layer).setDrawTileBoundaries(false);
             }
             if (layer instanceof LandsatI3WMSLayer)
             {
@@ -300,7 +301,7 @@ public class J3DEarthPanel extends javax.swing.JPanel implements J3DEarthCompone
                 starsLayer = (StarsLayer) layer;
 
                 // for now just enlarge radius by a factor of 10
-                starsLayer.setRadius(starsLayer.getRadius()*10.0);
+                // starsLayer.setRadius(starsLayer.getRadius()*10.0);
             }
             if(layer instanceof CountryBoundariesLayer)
             {
@@ -312,7 +313,7 @@ public class J3DEarthPanel extends javax.swing.JPanel implements J3DEarthCompone
         wwd.setModel(m);
 
         // add USGS topo layer
-        USGSTopographicMaps topo = new USGSTopographicMaps();
+        USGSTNMTopoLayer topo = new USGSTNMTopoLayer();
         topo.setEnabled(false);
         WwjUtils.insertBeforePlacenames(getWwd(), topo);
 
@@ -407,7 +408,7 @@ public class J3DEarthPanel extends javax.swing.JPanel implements J3DEarthCompone
         // END Sun Shading -------------
 
         // correct clipping plane -- so entire orbits are shown - maybe make variable?
-        setupView(); // setup needed viewing specs and use of AutoClipBasicOrbitView
+        setupView(); // setup needed viewing specs and use of BasicOrbitView
 
     } // constructor
 
@@ -535,17 +536,27 @@ public class J3DEarthPanel extends javax.swing.JPanel implements J3DEarthCompone
                 positions.add(new Position(Angle.NEG90, longitude, height));
                 positions.add(new Position(Angle.ZERO, longitude, height));
                 positions.add(new Position(Angle.POS90, longitude, height));
-                Polyline polyline = new Polyline(positions);
+                Path polyline = new Path(positions);
                 polyline.setFollowTerrain(false);
                 polyline.setNumSubsegments(30);
 
                 if(lon == -180 || lon == 0)
                 {
-                    polyline.setColor(new Color(1f, 1f, 0f, 0.5f)); // yellow
+                    polyline.setPositionColors(new PositionColors() {
+
+                        @Override
+                        public Color getColor(Position arg0, int arg1) { return new Color(1f, 1f, 0f, 0.5f); }
+
+                    }); // yellow
                 }
                 else
                 {
-                    polyline.setColor(new Color(1f, 1f, 1f, 0.5f));
+                    polyline.setPositionColors(new PositionColors() {
+
+                        @Override
+                        public Color getColor(Position arg0, int arg1) { return new Color(1f, 1f, 1f, 0.5f); }
+
+                    });
                 }
 
                 shapeLayer.addRenderable(polyline);
@@ -559,18 +570,28 @@ public class J3DEarthPanel extends javax.swing.JPanel implements J3DEarthCompone
                 positions.add(new Position(latitude, Angle.NEG180, height));
                 positions.add(new Position(latitude, Angle.ZERO, height));
                 positions.add(new Position(latitude, Angle.POS180, height));
-                Polyline polyline = new Polyline(positions);
-                polyline.setPathType(Polyline.LINEAR);
+                Path polyline = new Path(positions);
+                polyline.setPathType(AVKey.LINEAR);
                 polyline.setFollowTerrain(false);
                 polyline.setNumSubsegments(30);
 
                 if(lat == 0)
                 {
-                    polyline.setColor(new Color(1f, 1f, 0f, 0.5f));
+                    polyline.setPositionColors(new PositionColors() {
+
+                        @Override
+                        public Color getColor(Position arg0, int arg1) { return new Color(1f, 1f, 0f, 0.5f); }
+
+                    }); // yellow
                 }
                 else
                 {
-                    polyline.setColor(new Color(1f, 1f, 1f, 0.5f));
+                    polyline.setPositionColors(new PositionColors() {
+
+                        @Override
+                        public Color getColor(Position arg0, int arg1) { return new Color(1f, 1f, 1f, 0.5f); }
+
+                    });
                 }
 
                 shapeLayer.addRenderable(polyline);
@@ -1077,13 +1098,14 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
         return modelViewNearClip;
     }
 
+    @Deprecated // Don't use it
     public void setModelViewNearClip(double modelViewNearClip)
     {
         this.modelViewNearClip = modelViewNearClip;
 
         if(this.isModelViewMode())
         {
-            wwd.getView().setNearClipDistance(modelViewNearClip);
+            // wwd.getView().setNearClipDistance(modelViewNearClip);
         }
     }
 
@@ -1092,21 +1114,23 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
         return modelViewFarClip;
     }
 
+    @Deprecated // Don't use it
     public void setModelViewFarClip(double modelViewFarClip)
     {
         this.modelViewFarClip = modelViewFarClip;
 
         if(this.isModelViewMode())
         {
-            wwd.getView().setFarClipDistance(modelViewFarClip);
+            // wwd.getView().setFarClipDistance(modelViewFarClip);
         }
     }
 
+    @SuppressWarnings("unused")
     private void setupView()
     {
         if(modelViewMode == false)
         { // Earth View mode
-            AutoClipBasicOrbitView bov = new AutoClipBasicOrbitView();
+            BasicOrbitView bov = new BasicOrbitView();
             wwd.setView(bov);
 
             // remove the rest of the old input handler  (does this need a remove of hover listener? - maybe it is now completely removed?)
@@ -1118,8 +1142,8 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
             awth.setSmoothViewChanges(smoothViewChanges); // FALSE MAKES THE VIEW FAST!! -- MIGHT WANT TO MAKE IT GUI Chooseable
 
             // IF EARTH VIEW -- RESET CLIPPING PLANES BACK TO NORMAL SETTINGS!!!
-            wwd.getView().setNearClipDistance(this.nearClippingPlaneDistOrbit);
-            wwd.getView().setFarClipDistance(this.farClippingPlaneDistOrbit);
+            // TODO wwd.getView().setNearClipDistance(this.nearClippingPlaneDistOrbit);
+            // TODO wwd.getView().setFarClipDistance(this.farClippingPlaneDistOrbit);
 
             // change class for inputHandler
             Configuration.setValue(AVKey.INPUT_HANDLER_CLASS_NAME,
@@ -1143,15 +1167,17 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
 
             AbstractSatellite sat = satHash.get(modelViewString);
 
-            BasicModelView3 bmv;
+            BasicOrbitView bmv;
             if(wwd.getView() instanceof BasicOrbitView)
             {
-                bmv = new BasicModelView3(((BasicOrbitView)wwd.getView()).getOrbitViewModel(), sat);
-                //bmv = new BasicModelView3(sat);
+                bmv = new BasicOrbitView();
+                bmv.copyViewState(wwd.getView());
+                //bmv = new BasicOrbitView(sat);
             }
             else
             {
-                bmv = new BasicModelView3(((BasicModelView3)wwd.getView()).getOrbitViewModel(), sat);
+                bmv = new BasicOrbitView();
+                bmv.copyViewState(wwd.getView());
             }
 
             // remove the old hover listener -- depending on this instance of the input handler class type
@@ -1159,9 +1185,9 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
             {
                 ((AWTInputHandler) wwd.getInputHandler()).removeHoverSelectListener();
             }
-            else if( wwd.getInputHandler() instanceof BasicModelViewInputHandler3)
+            else if( wwd.getInputHandler() instanceof AWTInputHandler)
             {
-                ((BasicModelViewInputHandler3) wwd.getInputHandler()).removeHoverSelectListener();
+                ((AWTInputHandler) wwd.getInputHandler()).removeHoverSelectListener();
             }
 
             // set view
@@ -1171,7 +1197,7 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
             wwd.getInputHandler().setEventSource(null);
 
             // add new input handler
-            BasicModelViewInputHandler3 mih = new BasicModelViewInputHandler3();
+            AWTInputHandler mih = new AWTInputHandler();
             mih.setEventSource(wwd);
             wwd.setInputHandler(mih);
 
@@ -1179,14 +1205,14 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
             mih.setSmoothViewChanges(smoothViewChanges); // FALSE MAKES THE VIEW FAST!!
 
             // settings for great closeups!
-            wwd.getView().setNearClipDistance(modelViewNearClip);
-            wwd.getView().setFarClipDistance(modelViewFarClip);
+            // TODO wwd.getView().setNearClipDistance(modelViewNearClip);
+            // TODO wwd.getView().setFarClipDistance(modelViewFarClip);
             bmv.setZoom(900000);
             bmv.setPitch(Angle.fromDegrees(45));
 
             // change class for inputHandler
             Configuration.setValue(AVKey.INPUT_HANDLER_CLASS_NAME,
-                        BasicModelViewInputHandler3.class.getName());
+                        AWTInputHandler.class.getName());
 
             // re-setup control layer handler
             this.getWwd().addSelectListener(new ViewControlsSelectListener(wwd, viewControlsLayer));
@@ -1271,7 +1297,7 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
             // Hmm need to do something to keet the ECI view moving even after user interaction
             // seems to work after you click off globe after messing with it
             // this fixes the problem:
-            wwd.getView().stopStateIterators();
+            wwd.getView().stopAnimations();
             wwd.getView().stopMovement(); //seems to fix prop in v0.5
 
             // update rotation of view and Stars
@@ -1521,12 +1547,13 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
         return wwd.getModel().getLayers();
     }
 
+    @Deprecated // Don't use it
     public void setOrbitFarClipDistance(double clipDist)
     {
         farClippingPlaneDistOrbit = clipDist;
         if(!this.isModelViewMode())
         {
-            wwd.getView().setFarClipDistance(farClippingPlaneDistOrbit);
+            // wwd.getView().setFarClipDistance(farClippingPlaneDistOrbit);
         }
     }
 
@@ -1535,12 +1562,13 @@ private void fullScreenButtonActionPerformed(java.awt.event.ActionEvent evt) {//
         return farClippingPlaneDistOrbit;
     }
 
+    @Deprecated // Don't use it
     public void setOrbitNearClipDistance(double clipDist)
     {
         nearClippingPlaneDistOrbit = clipDist;
         if(!this.isModelViewMode())
         {
-            wwd.getView().setNearClipDistance(nearClippingPlaneDistOrbit);
+            // wwd.getView().setNearClipDistance(nearClippingPlaneDistOrbit);
         }
     }
 

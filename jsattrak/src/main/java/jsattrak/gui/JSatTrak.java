@@ -97,6 +97,14 @@ import name.gano.file.FileTypeFilter;
 import name.gano.file.SaveImageFile;
 import name.gano.swingx.fullscreen.ToggleFullscreen2DWindow;
 
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLContext;
+import com.jogamp.opengl.GLDrawableFactory;
+import com.jogamp.opengl.GLProfile;
+import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.glu.GLU;
+
 /**
  *
  * @author  Shawn E. Gano, shawn@gano.name
@@ -3813,7 +3821,15 @@ private void lookFeelMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
         // if current wwd is null - create one!
         if(wwd == null)
         {
+            if (GLContext.getCurrent() == null) {
+                GLCapabilities capabilities = new GLCapabilities(GLProfile.get(GLProfile.GL2));
+                GLAutoDrawable d = GLDrawableFactory.getFactory(GLProfile.get(GLProfile.GL2)).createDummyAutoDrawable(null, true, capabilities, null);
+                d.display();
+                d.getContext().makeCurrent();
+            }
+
             wwd = new WorldWindowGLCanvas(); // make first one
+            wwd.setContext(GLContext.getCurrent(), true);
         }
 
         return wwd;
@@ -3854,7 +3870,7 @@ private void lookFeelMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//
      */
     public static void main(final String args[])
     {
-        System.out.println("ELLO");
+
         // no command line arguments
         if(args.length == 0)
         {

@@ -75,6 +75,16 @@
       <name>terrestris</name>
       <url>https://nexus.terrestris.de/repository/public/</url>
     </repository>
+    <repository>
+      <id>jogamp</id>
+      <name>JogAmp</name>
+      <url>https://jogamp.org/deployment/maven/</url>
+    </repository>
+    <repository>
+      <id>clojars</id>
+      <name>Clojars</name>
+      <url>https://clojars.org/repo/</url>
+    </repository>
   </repositories>
 
   <dependencies>
@@ -122,24 +132,34 @@
     </dependency> -->
     <!-- <dependency>
       <groupId>org.jogamp.jogl</groupId>
-      <artifactId>jogl-all-main</artifactId>
-      <version>2.3.2</version>
+      <artifactId>jogl-all</artifactId>
+      <version>2.4.0</version>
     </dependency> -->
     <dependency>
+      <groupId>quil</groupId>
+      <artifactId>jogl-fat</artifactId>
+      <version>2.4.0</version>
+    </dependency>
+    <!-- <dependency>
       <groupId>org.jogamp.jogl</groupId>
       <artifactId>jogl</artifactId>
       <version>local_1.1.2</version>
+    </dependency> -->
+    <!-- <dependency>
+      <groupId>org.jogamp.gluegen</groupId>
+      <artifactId>gluegen-rt</artifactId>
+      <version>2.4.0</version>
+    </dependency> -->
+    <dependency>
+      <groupId>quil</groupId>
+      <artifactId>gluegen-rt-fat</artifactId>
+      <version>2.4.0</version>
     </dependency>
     <!-- <dependency>
       <groupId>org.jogamp.gluegen</groupId>
       <artifactId>gluegen-rt</artifactId>
-      <version>2.3.2</version>
-    </dependency> -->
-    <dependency>
-      <groupId>org.jogamp.gluegen</groupId>
-      <artifactId>gluegen-rt</artifactId>
       <version>local_1.1.2</version>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>net.java.joglutils</groupId>
       <artifactId>joglutils</artifactId>
@@ -190,10 +210,20 @@
       <artifactId>worldwind</artifactId>
       <version>2.0.0-986</version>
     </dependency> -->
-    <dependency>
+    <!-- <dependency>
       <groupId>gov.nasa</groupId>
       <artifactId>worldwind</artifactId>
       <version>local_0.6.134.11486</version>
+    </dependency> -->
+    <dependency>
+      <groupId>gov.nasa</groupId>
+      <artifactId>worldwind</artifactId>
+      <version>local_2.2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>gov.nasa</groupId>
+      <artifactId>worldwindx</artifactId>
+      <version>local_2.2.1</version>
     </dependency>
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>

@@ -88,7 +88,7 @@ public class MercatorTextureTile extends TextureTile
 		return subTiles;
 	}
 
-	private MercatorTextureTile getTileFromMemoryCache(TileKey tileKey)
+	protected MercatorTextureTile getTileFromMemoryCache(TileKey tileKey)
 	{
 		return (MercatorTextureTile) WorldWind.getMemoryCache(
 				MercatorTextureTile.class.getName()).getObject(tileKey);

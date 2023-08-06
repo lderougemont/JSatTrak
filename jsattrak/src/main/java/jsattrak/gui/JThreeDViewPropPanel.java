@@ -115,7 +115,7 @@ public class JThreeDViewPropPanel extends javax.swing.JPanel
             terminatorCheckBox.doClick();
         }
 
-        terminatorColorLabel.setBackground(threeDPanel.getEcefTimeDepRenderableLayer().getTerminator().getColor());
+        terminatorColorLabel.setBackground(threeDPanel.getEcefTimeDepRenderableLayer().getTerminator().getColorPublic());
 
         // Grid
         if(threeDPanel.getEciRadialGrid().isShowGrid())

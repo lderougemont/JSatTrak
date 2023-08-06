@@ -1,17 +1,17 @@
 /*
  * CoverageJoglColorBar.java
- * 
+ *
  * =====================================================================
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +22,9 @@
 
 package name.gano.worldwind.geom;
 
-import com.sun.opengl.util.j2d.TextRenderer;
+
+import com.jogamp.opengl.util.PMVMatrix;
+import com.jogamp.opengl.util.awt.TextRenderer;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Vec4;
@@ -32,31 +34,32 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.geom.Rectangle2D;
-import javax.media.opengl.GL;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
 import jsattrak.coverage.CoverageAnalyzer;
 
 /**
  *
  * @author sgano
  */
-public class CoverageJoglColorBar implements Renderable 
+public class CoverageJoglColorBar implements Renderable
 {
-        
+
     private int borderWidth = 20;
     private Dimension size = new Dimension(150, 10); // location on screen?
     private Color color = Color.white;
-    
-    private Font defaultFont = Font.decode("Arial-12-PLAIN");    
-    private TextRenderer textRenderer = null;    
+
+    private Font defaultFont = Font.decode("Arial-12-PLAIN");
+    private TextRenderer textRenderer = null;
     private Vec4 locationCenter = null;
-    
+
     CoverageAnalyzer ca;
-    
+
     public CoverageJoglColorBar(CoverageAnalyzer ca)
     {
         this.ca= ca;
     }
-       
+
     // Rendering
     public void render(DrawContext dc)
     {
@@ -68,15 +71,17 @@ public class CoverageJoglColorBar implements Renderable
 
         }
 
-        GL gl = dc.getGL();
+        GL2 gl = dc.getGL().getGL2();
 
         boolean attribsPushed = false;
         boolean modelviewPushed = false;
         boolean projectionPushed = false;
 
+        PMVMatrix m = new PMVMatrix();
+
         try
         {
-            gl.glPushAttrib(GL.GL_DEPTH_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT | GL.GL_ENABLE_BIT | GL.GL_TEXTURE_BIT | GL.GL_TRANSFORM_BIT | GL.GL_VIEWPORT_BIT | GL.GL_CURRENT_BIT);
+            gl.glPushAttrib(GL.GL_DEPTH_BUFFER_BIT | GL.GL_COLOR_BUFFER_BIT | GL2.GL_ENABLE_BIT | GL2.GL_TEXTURE_BIT | GL2.GL_TRANSFORM_BIT | GL2.GL_VIEWPORT_BIT | GL2.GL_CURRENT_BIT);
             attribsPushed = true;
 
             gl.glDisable(GL.GL_TEXTURE_2D);		// no textures
@@ -91,24 +96,24 @@ public class CoverageJoglColorBar implements Renderable
             // Load a parallel projection with xy dimensions (viewportWidth, viewportHeight)
             // into the GL projection matrix.
             java.awt.Rectangle viewport = dc.getView().getViewport();
-            gl.glMatrixMode(javax.media.opengl.GL.GL_PROJECTION);
-            gl.glPushMatrix();
+            gl.glMatrixMode(PMVMatrix.GL_PROJECTION);
+            m.glPushMatrix();
             projectionPushed = true;
-            gl.glLoadIdentity();
+            m.glLoadIdentity();
             double maxwh = width > height ? width : height;
-            gl.glOrtho(0d, viewport.width, 0d, viewport.height, -0.6 * maxwh, 0.6 * maxwh);
+            m.glOrthof(0f, (float)viewport.width, 0f, (float)viewport.height, (float)(-0.6 * maxwh), (float)(0.6 * maxwh));
 
-            gl.glMatrixMode(GL.GL_MODELVIEW);
-            gl.glPushMatrix();
+            gl.glMatrixMode(PMVMatrix.GL_MODELVIEW);
+            m.glPushMatrix();
             modelviewPushed = true;
-            gl.glLoadIdentity();
+            m.glLoadIdentity();
 
             // Scale to a width x height space
             // located at the proper position on screen
             double scale = computeScale(viewport);
             Vec4 locationSW = computeLocation(viewport, scale);
-            gl.glTranslated(locationSW.x(), locationSW.y(), locationSW.z());
-            gl.glScaled(scale, scale, 1);
+            m.glTranslatef((float)locationSW.x(), (float)locationSW.y(), (float)locationSW.z());
+            m.glScalef((float)scale, (float)scale, 1f);
 
             // Compute scale size in real world
             Position groundPos = computeGroundPosition(dc, dc.getView());
@@ -146,25 +151,25 @@ public class CoverageJoglColorBar implements Renderable
                 float[] colorRGB = backColor.getRGBColorComponents(null);
                 gl.glColor4d(colorRGB[0], colorRGB[1], colorRGB[2], (double)backColor.getAlpha() / 255d * opacity);
                 //gl.glTranslated((width - divWidth) / 2, 0d, 0d);
-                gl.glTranslated(20, 0d, 0d);
+                m.glTranslatef(20f, 0f, 0f);
                 this.drawScale(dc, divWidth, height);
 
                 colorRGB = this.color.getRGBColorComponents(null);
                 gl.glColor4d(colorRGB[0], colorRGB[1], colorRGB[2], opacity);
-                gl.glTranslated(-1d / scale, 1d / scale, 0d);
+                m.glTranslatef((float)(-1d / scale), (float)(1d / scale), 0f);
                 this.drawScale(dc, divWidth, height);
 
                 // Draw label
                 //String label = String.format("%.0f ", divSize) + unitLabel;
                 String label = ca.getUpperBoundLabel();
-                gl.glLoadIdentity();
+                m.glLoadIdentity();
                 gl.glDisable(GL.GL_CULL_FACE);
                 drawLabel(label,
                         locationSW.add3(new Vec4(divWidth * scale, 0 * height * scale - height * scale / 2 - 10, 0)));
 
                 //String label = String.format("%.0f ", divSize) + unitLabel;
                 label = ca.getLowerBoundLabel();
-                gl.glLoadIdentity();
+                m.glLoadIdentity();
                 gl.glDisable(GL.GL_CULL_FACE);
                 drawLabel(label,
                         locationSW.add3(new Vec4(0 + 12, 0 * height * scale - height * scale / 2 - 10, 0)));
@@ -175,12 +180,12 @@ public class CoverageJoglColorBar implements Renderable
         {
             if(projectionPushed)
             {
-                gl.glMatrixMode(GL.GL_PROJECTION);
+                gl.glMatrixMode(PMVMatrix.GL_PROJECTION);
                 gl.glPopMatrix();
             }
             if(modelviewPushed)
             {
-                gl.glMatrixMode(GL.GL_MODELVIEW);
+                gl.glMatrixMode(PMVMatrix.GL_MODELVIEW);
                 gl.glPopMatrix();
             }
             if(attribsPushed)
@@ -189,7 +194,7 @@ public class CoverageJoglColorBar implements Renderable
             }
         } // finally
     } // render
-        
+
     private double toViewportScale = 0.2;
 
     private double computeScale(java.awt.Rectangle viewport)
@@ -218,7 +223,7 @@ public class CoverageJoglColorBar implements Renderable
 
         return new Vec4(x, y, 0);
     }
-        
+
     private Position computeGroundPosition(DrawContext dc, View view)
     {
         if(view == null)
@@ -237,7 +242,7 @@ public class CoverageJoglColorBar implements Renderable
                 groundPos.getLongitude(),
                 elevation * dc.getVerticalExaggeration());
     }
-        
+
     private final float[] compArray = new float[4];
 
     private Color getBackgroundColor(Color color)
@@ -252,12 +257,12 @@ public class CoverageJoglColorBar implements Renderable
             return new Color(1, 1, 1, 0.7f);
         }
     }
-        
+
     // Draw scale graphic
     private void drawScale(DrawContext dc, double width, double height)
     {
 
-        GL gl = dc.getGL();
+        GL2 gl = dc.getGL().getGL2();
 
         // draw lines at end points
         gl.glBegin(GL.GL_LINE_STRIP);
@@ -280,7 +285,7 @@ public class CoverageJoglColorBar implements Renderable
         }
 
     }
-    
+
     // Draw the scale label
     private void drawLabel(String text, Vec4 screenPoint)
     {
@@ -303,5 +308,5 @@ public class CoverageJoglColorBar implements Renderable
         this.textRenderer.end3DRendering();
 
     }
-        
-} 
+
+}

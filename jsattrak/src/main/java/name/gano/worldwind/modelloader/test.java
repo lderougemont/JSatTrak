@@ -22,7 +22,7 @@
 
 package name.gano.worldwind.modelloader;
 
-import gov.nasa.worldwind.examples.ApplicationTemplate;
+import gov.nasa.worldwindx.examples.ApplicationTemplate;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.Position;
 import java.util.Random;
@@ -76,7 +76,7 @@ public class test extends ApplicationTemplate
                 layer.addModel(model3D);
 
                 insertBeforeCompass(this.getWwd(), layer);
-                this.getLayerPanel().update(this.getWwd());
+                this.getControlPanel().update(this.getGraphics());
             }
             catch (Exception e)
             {

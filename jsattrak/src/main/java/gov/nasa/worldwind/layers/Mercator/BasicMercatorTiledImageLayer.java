@@ -6,11 +6,11 @@ All Rights Reserved.
 */
 package gov.nasa.worldwind.layers.Mercator;
 
-import com.sun.opengl.util.texture.*;
+import com.jogamp.opengl.util.texture.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.*;
-import gov.nasa.worldwind.formats.dds.DDSConverter;
+import gov.nasa.worldwind.formats.dds.DDSCompressor;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.retrieve.*;
@@ -24,7 +24,7 @@ import java.nio.ByteBuffer;
 
 /**
  * BasicTiledImageLayer modified 2009-02-03 to add support for Mercator projections.
- * 
+ *
  * @author tag
  * @version $Id: BasicMercatorTiledImageLayer.java 9259 2009-03-08 22:32:31Z patrickmurris $
  */
@@ -54,14 +54,14 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer
 		this.setValue(AVKey.CONSTRUCTION_PARAMETERS, params);
 	}
 
-	protected void forceTextureLoad(MercatorTextureTile tile)
+	protected void forceTextureLoad(DrawContext dc, MercatorTextureTile tile)
 	{
 		final URL textureURL = WorldWind.getDataFileStore().findFile(
 				tile.getPath(), true);
 
 		if (textureURL != null && !this.isTextureExpired(tile, textureURL))
 		{
-			this.loadTexture(tile, textureURL);
+			this.loadTexture(dc, tile, textureURL);
 		}
 	}
 
@@ -71,7 +71,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer
 		if (this.getReferencePoint() != null)
 			tile.setPriority(centroid.distanceTo3(this.getReferencePoint()));
 
-		RequestTask task = new RequestTask(tile, this);
+		RequestTask task = new RequestTask(dc, tile, this);
 		this.getRequestQ().add(task);
 	}
 
@@ -80,12 +80,15 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer
 	{
 		private final BasicMercatorTiledImageLayer layer;
 		private final MercatorTextureTile tile;
+		private final DrawContext dc;
 
-		private RequestTask(MercatorTextureTile tile,
+
+		private RequestTask(DrawContext dc, MercatorTextureTile tile,
 				BasicMercatorTiledImageLayer layer)
 		{
 			this.layer = layer;
 			this.tile = tile;
+			this.dc = dc;
 		}
 
 		public void run()
@@ -97,7 +100,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer
 			if (textureURL != null
 					&& !this.layer.isTextureExpired(tile, textureURL))
 			{
-				if (this.layer.loadTexture(tile, textureURL))
+				if (this.layer.loadTexture(dc, tile, textureURL))
 				{
 					layer.getLevels().unmarkResourceAbsent(tile);
 					this.layer.firePropertyChange(AVKey.LAYER, null, this);
@@ -177,14 +180,14 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer
 		return true;
 	}
 
-	private boolean loadTexture(MercatorTextureTile tile,
+	private boolean loadTexture(DrawContext dc, MercatorTextureTile tile,
 			java.net.URL textureURL)
 	{
 		TextureData textureData;
 
 		synchronized (this.fileLock)
 		{
-			textureData = readTexture(textureURL, this.isUseMipMaps());
+			textureData = readTexture(dc, textureURL, this.isUseMipMaps());
 		}
 
 		if (textureData == null)
@@ -197,11 +200,11 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer
 		return true;
 	}
 
-	private static TextureData readTexture(java.net.URL url, boolean useMipMaps)
+	private static TextureData readTexture(DrawContext dc, java.net.URL url, boolean useMipMaps)
 	{
 		try
 		{
-			return TextureIO.newTextureData(url, useMipMaps, null);
+			return TextureIO.newTextureData(dc.getGL().getGLProfile(), url, useMipMaps, null);
 		}
 		catch (Exception e)
 		{
@@ -380,7 +383,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer
 					else if (outFile.getName().endsWith(".dds"))
 					{
 						// Convert to DDS and save the result.
-						buffer = DDSConverter.convertToDDS(buffer, contentType);
+						buffer = DDSCompressor.compressImageBuffer(buffer);
 						if (buffer != null)
 							this.layer.saveBuffer(buffer, outFile);
 					}
@@ -438,7 +441,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer
         return image;
     }
 
-    
+
     private BufferedImage convertBufferToImage(ByteBuffer buffer)
 	{
 		try

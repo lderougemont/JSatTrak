@@ -55,3 +55,17 @@ installjars:
 		-Dversion=local_0.6.134.11486 \
 		-Dpackaging=jar \
 		-DgeneratePom=true
+	mvn install:install-file \
+		-Dfile=./lib/worldwind/worldwind-2.2.1.jar \
+		-DgroupId=gov.nasa \
+		-DartifactId=worldwind \
+		-Dversion=local_2.2.1 \
+		-Dpackaging=jar \
+		-DgeneratePom=true
+	mvn install:install-file \
+		-Dfile=./lib/worldwind/worldwindx-2.2.1.jar \
+		-DgroupId=gov.nasa \
+		-DartifactId=worldwindx \
+		-Dversion=local_2.2.1 \
+		-Dpackaging=jar \
+		-DgeneratePom=true

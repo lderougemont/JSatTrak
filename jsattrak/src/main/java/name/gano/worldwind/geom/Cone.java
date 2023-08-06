@@ -6,13 +6,13 @@
  *   This file is part of JSatTrak.
  *
  *   Copyright 2007-2013 Shawn E. Gano
- *   
+ *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
- *   
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- *   
+ *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
  *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,9 +30,9 @@ import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.render.Renderable;
 import java.awt.Color;
-import javax.media.opengl.GL;
-import javax.media.opengl.glu.GLU;
-import javax.media.opengl.glu.GLUquadric;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.glu.GLUquadric;
 
 public class Cone implements Renderable
 {
@@ -46,11 +46,11 @@ public class Cone implements Renderable
     private Globe myGlobe;
     private Color color;
     private Vec4 topCenter; // point at center of cylinder base
-    
+
     // solid geometry generation parameters
     private int slices = 30;  // 30
     private int stacks = 1;  // 30
-    
+
 
     public Cone(Globe globe, double lat, double lon, double mGroundRange, double mCeiling, Angle orientation, Angle elevation, Color theColor)
     {
@@ -72,32 +72,32 @@ public class Cone implements Renderable
 
         Position p = myGlobe.computePositionFromPoint(this.topCenter);
 
-        javax.media.opengl.GL gl = dc.getGL();
+        com.jogamp.opengl.GL2 gl = dc.getGL().getGL2();
 
-        gl.glPushAttrib(javax.media.opengl.GL.GL_TEXTURE_BIT | javax.media.opengl.GL.GL_ENABLE_BIT | javax.media.opengl.GL.GL_CURRENT_BIT);
-        gl.glDisable(javax.media.opengl.GL.GL_TEXTURE_2D);
+        gl.glPushAttrib(com.jogamp.opengl.GL2.GL_TEXTURE_BIT | com.jogamp.opengl.GL2.GL_ENABLE_BIT | com.jogamp.opengl.GL2.GL_CURRENT_BIT);
+        gl.glDisable(com.jogamp.opengl.GL.GL_TEXTURE_2D);
 
         gl.glEnable(GL.GL_BLEND);
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
         gl.glColor4ub((byte) getColor().getRed(), (byte) getColor().getGreen(), (byte) getColor().getBlue(), (byte) getColor().getAlpha());
 
-        gl.glEnable(javax.media.opengl.GL.GL_DEPTH_TEST);
-        gl.glMatrixMode(javax.media.opengl.GL.GL_MODELVIEW);
+        gl.glEnable(com.jogamp.opengl.GL.GL_DEPTH_TEST);
+        gl.glMatrixMode(com.jogamp.opengl.GL2.GL_MODELVIEW);
         gl.glPushMatrix();
 
         gl.glTranslated(this.topCenter.x, this.topCenter.y, this.topCenter.z);
 
-        dc.getGL().glRotated(90 + p.getLongitude().getDegrees(), 0, 1, 0);
-        dc.getGL().glRotated(myOrientation.getDegrees(), -1, 0, 0);
-        dc.getGL().glRotated(p.getLatitude().getDegrees() * myOrientation.sin(), 0, 1, 0);
-        dc.getGL().glRotated(myElevation.getDegrees(), 0, -1, 0);
-        dc.getGL().glRotated(p.getLatitude().getDegrees() * myElevation.sin(), -1, 0, 0);
+        dc.getGL().getGL2().glRotated(90 + p.getLongitude().getDegrees(), 0, 1, 0);
+        dc.getGL().getGL2().glRotated(myOrientation.getDegrees(), -1, 0, 0);
+        dc.getGL().getGL2().glRotated(p.getLatitude().getDegrees() * myOrientation.sin(), 0, 1, 0);
+        dc.getGL().getGL2().glRotated(myElevation.getDegrees(), 0, -1, 0);
+        dc.getGL().getGL2().glRotated(p.getLatitude().getDegrees() * myElevation.sin(), -1, 0, 0);
 
         GLUquadric quadric = dc.getGLU().gluNewQuadric();
         dc.getGLU().gluQuadricDrawStyle(quadric, GLU.GLU_FILL);
 
         dc.getGLU().gluCylinder(quadric, 0, this.myGroundRange, this.myCeiling, slices, stacks);
-        dc.getGL().glTranslated(0, 0, this.myCeiling);
+        dc.getGL().getGL2().glTranslated(0, 0, this.myCeiling);
         dc.getGLU().gluDisk(quadric, 0d, this.myGroundRange, slices, stacks);
         dc.getGLU().gluDeleteQuadric(quadric);
 
@@ -109,15 +109,15 @@ public class Cone implements Renderable
     public void setVertexPosition(double x, double y, double z)
     {
         this.topCenter = new Vec4(x,y,z,0);
-        
+
     }
-    
+
     public void setLatLonRadians(double lat, double lon, double alt)
     {
         this.myPointLat = Angle.fromRadiansLatitude(lat);
         this.myPointLon = Angle.fromRadiansLatitude(lon);
         this.topCenter = myGlobe.computePointFromPosition(myPointLat, myPointLon, alt);
-        
+
     }
 
     // corrected spelling SEG 30 Mar 2010
